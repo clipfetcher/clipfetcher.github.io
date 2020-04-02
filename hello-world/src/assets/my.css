@@ -1,3 +1,4 @@
 .myClass {
-    color: blue;
+    color: green;
+    border: 2px dotted black;
 }
