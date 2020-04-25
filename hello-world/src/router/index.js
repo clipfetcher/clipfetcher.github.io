@@ -80,9 +80,28 @@ const routes = [
     component: () => import(/* webpackChunkName: "user" */ '../views/User.vue'),
     props: true,
   },
+  {
+    path: '/demo',
+    name: 'Demo',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "news" */ '../views/Demo.vue')
+  },
+  {
+    path: '/test',
+    name: 'TestComponent',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "news" */ '../views/TestComponent.vue')
+  },
+  { path: '/404', component: () => import(/* webpackChunkName: "user" */ '../views/NotFoundComponent.vue'), },
+  { path: '*', redirect: '/404' }
 ]
 
 const router = new VueRouter({
+  mode: 'history',
   routes
 })
 
