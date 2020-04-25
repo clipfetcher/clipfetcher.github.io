@@ -77,7 +77,7 @@
 </template>
 
 <script>
-let ip = "http://192.168.100.102";
+let ip = "http://192.168.1.109";
 export default {
   name: "Axios",
   data() {
