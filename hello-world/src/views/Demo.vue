@@ -88,33 +88,7 @@
     <div v-show="highlightShow">
       <div v-if="exist" class="card my-2">
         <h5 class="card-header">精華搜尋影片</h5>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-12 col-md-4">
-              <div id="highlightVideoShow" class="embed-responsive embed-responsive-16by9">
-                <iframe id="videoSearch" class="embed-responsive-item" :src="vidSearch"></iframe>
-              </div>
-            </div>
-            <div class="col-12 col-md-3">
-              <span>實況主：</span>
-              <br />
-              <span>標題：</span>
-              <br />
-              <span>遊戲分類：</span>
-              <br />
-            </div>
-            <div class="col-12 col-md-5 align-self-end">
-              <button type="button" class="btn btn-outline-secondary my-1">影片不精準</button>
-              <button type="button" class="btn btn-outline-secondary my-1">影片長度過長</button>
-              <button type="button" class="btn btn-outline-secondary my-1">影片分析太久</button>
-              <button type="button" class="btn btn-outline-secondary my-1">其他</button>
-              <br />
-              <div class="float-right">
-                <!-- Rating -->
-              </div>
-            </div>
-          </div>
-        </div>
+        <HighlightList :videoURL="vidSearchShow"></HighlightList>
       </div>
       <div v-else class="alert alert-danger" role="alert">
         <p class="text-center my-2 py-2">
@@ -150,102 +124,24 @@
     <!-- 分析結果顯示 -->
     <div id="videoResult" class="card my-2" v-show="videoResult">
       <h5 class="card-header">分析結果精華影片</h5>
-      <div class="card-body">
-        <div class="row">
-          <div class="col-12 col-md-4">
-            <div class="embed-responsive embed-responsive-16by9">
-              <iframe
-                class="embed-responsive-item"
-                src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0"
-                allowfullscreen
-              ></iframe>
-            </div>
-          </div>
-          <div class="col-12 col-md-3">
-            <p class="text-left m-0">實況主：</p>
-            <p class="text-left m-0">標題：</p>
-            <p class="text-left m-0">遊戲分類：</p>
-          </div>
-          <div class="col-12 col-md-5 align-self-end">
-            <button type="button" class="btn btn-outline-secondary my-1">影片不精準</button>
-            <button type="button" class="btn btn-outline-secondary my-1">影片長度過長</button>
-            <button type="button" class="btn btn-outline-secondary my-1">影片分析太久</button>
-            <button type="button" class="btn btn-outline-secondary my-1">其他</button>
-            <br />
-            <div class="float-right">
-              <!-- Rating -->
-            </div>
-          </div>
-        </div>
-      </div>
+      <HighlightList videoURL="https://www.youtube.com/embed/zpOULjyy-n8?rel=0"></HighlightList>
     </div>
     <br />
     <hr />
-    <h3 class="text-center my-2">最新精華影片</h3>
-
     <!-- 精華檢視顯示 -->
     <div id="videoList my-2">
       <!-- 精華影片顯示 -->
       <div class="card my-2">
-        <h5 class="card-header">highlight video id or title</h5>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-12 col-md-4">
-              <div class="embed-responsive embed-responsive-16by9">
-                <iframe
-                  class="embed-responsive-item"
-                  src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0"
-                  allowfullscreen
-                ></iframe>
-              </div>
-            </div>
-            <div class="col-12 col-md-3">
-              <div class="col-12 col-md-3">
-                <p class="text-left m-0">實況主：</p>
-                <p class="text-left m-0">標題：</p>
-                <p class="text-left m-0">遊戲分類：</p>
-              </div>
-            </div>
-            <div class="col-12 col-md-5 align-self-end">
-              <button type="button" class="btn btn-outline-secondary my-1">影片不精準</button>
-              <button type="button" class="btn btn-outline-secondary my-1">影片長度過長</button>
-              <button type="button" class="btn btn-outline-secondary my-1">影片分析太久</button>
-              <button type="button" class="btn btn-outline-secondary my-1">其他</button>
-              <br />
-              <div class="float-right">
-                <template v-for="index in 5">
-                  <i
-                    v-if="index <= starRating"
-                    :key="index.id"
-                    class="text-warning fas fa-star"
-                    @click="clickRating(index)"
-                    @mouseover="mouseOverRrating(index)"
-                    @touchstart="mouseOverRrating(index)"
-                    @mouseout="mouseOutRrating"
-                    @touchend="mouseOutRrating"
-                  ></i>
-                  <i
-                    v-else
-                    :key="index.id"
-                    class="text-warning far fa-star"
-                    @click="clickRating(index)"
-                    @mouseover="mouseOverRrating(index)"
-                    @touchstart="mouseOverRrating(index)"
-                    @mouseout="mouseOutRrating"
-                    @touchend="mouseOutRrating"
-                  ></i>
-                </template>
-                {{ starRating }}
-              </div>
-            </div>
-          </div>
-        </div>
+        <h5 class="card-header">最新精華影片</h5>
+        <HighlightList videoURL="https://www.youtube.com/embed/zpOULjyy-n8?rel=0"></HighlightList>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import HighlightList from "@/components/HighlightList.vue";
+
 var vodShow = false;
 var vodAnalysisBtnShow = false;
 var progressList = false;
@@ -270,6 +166,7 @@ export default {
 
       vidAnalysis: "",
       vidSearch: "",
+      vidSearchShow: "",
 
       starRating: 0,
       temp_starRating: 0,
@@ -291,6 +188,7 @@ export default {
       progressBarText: ""
     };
   },
+  components: { HighlightList },
   methods: {
     mouseOverRrating: function(val) {
       this.temp_starRating = this.starRating;
@@ -368,7 +266,7 @@ export default {
           '"></iframe >';
         $("#highlightVideoShow").html(output);
         */
-        this.vidSearch =
+        this.vidSearchShow =
           "https://player.twitch.tv/?autoplay=false&video=v" + vid;
         this.highlightShow = true;
         //this.exist = !this.exist;
