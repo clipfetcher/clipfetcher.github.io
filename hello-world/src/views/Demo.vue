@@ -1,34 +1,28 @@
 <template>
   <div class="container">
-    <div
-      id="analysisFinish"
-      v-if="analysisFinish"
-      class="modal fade bd-example-modal-sm"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="mySmallModalLabel"
-      aria-hidden="true"
+    <transition
+      @enter="startTransitionModal"
+      @after-enter="endTransitionModal"
+      @before-leave="endTransitionModal"
+      @after-leave="startTransitionModal"
     >
-      <div class="modal-dialog modal-sm" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">{{title}}</h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-              @click="analysisFinish = false"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <p>影片分析完成！！</p>
+      <div class="modal fade" v-if="showModal" ref="modal">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">{{ title }}</h5>
+              <button class="close" type="button" @click="showModal = !showModal">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>影片分析完成！！</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </transition>
+    <div class="modal-backdrop fade d-none" ref="backdrop"></div>
 
     <div class="my-3 p-1">
       <nav class="nav nav-pills nav-justified">
@@ -85,11 +79,7 @@
     <div class="row justify-content-center" v-show="vodShow">
       <div class="col-12 col-md-8">
         <div id="videoShow" class="embed-responsive embed-responsive-16by9 my-2">
-          <iframe
-            id="videoAnalysis"
-            class="embed-responsive-item"
-            :src="'https://player.twitch.tv/?autoplay=false&video=v' + vidAnalysis"
-          ></iframe>
+          <iframe id="videoAnalysis" class="embed-responsive-item" :src="vidAnalysis"></iframe>
         </div>
       </div>
     </div>
@@ -102,11 +92,7 @@
           <div class="row">
             <div class="col-12 col-md-4">
               <div id="highlightVideoShow" class="embed-responsive embed-responsive-16by9">
-                <iframe
-                  id="videoSearch"
-                  class="embed-responsive-item"
-                  :src="'https://player.twitch.tv/?autoplay=false&video=v' + vidSearch"
-                ></iframe>
+                <iframe id="videoSearch" class="embed-responsive-item" :src="vidSearch"></iframe>
               </div>
             </div>
             <div class="col-12 col-md-3">
@@ -298,7 +284,7 @@ export default {
       highlightShow: false,
       exist: true,
 
-      analysisFinish: false,
+      showModal: false,
 
       //progress bar
       progressBarValueNow: 0,
@@ -334,7 +320,8 @@ export default {
           '"></iframe >';
         $("#videoShow").html(output);
         */
-        this.vidAnalysis = vid;
+        this.vidAnalysis =
+          "https://player.twitch.tv/?autoplay=false&video=v" + vid;
         this.vodLoadBtn = "重新載入";
         this.videoResult = false;
         this.vodShow = true;
@@ -355,18 +342,15 @@ export default {
       let interval = setInterval(function() {
         if (val === 100) {
           //$("#analysisFinish").modal("show");
-          this.analysisFinish = true;
+          call.showModal = !call.showModal;
           call.progressList = false;
           call.videoResult = true;
           clearInterval(interval);
         } else {
           val += 10;
         }
-        //$("#progressBar").css("width", val + "%");
-        //$("#progressBar").attr("aria-valuenow", val);
-        //$("#progressBar").text(val + "%");
-        this.progressBarValueNow = val;
-        this.progressBarText = val + "%";
+        call.progressBarValueNow = val;
+        call.progressBarText = val + "%";
       }, 500);
     },
     searchVideo: function() {
@@ -384,7 +368,8 @@ export default {
           '"></iframe >';
         $("#highlightVideoShow").html(output);
         */
-        this.vidSearch = vid;
+        this.vidSearch =
+          "https://player.twitch.tv/?autoplay=false&video=v" + vid;
         this.highlightShow = true;
         //this.exist = !this.exist;
       } else if (vid === "") {
@@ -418,6 +403,14 @@ export default {
         this.active = false;
         this.inputBar = !this.inputBar;
       }
+    },
+    startTransitionModal: function() {
+      this.$refs.backdrop.classList.toggle("d-block");
+      this.$refs.modal.classList.toggle("d-block");
+    },
+    endTransitionModal: function() {
+      this.$refs.backdrop.classList.toggle("show");
+      this.$refs.modal.classList.toggle("show");
     }
   }
 };
