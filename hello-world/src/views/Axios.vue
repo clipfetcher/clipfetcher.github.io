@@ -56,8 +56,8 @@
 </template>
 
 <script>
-let ip = "https://clip-fetcher.herokuapp.com";
-//https://clip-fetcher.herokuapp.com/
+let ip = "http://192.168.1.109:3000";
+//https://clip-fetcher.herokuapp.com
 export default {
   name: "Axios",
   data() {
@@ -91,7 +91,7 @@ export default {
     tryApi_2() {
       this.axios
         .get(ip + "/api/vod")
-        .then(response => (this.api_test_2 = response))
+        .then(response => (this.api_test_2 = response.data))
         .catch(function(error) {
           console.log(error.response);
         });
@@ -109,9 +109,11 @@ export default {
     tryApi_4() {
       this.axios
         .get(ip + "/api/vod/status", {
-          vod_id: this.vod
+          params: {
+            vod_id: this.vod
+          }
         })
-        .then(response => (this.api_test_4 = response))
+        .then(response => (this.api_test_4 = response.data))
         .catch(function(error) {
           console.log(error);
         });
@@ -119,9 +121,11 @@ export default {
     tryApi_5() {
       this.axios
         .get(ip + "/api/vod/highlight", {
-          vod_id: this.vod
+          params: {
+            vod_id: this.vod
+          }
         })
-        .then(response => (this.api_test_5 = response))
+        .then(response => (this.api_test_5 = response.data))
         .catch(function(error) {
           console.log(error);
         });
