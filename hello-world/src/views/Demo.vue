@@ -88,7 +88,7 @@
     <div v-show="highlightShow">
       <div v-if="exist" class="card my-2">
         <h5 class="card-header">精華搜尋影片</h5>
-        <HighlightList :videoURL="vidSearchShow"></HighlightList>
+        <HighlightList :youtubeURL="vidSearchShow"></HighlightList>
       </div>
       <div v-else class="alert alert-danger" role="alert">
         <p class="text-center my-2 py-2">
@@ -124,7 +124,12 @@
     <!-- 分析結果顯示 -->
     <div id="videoResult" class="card my-2" v-show="videoResult">
       <h5 class="card-header">分析結果精華影片</h5>
-      <HighlightList videoURL="https://www.youtube.com/embed/zpOULjyy-n8?rel=0"></HighlightList>
+      <HighlightList
+        vod_id="123"
+        channel_id="Test"
+        game="Test"
+        youtubeURL="https://www.youtube.com/embed/zpOULjyy-n8?rel=0"
+      ></HighlightList>
     </div>
     <br />
     <hr />
@@ -133,7 +138,14 @@
       <!-- 精華影片顯示 -->
       <div class="card my-2">
         <h5 class="card-header">最新精華影片</h5>
-        <HighlightList videoURL="https://www.youtube.com/embed/zpOULjyy-n8?rel=0"></HighlightList>
+        <HighlightList
+          v-for="items in highlightVideos"
+          :key="items.id"
+          :vod_id="items.vod_id"
+          :channel_id="items.channel_id"
+          :game="items.game"
+          :youtubeURL="items.youtubeURL"
+        ></HighlightList>
       </div>
     </div>
   </div>
@@ -141,6 +153,9 @@
 
 <script>
 import HighlightList from "@/components/HighlightList.vue";
+
+var ip = "http://192.168.1.109:3000";
+//https://clip-fetcher.herokuapp.com
 
 var vodShow = false;
 var vodAnalysisBtnShow = false;
@@ -185,10 +200,21 @@ export default {
 
       //progress bar
       progressBarValueNow: 0,
-      progressBarText: ""
+      progressBarText: "",
+
+      //apis
+      highlightVideos: null
     };
   },
   components: { HighlightList },
+  mounted() {
+    this.axios
+      .get(ip + "/api/vod")
+      .then(response => (this.highlightVideos = response.data.data))
+      .catch(function(error) {
+        console.log(error.response);
+      });
+  },
   methods: {
     mouseOverRrating: function(val) {
       this.temp_starRating = this.starRating;
