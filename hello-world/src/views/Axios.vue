@@ -56,7 +56,7 @@
 </template>
 
 <script>
-let ip = "http://192.168.1.109:3000";
+var ip = "http://192.168.1.109:3000";
 //https://clip-fetcher.herokuapp.com
 export default {
   name: "Axios",
