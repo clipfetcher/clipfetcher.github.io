@@ -4,13 +4,14 @@
     <div class="row">
       <div class="col-12 col-md-4">
         <div class="embed-responsive embed-responsive-16by9">
-          <iframe class="embed-responsive-item" :src="videoURL" allowfullscreen></iframe>
+          <iframe class="embed-responsive-item" :src="youtubeURL" allowfullscreen></iframe>
         </div>
       </div>
       <div class="col-12 col-md-3">
-        <p class="text-left m-0">實況主：</p>
-        <p class="text-left m-0">標題：</p>
-        <p class="text-left m-0">遊戲分類：</p>
+        <span>{{ vod_id }}</span>
+        <p class="text-left m-0">實況主：{{ channel_id }}</p>
+        <!--<p class="text-left m-0">標題：</p>-->
+        <p class="text-left m-0">遊戲分類：{{ game }}</p>
       </div>
       <div class="col-12 col-md-5 align-self-end">
         <button type="button" class="btn btn-outline-secondary m-1">影片不精準</button>
@@ -51,7 +52,7 @@
 <script>
 export default {
   name: "HighlightList",
-  props: ["videoURL"],
+  props: ["vod_id", "channel_id", "game", "youtubeURL"],
   data() {
     return {
       starRating: 0
