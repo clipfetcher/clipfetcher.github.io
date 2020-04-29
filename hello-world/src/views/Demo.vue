@@ -43,12 +43,20 @@
                 aria-describedby="videoData"
                 placeholder="VodId 或 Vod 網址"
                 v-model="vodData"
+                @change="checkVodValid"
+                @keyup="checkVodValid"
+                :class="vodValid ? 'is-Valid' : 'is-invalid'"
               />
               <div class="input-group-append">
-                <button id="vodLoadBtn" type="submit" class="btn btn-primary">{{vodLoadBtn}}</button>
+                <button
+                  id="vodLoadBtn"
+                  type="submit"
+                  class="btn btn-primary"
+                  :class="{disabled: !vodValid}"
+                >{{vodLoadBtn}}</button>
               </div>
+              <div v-if="!vodValid" class="invalid-feedback">{{ vodErrorData }}</div>
             </div>
-            <small id="videoData" class="form-text text-muted">請確認 Vod Id 或 Vod 網址正確</small>
           </form>
         </section>
 
@@ -88,7 +96,13 @@
     <div v-show="highlightShow">
       <div v-if="exist" class="card my-2">
         <h5 class="card-header">精華搜尋影片</h5>
-        <HighlightList :youtubeURL="vidSearchShow"></HighlightList>
+        <HighlightList
+          :vod_id="searchVideos.vod_id"
+          :channel_id="searchVideos.channel_id"
+          :game="searchVideos.game"
+          :youtube_url="searchVideos.youtube_url"
+          :avg_score="searchVideos.avg_score"
+        ></HighlightList>
       </div>
       <div v-else class="alert alert-danger" role="alert">
         <p class="text-center my-2 py-2">
@@ -101,7 +115,13 @@
     <div class="row justify-content-center my-2" v-show="vodAnalysisBtnShow">
       <div class="col-10 col-md-6">
         <button
+          v-if="highlightExist"
+          type="button"
+          class="btn btn-success btn-lg btn-block disabled"
+        >此VOD已存在精華影片</button>
+        <button
           id="videoStartAnalysisBtn"
+          v-else
           type="button"
           class="btn btn-success btn-lg btn-block"
           @click="analysisVideo"
@@ -122,13 +142,14 @@
     </div>
 
     <!-- 分析結果顯示 -->
-    <div id="videoResult" class="card my-2" v-show="videoResult">
+    <div id="videoResult" class="card my-2" v-if="videoResult">
       <h5 class="card-header">分析結果精華影片</h5>
       <HighlightList
-        vod_id="123"
-        channel_id="Test"
-        game="Test"
-        youtubeURL="https://www.youtube.com/embed/zpOULjyy-n8?rel=0"
+        :vod_id="analyseVideos.vod_id"
+        :channel_id="analyseVideos.channel_id"
+        :game="analyseVideos.game"
+        :youtube_url="analyseVideos.youtube_url"
+        :avg_score="analyseVideos.avg_score"
       ></HighlightList>
     </div>
     <br />
@@ -140,11 +161,12 @@
         <h5 class="card-header">最新精華影片</h5>
         <HighlightList
           v-for="items in highlightVideos"
-          :key="items.id"
+          :key="items.vod_id"
           :vod_id="items.vod_id"
           :channel_id="items.channel_id"
           :game="items.game"
-          :youtubeURL="items.youtubeURL"
+          :youtube_url="items.youtube_url"
+          :avg_score="items.avg_score"
         ></HighlightList>
       </div>
     </div>
@@ -195,114 +217,195 @@ export default {
       inputBar: true,
       active: true,
       highlightShow: false,
-      exist: true,
+      exist: false,
+      //api control
+      vodValid: true,
+      vodErrorData: "",
+      vod_id: "",
+      analyseVideos: null,
+      highlightExist: true,
 
+      //modal
       showModal: false,
 
       //progress bar
       progressBarValueNow: 0,
       progressBarText: "",
 
-      //apis
-      highlightVideos: null
+      //HighlightList
+      highlightVideos: null,
+
+      //search
+      searchVideos: null
     };
   },
   components: { HighlightList },
   mounted() {
     this.axios
-      .get(ip + "/api/vod")
-      .then(response => (this.highlightVideos = response.data.data))
+      .get(ip + "/api/vod", {
+        params: {
+          vod_id: this.vod
+        }
+      })
+      .then(response => (this.highlightVideos = response.data))
       .catch(function(error) {
         console.log(error.response);
       });
   },
   methods: {
-    mouseOverRrating: function(val) {
-      this.temp_starRating = this.starRating;
-      this.starRating = val;
-    },
-    mouseOutRrating: function() {
-      if (!this.isRating) this.starRating = 0;
-      else this.starRating = this.temp_starRating;
-      this.temp_starRating = 0;
-    },
-    clickRating: function(val) {
-      this.starRating = this.temp_starRating = val;
-      this.isRating = true;
-    },
-    loadVideo: function() {
+    checkVodValid: function() {
+      let vm = this;
+      this.vodErrorData = "";
       let vodData = this.vodData;
-      //let output = "";
       vodData = vodData.split("?");
       let vid = vodData[0];
       vid = vid.substring(vid.length - 9);
-      console.log(vid);
       if (parseInt(vid) && vid <= 999999999) {
-        /*
-        output =
-          '<iframe id="video" class="embed-responsive-item" src="https://player.twitch.tv/?autoplay=false&video=v' +
-          vid +
-          '"></iframe >';
-        $("#videoShow").html(output);
-        */
-        this.vidAnalysis =
-          "https://player.twitch.tv/?autoplay=false&video=v" + vid;
-        this.vodLoadBtn = "重新載入";
-        this.videoResult = false;
-        this.vodShow = true;
-        this.vodAnalysisBtnShow = true;
-      } else if (vid === "") {
-        alert("VOD ID或VOD網址未輸入");
-        location.reload();
+        this.axios
+          .get(ip + "/api/vod/highlight", {
+            params: {
+              highlight_id: vid
+            }
+          })
+          .then(function() {
+            vm.vodValid = false;
+            vm.vodErrorData = "此VOD精華已存在";
+          })
+          .catch(function(error) {
+            console.log(error);
+            vm.vodValid = true;
+          });
+      } else if (this.vodData == "") {
+        this.vodValid = true;
       } else {
-        alert("VOD ID或VOD網址輸入錯誤");
-        location.reload();
+        this.vodValid = false;
+        this.vodErrorData = "請確認 Vod Id 或 Vod 網址正確";
+      }
+    },
+    checkHighlightExist: function(vod_id) {
+      let vm = this;
+      this.axios
+        .get(ip + "/api/vod/highlight", {
+          params: {
+            highlight_id: vod_id
+          }
+        })
+        .then(() => {
+          vm.highlightExist = true;
+        })
+        .catch(function(error) {
+          console.log(error);
+          vm.highlightExist = false;
+        });
+    },
+    showAnalyseVideo: function() {
+      this.videoResult = false;
+      let vm = this;
+      this.axios
+        .get(ip + "/api/vod/highlight", {
+          params: {
+            highlight_id: this.vod_id
+          }
+        })
+        .then(response => {
+          this.analyseVideos = response.data;
+          vm.videoResult = true;
+        })
+        .catch(function(error) {
+          console.log(error);
+          vm.videoResult = false;
+        });
+    },
+    loadVideo: function() {
+      this.vodShow = false;
+      this.vodAnalysisBtnShow = false;
+      this.highlightExist = true;
+      if (this.vodValid) {
+        let vodData = this.vodData;
+        vodData = vodData.split("?");
+        let vid = vodData[0];
+        vid = vid.substring(vid.length - 9);
+        if (parseInt(vid) && vid <= 999999999) {
+          this.checkHighlightExist(vid);
+          this.vidAnalysis =
+            "https://player.twitch.tv/?autoplay=false&video=v" + vid;
+          this.vodLoadBtn = "重新載入";
+          this.videoResult = false;
+          this.vodShow = true;
+          this.vodAnalysisBtnShow = true;
+          this.vod_id = vid;
+        } else if (vid === "") {
+          alert("VOD ID或VOD網址未輸入");
+          this.vod_id = "";
+        } else {
+          alert("VOD ID或VOD網址輸入錯誤");
+          this.vod_id = "";
+        }
       }
     },
     analysisVideo: function() {
       let val = 0;
-      let call = this;
+      let vm = this;
       this.vodAnalysisBtnShow = false;
       this.progressList = true;
-      let interval = setInterval(function() {
-        if (val === 100) {
-          //$("#analysisFinish").modal("show");
-          call.showModal = !call.showModal;
-          call.progressList = false;
-          call.videoResult = true;
+      this.axios
+        .post(ip + "/api/vod", {
+          vod_id: this.vod_id
+        })
+        .then(() => {
+          val += 10;
+          vm.progressBarValueNow = val;
+          vm.progressBarText = val + "%";
+          vm.showModal = !vm.showModal;
+          vm.progressList = false;
           clearInterval(interval);
+          vm.showAnalyseVideo();
+        })
+        .catch(function(error) {
+          console.log(error);
+          clearInterval(interval);
+          vm.vodAnalysisBtnShow = true;
+        });
+      let interval = setInterval(function() {
+        if (val == 90) {
+          //clearInterval(interval);
         } else {
           val += 10;
         }
-        call.progressBarValueNow = val;
-        call.progressBarText = val + "%";
+        vm.progressBarValueNow = val;
+        vm.progressBarText = val + "%";
       }, 500);
     },
     searchVideo: function() {
-      let video = this.videoSearch;
-      //let output = "";
-      video = video.split("?");
+      let vm = this;
+      let video = this.videoSearch.split("?");
       let vid = video[0];
       vid = vid.substring(vid.length - 9);
       console.log(vid);
+      this.exist = false;
+      this.highlightShow = false;
+      this.searchVideos = null;
       if (parseInt(vid) && vid <= 999999999) {
-        /*
-        output =
-          '<iframe id="video" class="embed-responsive-item" src="https://player.twitch.tv/?autoplay=false&video=v' +
-          vid +
-          '"></iframe >';
-        $("#highlightVideoShow").html(output);
-        */
-        this.vidSearchShow =
-          "https://player.twitch.tv/?autoplay=false&video=v" + vid;
-        this.highlightShow = true;
-        //this.exist = !this.exist;
-      } else if (vid === "") {
+        this.axios
+          .get(ip + "/api/vod/highlight", {
+            params: {
+              highlight_id: vid
+            }
+          })
+          .then(response => {
+            vm.searchVideos = response.data;
+            vm.exist = true;
+            vm.highlightShow = true;
+          })
+          .catch(function(error) {
+            console.log(error);
+            vm.exist = false;
+            vm.highlightShow = true;
+          });
+      } else if (vid == "") {
         alert("精華影片 ID或VOD網址未輸入");
-        location.reload();
       } else {
         alert("精華影片 ID或VOD網址輸入錯誤");
-        location.reload();
       }
     },
     changeBar: function(type) {
