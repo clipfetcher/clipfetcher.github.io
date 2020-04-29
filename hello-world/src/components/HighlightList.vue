@@ -4,7 +4,7 @@
     <div class="row">
       <div class="col-12 col-md-4">
         <div class="embed-responsive embed-responsive-16by9">
-          <iframe class="embed-responsive-item" :src="youtubeURL" allowfullscreen></iframe>
+          <iframe class="embed-responsive-item" :src="youtube_embed" allowfullscreen></iframe>
         </div>
       </div>
       <div class="col-12 col-md-3">
@@ -43,6 +43,7 @@
             ></i>
           </template>
           {{ starRating }}
+          {{ avg_score }}
         </div>
       </div>
     </div>
@@ -52,7 +53,7 @@
 <script>
 export default {
   name: "HighlightList",
-  props: ["vod_id", "channel_id", "game", "youtubeURL"],
+  props: ["vod_id", "channel_id", "game", "youtube_url", "avg_score"],
   data() {
     return {
       starRating: 0
@@ -71,6 +72,19 @@ export default {
     clickRating: function(val) {
       this.starRating = this.temp_starRating = val;
       this.isRating = true;
+    }
+  },
+  computed: {
+    youtube_embed: function() {
+      //https://youtu.be/frguLOUro2E
+      let vodData = this.youtube_url;
+      vodData = vodData.split("?");
+      let vid = vodData[0];
+      vid = vid.split("/");
+      let i = 0;
+      for (i = 0; i < vid.length; i++);
+      let url = vid[i - 1];
+      return "https://www.youtube.com/embed/" + url + "?rel=0";
     }
   }
 };
