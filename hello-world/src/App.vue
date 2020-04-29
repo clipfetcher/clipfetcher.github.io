@@ -18,14 +18,12 @@
           <li class="nav-item active">
             <router-link class="nav-link" to="/">Home</router-link>
           </li>
+          <!--
           <li class="nav-item">
             <router-link class="nav-link" to="/about">About</router-link>
           </li>
           <li class="nav-item">
             <router-link class="nav-link" to="/news">News</router-link>
-          </li>
-          <li class="nav-item">
-            <router-link class="nav-link" to="/axios">Axios</router-link>
           </li>
           <li class="nav-item">
             <router-link class="nav-link" :to="{ name: 'Player', params: { uid: 1 }}">Player_1</router-link>
@@ -51,11 +49,15 @@
           <li class="nav-item">
             <router-link class="nav-link" to="/User/2/Taiwan">User2</router-link>
           </li>
+          -->
           <li class="nav-item">
             <router-link class="nav-link" to="/demo">Demo</router-link>
           </li>
           <li class="nav-item">
             <router-link class="nav-link" to="/test">Test</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/axios">Axios</router-link>
           </li>
         </ul>
       </div>
@@ -70,7 +72,7 @@
 
     <footer class="mt-3">
       <div class="container">
-        <a class="nav-link float-right" href="mailto:">聯絡我們</a>
+        <a class="nav-link float-right disabled" href="mailto:">聯絡我們</a>
       </div>
     </footer>
   </div>
