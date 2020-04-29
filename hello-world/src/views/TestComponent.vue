@@ -2,19 +2,18 @@
   <div class="container">
     <div class="card my-2">
       <h5 class="card-header">精華影片列表</h5>
-      <HighlightList></HighlightList>
     </div>
   </div>
 </template>
 
 <script>
-import HighlightList from "@/components/HighlightList.vue";
+//import HighlightList from "@/components/HighlightList.vue";
 
 export default {
   name: "test",
   data() {
     return {};
-  },
-  components: { HighlightList }
+  }
+  //components: { HighlightList }
 };
 </script>
