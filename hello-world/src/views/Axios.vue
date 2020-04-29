@@ -7,22 +7,22 @@
       <input type="text" name="vod" v-model="vod" />
     </div>
     <p>{{ vod }}</p>
-    <h2>vod_post</h2>
+    <h2 class="text-success">vod_post</h2>
     <button class="btn btn-primary m-1" @click="tryApi_1()">Test</button>
     <p>{{ api_test_1 }}</p>
-    <h2>vod_get</h2>
+    <h2 class="text-success">vod_get</h2>
     <button class="btn btn-primary m-1" @click="tryApi_2()">Test</button>
     <p>{{ api_test_2 }}</p>
-    <h2>vod/check_post</h2>
+    <h2 class="text-success">vod/check_post</h2>
     <button class="btn btn-primary m-1" @click="tryApi_3()">Test</button>
     <p>{{ api_test_3 }}</p>
-    <h2>vod/status_get</h2>
+    <h2 class="text-warning">vod/status_get</h2>
     <button class="btn btn-primary m-1" @click="tryApi_4()">Test</button>
     <p>{{ api_test_4 }}</p>
-    <h2>vod/highlight_get</h2>
+    <h2 class="text-success">vod/highlight_get</h2>
     <button class="btn btn-primary m-1" @click="tryApi_5()">Test</button>
     <p>{{ api_test_5 }}</p>
-    <h2>vod/appraise_post</h2>
+    <h2 class="text-success">vod/appraise_post</h2>
     <form action="javascript:void(0)" @submit="tryApi_6()">
       <div class="form-group">
         <label>text:</label>
@@ -37,7 +37,7 @@
       <button class="btn btn-primary m-1" type="submit">Test</button>
     </form>
     <p>{{ api_test_6 }}</p>
-    <h2>vod/opinion_post</h2>
+    <h2 class="text-warning">vod/opinion_post</h2>
     <form action="javascript:void(0)" @submit="tryApi_7()">
       <div class="form-group">
         <label>mail:</label>
@@ -90,7 +90,11 @@ export default {
     },
     tryApi_2() {
       this.axios
-        .get(ip + "/api/vod")
+        .get(ip + "/api/vod", {
+          params: {
+            vod_id: ""
+          }
+        })
         .then(response => (this.api_test_2 = response.data))
         .catch(function(error) {
           console.log(error.response);
@@ -122,7 +126,7 @@ export default {
       this.axios
         .get(ip + "/api/vod/highlight", {
           params: {
-            vod_id: this.vod
+            highlight_id: this.vod
           }
         })
         .then(response => (this.api_test_5 = response.data))
