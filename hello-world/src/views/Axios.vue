@@ -2,7 +2,7 @@
   <div class="axios container">
     <h1>Axios test</h1>
     <div class="form-group">
-      <label>vod_id:</label>
+      <label>id:</label>
       <br />
       <input type="text" name="vod" v-model="vod" />
     </div>
@@ -65,7 +65,7 @@ export default {
       vod: "",
       highlight_id: "",
       text: "",
-      score: "",
+      score: 0,
       mail: "",
       content: "",
       api_test_1: null,
@@ -92,7 +92,7 @@ export default {
       this.axios
         .get(ip + "/api/vod", {
           params: {
-            vod_id: ""
+            vod_id: this.vod
           }
         })
         .then(response => (this.api_test_2 = response.data))
