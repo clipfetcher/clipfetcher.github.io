@@ -162,7 +162,7 @@
       <h2>最新精華影片</h2>
       <HighlightList
         v-for="items in highlightVideos"
-        :key="items.vod_id"
+        :key="items.id"
         :vod_id="items.vod_id"
         :channel_id="items.channel_id"
         :game="items.game"
