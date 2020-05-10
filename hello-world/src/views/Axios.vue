@@ -7,6 +7,8 @@
       <input type="text" name="vod" v-model="vod" />
     </div>
     <p>{{ vod }}</p>
+    <button class="btn btn-primary m-1" @click="tryApi_twitch()">Test_Twitch_api</button>
+    <p>{{ api_test_twitch }}</p>
     <h2 class="text-success">vod_post</h2>
     <button class="btn btn-primary m-1" @click="tryApi_1()">Test</button>
     <p>{{ api_test_1 }}</p>
@@ -74,7 +76,8 @@ export default {
       api_test_4: null,
       api_test_5: null,
       api_test_6: null,
-      api_test_7: null
+      api_test_7: null,
+      api_test_twitch: null
     };
   },
   methods: {
@@ -153,6 +156,14 @@ export default {
           content: this.content
         })
         .then(response => (this.api_test_7 = response))
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
+    tryApi_twitch() {
+      this.axios
+        .get("https://api.twitch.tv/kraken/videos/:vod")
+        .then(response => (this.api_test_twitch = response))
         .catch(function(error) {
           console.log(error);
         });
