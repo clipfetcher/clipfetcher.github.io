@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <!-- Modal -->
     <transition
       @enter="startTransitionModal"
       @after-enter="endTransitionModal"
@@ -22,6 +23,7 @@
         </div>
       </div>
     </transition>
+
     <div class="modal-backdrop fade d-none" ref="backdrop"></div>
 
     <div class="my-3 p-1">
