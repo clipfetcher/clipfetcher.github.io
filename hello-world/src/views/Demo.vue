@@ -157,18 +157,16 @@
     <!-- 精華檢視顯示 -->
     <div id="videoList my-2">
       <!-- 精華影片顯示 -->
-      <div class="card my-2">
-        <h5 class="card-header">最新精華影片</h5>
-        <HighlightList
-          v-for="items in highlightVideos"
-          :key="items.vod_id"
-          :vod_id="items.vod_id"
-          :channel_id="items.channel_id"
-          :game="items.game"
-          :youtube_url="items.youtube_url"
-          :avg_score="items.avg_score"
-        ></HighlightList>
-      </div>
+      <h2>最新精華影片</h2>
+      <HighlightList
+        v-for="items in highlightVideos"
+        :key="items.vod_id"
+        :vod_id="items.vod_id"
+        :channel_id="items.channel_id"
+        :game="items.game"
+        :youtube_url="items.youtube_url"
+        :avg_score="items.avg_score"
+      ></HighlightList>
     </div>
   </div>
 </template>
