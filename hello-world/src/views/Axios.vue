@@ -162,7 +162,14 @@ export default {
     },
     tryApi_twitch() {
       this.axios
-        .get("https://api.twitch.tv/kraken/videos/:vod")
+        .create({
+          baseURL: "https://api.twitch.tv/kraken/",
+          headers: {
+            Accept: "application/vnd.twitchtv.v5+json",
+            "Client-ID": "ildytfqanhzvdaprp96m5rkylap16k"
+          }
+        })
+        .get("videos/" + this.vod)
         .then(response => (this.api_test_twitch = response))
         .catch(function(error) {
           console.log(error);
