@@ -218,10 +218,6 @@ export default {
       //modal
       showModal: false,
 
-      //progress bar
-      progressBarValueNow: 0,
-      progressBarText: "",
-
       //HighlightList
       highlightVideos: null,
 
@@ -328,7 +324,6 @@ export default {
       let video = this.videoSearch.split("?");
       let vid = video[0];
       vid = vid.substring(vid.length - 9);
-      console.log(vid);
       this.highlightSearch = "Loading";
       this.highlightShow = true;
       this.searchVideos = null;
