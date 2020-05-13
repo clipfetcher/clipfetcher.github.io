@@ -152,13 +152,13 @@
       </div>
       <div v-else-if="videoList === 'Finish'">
         <HighlightList
-          v-for="items in highlightVideos"
-          :key="items.id"
-          :vod_id="items.vod_id"
-          :channel_id="items.channel_id"
-          :game="items.game"
-          :youtube_url="items.youtube_url"
-          :avg_score="items.avg_score"
+          v-for="highlight in highlightVideos"
+          :key="highlight.index"
+          :vod_id="highlight.vod_id"
+          :channel_id="highlight.channel_id"
+          :game="highlight.game"
+          :youtube_url="highlight.youtube_url"
+          :avg_score="highlight.avg_score"
         ></HighlightList>
       </div>
     </div>
