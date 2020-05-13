@@ -34,9 +34,9 @@
           pill
           variant="info"
           class="mx-4 my-2"
-        >提供建議</b-button>
+        >意見回饋</b-button>
 
-        <b-modal v-model="opinionModalShow" title="建議提供" hide-footer>
+        <b-modal v-model="opinionModalShow" title="意見回饋" hide-footer>
           <form @submit.prevent="opinion">
             <div class="form-group">
               <label for="mail">電子信箱：</label>
