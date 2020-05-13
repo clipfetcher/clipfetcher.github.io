@@ -15,8 +15,8 @@
     <h2 class="text-success">vod_get</h2>
     <button class="btn btn-primary m-1" @click="tryApi_2()">Test</button>
     <p>{{ api_test_2 }}</p>
-    <h2 class="text-success">vod/check_post</h2>
-    <button class="btn btn-primary m-1" @click="tryApi_3()">Test</button>
+    <h2 class="text-success text-muted">vod/check_post</h2>
+    <button class="btn btn-primary m-1 disabled" @click="tryApi_3()">Test</button>
     <p>{{ api_test_3 }}</p>
     <h2 class="text-warning">vod/status_get</h2>
     <button class="btn btn-primary m-1" @click="tryApi_4()">Test</button>
@@ -39,7 +39,7 @@
       <button class="btn btn-primary m-1" type="submit">Test</button>
     </form>
     <p>{{ api_test_6 }}</p>
-    <h2 class="text-warning">vod/opinion_post</h2>
+    <h2 class="text-success">vod/opinion_post</h2>
     <form action="javascript:void(0)" @submit="tryApi_7()">
       <div class="form-group">
         <label>mail:</label>
