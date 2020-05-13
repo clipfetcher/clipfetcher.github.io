@@ -101,7 +101,14 @@
 <script>
 export default {
   name: "HighlightList",
-  props: ["vod_id", "channel_id", "game", "youtube_url", "avg_score"],
+  props: [
+    "vod_id",
+    "highlight_id",
+    "channel_id",
+    "game",
+    "youtube_url",
+    "avg_score"
+  ],
   data() {
     return {
       temp_starRating: 0,
