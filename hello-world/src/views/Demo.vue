@@ -1,31 +1,5 @@
 <template>
   <div class="container">
-    <!-- Modal -->
-    <transition
-      @enter="startTransitionModal"
-      @after-enter="endTransitionModal"
-      @before-leave="endTransitionModal"
-      @after-leave="startTransitionModal"
-    >
-      <div class="modal fade" v-if="showModal" ref="modal">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">{{ title }}</h5>
-              <button class="close" type="button" @click="showModal = !showModal">
-                <span aria-hidden="true">×</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <p>影片開始分析！</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </transition>
-
-    <div class="modal-backdrop fade d-none" ref="backdrop"></div>
-
     <div class="my-3 p-1">
       <nav class="nav nav-pills nav-justified">
         <a class="nav-item nav-link" :class="{active:inputBar}" @click="changeBar('create')">精華生成</a>
@@ -102,11 +76,14 @@
       <div v-else-if="highlightSearch === 'Find'" class="card my-2">
         <h5 class="card-header">精華搜尋結果</h5>
         <HighlightList
-          :vod_id="searchVideos.vod_id"
-          :channel_id="searchVideos.channel_id"
-          :game="searchVideos.game"
-          :youtube_url="searchVideos.youtube_url"
-          :avg_score="searchVideos.avg_score"
+          v-for="searchVideo in searchVideos"
+          :key="searchVideo.index"
+          :vod_id="searchVideo.vod_id"
+          :highlight_id="searchVideo.highlight_id"
+          :channel_id="searchVideo.channel_id"
+          :game="searchVideo.game"
+          :youtube_url="searchVideo.youtube_url"
+          :avg_score="searchVideo.avg_score"
         ></HighlightList>
       </div>
       <div v-else class="alert alert-danger" role="alert">
@@ -117,7 +94,7 @@
     </div>
 
     <!-- 分析 -->
-    <div class="row justify-content-center my-2" v-show="vodAnalysisBtnShow">
+    <div class="row justify-content-center my-4" v-show="vodAnalysisBtnShow">
       <div class="col-10 col-md-6">
         <button
           id="videoStartAnalysisBtn"
@@ -128,11 +105,30 @@
       </div>
     </div>
 
+    <div v-show="vodAnalysisSendStatusShow" class="row justify-content-center my-2">
+      <div v-if="vodAnalysisSendStatus === 'Loading'">
+        <div class="spinner-border text-secondary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+      <div v-else-if="vodAnalysisSendStatus === 'Success'" class="alert alert-info" role="alert">
+        <p class="text-center my-2 py-2">
+          <span>我們已收到您的分析請求！將會在分析完成後通知您！</span>
+        </p>
+      </div>
+      <div v-else-if="vodAnalysisSendStatus === 'Error'" class="alert alert-danger" role="alert">
+        <p class="text-center my-2 py-2">
+          <span>很抱歉！分析影片失敗 請重新嘗試！</span>
+        </p>
+      </div>
+    </div>
+
     <!-- 分析結果顯示 -->
     <div id="videoResult" class="card my-2" v-if="videoResult">
       <h5 class="card-header">分析結果精華影片</h5>
       <HighlightList
         :vod_id="analyseVideos.vod_id"
+        :highlight_id="analyseVideos.highlight_id"
         :channel_id="analyseVideos.channel_id"
         :game="analyseVideos.game"
         :youtube_url="analyseVideos.youtube_url"
@@ -155,6 +151,7 @@
           v-for="highlight in highlightVideos"
           :key="highlight.index"
           :vod_id="highlight.vod_id"
+          :highlight_id="highlight.highlight_id"
           :channel_id="highlight.channel_id"
           :game="highlight.game"
           :youtube_url="highlight.youtube_url"
@@ -174,7 +171,7 @@ var ip = "https://clip-fetcher.herokuapp.com";
 
 var vodShow = false;
 var vodAnalysisBtnShow = false;
-var progressList = false;
+var vodAnalysisSendStatusShow = false;
 var videoResult = false;
 var active = true;
 var highlightShow = false;
@@ -202,7 +199,8 @@ export default {
       //顯示控制
       vodShow: false,
       vodAnalysisBtnShow: false,
-      progressList: false,
+      vodAnalysisSendStatusShow: false,
+      vodAnalysisSendStatus: "Loading",
       videoResult: false,
       inputBar: true,
       active: true,
@@ -214,9 +212,6 @@ export default {
       vodErrorData: "",
       vod_id: "",
       analyseVideos: null,
-
-      //modal
-      showModal: false,
 
       //HighlightList
       highlightVideos: null,
@@ -265,6 +260,7 @@ export default {
     loadVideo: function() {
       this.vodShow = false;
       this.vodAnalysisBtnShow = false;
+      this.vodAnalysisSendStatusShow = false;
       this.vodErrorData = "";
       let vm = this;
       let vodData = this.vodData;
@@ -303,21 +299,21 @@ export default {
     analysisVideo: function() {
       let vm = this;
       this.vodAnalysisBtnShow = false;
-      this.progressList = true;
+      this.vodAnalysisSendStatusShow = true;
+      this.vodAnalysisSendStatus = "Loading";
       this.axios
         .post(ip + "/api/vod", {
           vod_id: this.vod_id
         })
         .then(response => {
-          //vm.showModal = !vm.showModal;
-          //vm.showAnalyseVideo;
+          vm.vodAnalysisSendStatus = "Success";
           this.api = response;
         })
         .catch(function(error) {
           console.log(error);
           vm.vodAnalysisBtnShow = true;
+          vm.vodAnalysisSendStatus = "Error";
         });
-      //vm.showModal = !vm.showModal;
     },
     searchVideo: function() {
       let vm = this;
@@ -335,7 +331,8 @@ export default {
         })
         .then(response => {
           vm.searchVideos = response.data;
-          vm.highlightSearch = "Find";
+          if (vm.searchVideos == "") vm.highlightSearch = "Error";
+          else vm.highlightSearch = "Find";
         })
         .catch(function(error) {
           console.log(error);
@@ -347,7 +344,7 @@ export default {
         highlightShow = this.highlightShow;
         this.vodShow = vodShow;
         this.vodAnalysisBtnShow = vodAnalysisBtnShow;
-        this.progressList = progressList;
+        this.vodAnalysisSendStatusShow = vodAnalysisSendStatusShow;
         this.videoResult = videoResult;
         this.active = active;
         this.highlightShow = false;
@@ -356,23 +353,15 @@ export default {
         this.highlightShow = highlightShow;
         vodShow = this.vodShow;
         vodAnalysisBtnShow = this.vodAnalysisBtnShow;
-        progressList = this.progressList;
+        vodAnalysisSendStatusShow = this.vodAnalysisSendStatusShow;
         videoResult = this.videoResult;
         this.vodShow = false;
         this.vodAnalysisBtnShow = false;
-        this.progressList = false;
+        this.vodAnalysisSendStatusShow = false;
         this.videoResult = false;
         this.active = false;
         this.inputBar = !this.inputBar;
       }
-    },
-    startTransitionModal: function() {
-      this.$refs.backdrop.classList.toggle("d-block");
-      this.$refs.modal.classList.toggle("d-block");
-    },
-    endTransitionModal: function() {
-      this.$refs.backdrop.classList.toggle("show");
-      this.$refs.modal.classList.toggle("show");
     }
   }
 };
