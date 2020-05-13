@@ -1,7 +1,16 @@
 <template>
   <div id="app">
     <nav class="navbar navbar-dark bg-dark">
-      <a class="navbar-brand" href="#">{{ title }}</a>
+      <a class="navbar-brand" href="#">
+        <img
+          src="./assets/ClipFetcher.png"
+          width="30"
+          height="30"
+          class="d-inline-block align-top"
+          alt="ClipFetcher Logo"
+        />
+        {{ title }}
+      </a>
       <button
         class="navbar-toggler"
         type="button"
@@ -72,18 +81,59 @@
 
     <footer class="mt-3">
       <div class="container">
-        <a class="nav-link float-right disabled" href="mailto:">聯絡我們</a>
+        <b-button
+          @click="opinionModalShow = !opinionModalShow"
+          pill
+          variant="info"
+          class="mx-4 my-2"
+        >提供建議</b-button>
+
+        <b-modal v-model="opinionModalShow" title="建議提供" hide-footer>
+          <form @submit.prevent="opinion">
+            <div class="form-group">
+              <label for="mail">電子信箱：</label>
+              <input
+                type="email"
+                class="form-control"
+                id="mail"
+                v-model="mail"
+                aria-describedby="emailHelp"
+                required
+              />
+              <small id="emailHelp" class="form-text text-muted">我們將會使用這個信箱作為聯絡您的方式</small>
+            </div>
+            <div class="form-group">
+              <label for="mail">建議內容：</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="想要給本系統改善的建議"
+                id="content"
+                v-model="content"
+                required
+              />
+            </div>
+            <button type="submit" class="btn btn-primary float-right">送出</button>
+          </form>
+        </b-modal>
+        {{ response }}
       </div>
     </footer>
   </div>
 </template>
 
 <script>
+var ip = "https://clip-fetcher.herokuapp.com";
+
 export default {
   name: "App",
   data() {
     return {
-      title: "Highlight Clip Fetcher"
+      title: "Highlight Clip Fetcher",
+      mail: "",
+      content: "",
+      opinionModalShow: false,
+      response: null
     };
   },
   methods: {
@@ -96,6 +146,22 @@ export default {
       //this.$router.go(-1);
     }
     */
+    opinion: function() {
+      let vm = this;
+      this.axios
+        .post(ip + "/api/vod/opinion", {
+          mail: this.mail,
+          content: this.content
+        })
+        .then(response => {
+          vm.response = response;
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+      this.mail = "";
+      this.content = "";
+    }
   }
 };
 </script>
