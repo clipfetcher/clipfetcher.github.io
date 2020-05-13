@@ -1,90 +1,6 @@
 <template>
   <!-- 精華影片顯示 -->
   <div class="m-4">
-    <transition
-      @enter="startTransitionModal"
-      @after-enter="endTransitionModal"
-      @before-leave="endTransitionModal"
-      @after-leave="startTransitionModal"
-    >
-      <div class="modal fade" v-if="showModal" ref="modal">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button class="close" type="button" @click="showModal = !showModal">
-                <span aria-hidden="true">×</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <form @submit.prevent="appraise">
-                <div class="form-group">
-                  <label for="validationText">評論：</label>
-                  <br />
-                  <button
-                    type="button"
-                    class="btn m-1"
-                    :class="notAccurate ? 'btn-secondary' : 'btn-outline-secondary'"
-                    @click="textButton('notAccurate')"
-                  >影片不精準</button>
-                  <button
-                    type="button"
-                    class="btn m-1"
-                    :class="videoLong ? 'btn-secondary' : 'btn-outline-secondary'"
-                    @click="textButton('videoLong')"
-                  >影片長度過長</button>
-                  <button
-                    type="button"
-                    class="btn m-1"
-                    :class="analysisLong ? 'btn-secondary' : 'btn-outline-secondary'"
-                    @click="textButton('analysisLong')"
-                  >影片分析太久</button>
-                  <br />
-                  <input
-                    type="text"
-                    class="form-control"
-                    :class="validationText?'is-invalid':''"
-                    id="validationText"
-                    @change="checkText"
-                    @keyup="checkText"
-                    v-model="text"
-                  />
-                  <div class="invalid-feedback">評論不得為空</div>
-                </div>
-                <div class="form-group">
-                  <label for="starRating">分數：</label>
-                  <br />
-                  <template v-for="index in 5">
-                    <i
-                      v-if="index <= starRating"
-                      :key="index.id"
-                      class="text-warning fas fa-star"
-                      @click="clickRating(index)"
-                      @mouseover="mouseOverRrating(index)"
-                      @touchstart="mouseOverRrating(index)"
-                      @mouseout="mouseOutRrating"
-                      @touchend="mouseOutRrating"
-                    ></i>
-                    <i
-                      v-else
-                      :key="index.id"
-                      class="text-warning far fa-star"
-                      @click="clickRating(index)"
-                      @mouseover="mouseOverRrating(index)"
-                      @touchstart="mouseOverRrating(index)"
-                      @mouseout="mouseOutRrating"
-                      @touchend="mouseOutRrating"
-                    ></i>
-                  </template>
-                  {{ starRating }}
-                </div>
-                <button type="submit" class="btn btn-primary float-right">送出</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </transition>
-    <div class="modal-backdrop fade d-none" ref="backdrop"></div>
     <div class="row">
       <div class="col-12 col-md-4 my-2">
         <div class="embed-responsive embed-responsive-16by9">
@@ -104,7 +20,78 @@
         <!--<p class="text-left m-0">標題：</p>-->
         <p class="text-left m-0">遊戲分類：{{ game }}</p>
         <p class="text-left m-0">目前分數：{{ avg_score }}</p>
-        <button class="btn btn-outline-info float-right m-1" @click="showModal = !showModal">我要評價</button>
+        <b-button
+          v-show="!haveAppraise"
+          @click="appraiseModalShow = !appraiseModalShow"
+          variant="outline-info"
+          class="float-right m-1"
+        >我要評價</b-button>
+
+        <b-modal v-model="appraiseModalShow" title="精華評價" hide-footer>
+          <form @submit.prevent="appraise">
+            <div class="form-group">
+              <label for="validationText">評論：</label>
+              <br />
+              <button
+                type="button"
+                class="btn m-1"
+                :class="notAccurate ? 'btn-secondary' : 'btn-outline-secondary'"
+                @click="textButton('notAccurate')"
+              >影片不精準</button>
+              <button
+                type="button"
+                class="btn m-1"
+                :class="videoLong ? 'btn-secondary' : 'btn-outline-secondary'"
+                @click="textButton('videoLong')"
+              >影片長度過長</button>
+              <button
+                type="button"
+                class="btn m-1"
+                :class="analysisLong ? 'btn-secondary' : 'btn-outline-secondary'"
+                @click="textButton('analysisLong')"
+              >影片分析太久</button>
+              <br />
+              <input
+                type="text"
+                class="form-control"
+                :class="validationText?'is-invalid':''"
+                id="validationText"
+                @change="checkText"
+                @keyup="checkText"
+                v-model="text"
+              />
+              <div class="invalid-feedback">評論不得為空</div>
+            </div>
+            <div class="form-group">
+              <label for="starRating">分數：</label>
+              <br />
+              <template v-for="index in 5">
+                <i
+                  v-if="index <= starRating"
+                  :key="index.id"
+                  class="text-warning fas fa-star"
+                  @click="clickRating(index)"
+                  @mouseover="mouseOverRrating(index)"
+                  @touchstart="mouseOverRrating(index)"
+                  @mouseout="mouseOutRrating"
+                  @touchend="mouseOutRrating"
+                ></i>
+                <i
+                  v-else
+                  :key="index.id"
+                  class="text-warning far fa-star"
+                  @click="clickRating(index)"
+                  @mouseover="mouseOverRrating(index)"
+                  @touchstart="mouseOverRrating(index)"
+                  @mouseout="mouseOutRrating"
+                  @touchend="mouseOutRrating"
+                ></i>
+              </template>
+              {{ starRating }}
+            </div>
+            <button type="submit" class="btn btn-primary float-right">送出</button>
+          </form>
+        </b-modal>
       </div>
     </div>
     <hr class="my-4" />
@@ -120,13 +107,13 @@ export default {
       temp_starRating: 0,
       starRating: 0,
       text: "",
-      showModal: false,
+      appraiseModalShow: false,
 
       notAccurate: false,
       videoLong: false,
       analysisLong: false,
       validationText: false,
-      response: null
+      haveAppraise: false
     };
   },
   methods: {
@@ -142,14 +129,6 @@ export default {
     clickRating: function(val) {
       this.starRating = this.temp_starRating = val;
       this.isRating = true;
-    },
-    startTransitionModal: function() {
-      this.$refs.backdrop.classList.toggle("d-block");
-      this.$refs.modal.classList.toggle("d-block");
-    },
-    endTransitionModal: function() {
-      this.$refs.backdrop.classList.toggle("show");
-      this.$refs.modal.classList.toggle("show");
     },
     textButton: function(button) {
       let output = "";
@@ -179,6 +158,7 @@ export default {
       }
     },
     appraise: function() {
+      let vm = this;
       if (this.text == "" || this.text == null) {
         this.validationText = true;
       } else {
@@ -189,11 +169,14 @@ export default {
             text: this.text,
             score: this.starRating
           })
-          .then(response => (this.response = response))
+          .then(response => {
+            vm.response = response;
+            vm.haveAppraise = true;
+          })
           .catch(function(error) {
             console.log(error);
           });
-        this.showModal = !this.showModal;
+        this.appraiseModalShow = !this.appraiseModalShow;
       }
     }
   },
