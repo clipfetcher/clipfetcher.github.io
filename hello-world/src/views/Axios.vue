@@ -18,7 +18,7 @@
     <h2 class="text-success text-muted">vod/check_post</h2>
     <button class="btn btn-primary m-1 disabled" @click="tryApi_3()">Test</button>
     <p>{{ api_test_3 }}</p>
-    <h2 class="text-warning">vod/status_get</h2>
+    <h2 class="text-warning">vod/status_post</h2>
     <button class="btn btn-primary m-1" @click="tryApi_4()">Test</button>
     <p>{{ api_test_4 }}</p>
     <h2 class="text-success">vod/highlight_get</h2>
@@ -115,10 +115,8 @@ export default {
     },
     tryApi_4() {
       this.axios
-        .get(ip + "/api/vod/status", {
-          params: {
-            vod_id: this.vod
-          }
+        .post(ip + "/api/vod/status", {
+          vod_id: this.vod
         })
         .then(response => (this.api_test_4 = response.data))
         .catch(function(error) {
@@ -151,7 +149,7 @@ export default {
     },
     tryApi_7() {
       this.axios
-        .post(ip + "/api/vod/opinion", {
+        .post(ip + "/api/opinion", {
           mail: this.mail,
           content: this.content
         })
