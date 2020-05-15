@@ -123,12 +123,12 @@ export default {
         this.contentError = true;
       } else {
         this.axios
-          .post(ip + "/api/vod/opinion", {
+          .post(ip + "/api/opinion", {
             mail: this.mail,
             content: this.content
           })
           .then(response => {
-            vm.response = response;
+            vm.response = response.status;
           })
           .catch(function(error) {
             console.log(error);
