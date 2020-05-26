@@ -47,7 +47,7 @@
                 type="text"
                 class="form-control"
                 aria-describedby="videoSearchText"
-                placeholder="精華 Vod Id 或其他關鍵字"
+                placeholder="輸入您要搜尋的關鍵字"
                 v-model="videoSearch"
               />
 
