@@ -33,7 +33,15 @@
         <section class="my-3" v-else-if="!inputBar" key="search">
           <form @submit.prevent="searchVideo">
             <label for="videoSearch">請輸入你想要尋找的精華 Vod Id 或其他關鍵字</label>
-            <div class="input-group">
+            <b-input-group>
+              <template v-slot:prepend>
+                <b-dropdown :text="videoSearchType" variant="primary">
+                  <b-dropdown-item @click="videoSearchType = 'vod_id'">VOD Id</b-dropdown-item>
+                  <b-dropdown-item @click="videoSearchType = 'highlight_id'">Highlight Id</b-dropdown-item>
+                  <b-dropdown-item @click="videoSearchType = 'game'">Game</b-dropdown-item>
+                  <b-dropdown-item @click="videoSearchType = 'channel_id'">Channel Id</b-dropdown-item>
+                </b-dropdown>
+              </template>
               <input
                 id="videoSearch"
                 type="text"
@@ -42,10 +50,11 @@
                 placeholder="精華 Vod Id 或其他關鍵字"
                 v-model="videoSearch"
               />
+
               <div class="input-group-append">
                 <button id="vodSearchBtn" type="submit" class="btn btn-primary">{{ vodSearchBtn }}</button>
               </div>
-            </div>
+            </b-input-group>
           </form>
         </section>
       </transition>
@@ -188,6 +197,7 @@ export default {
       vodData: "",
       vidId: "",
       videoSearch: "",
+      videoSearchType: "搜尋項目",
 
       vidAnalysis: "",
       vidSearch: "",
@@ -225,11 +235,7 @@ export default {
   components: { HighlightList },
   mounted() {
     this.axios
-      .get(ip + "/api/vod", {
-        params: {
-          vod_id: this.vod
-        }
-      })
+      .get(ip + "/api/vod/highlight")
       .then(response => {
         this.highlightVideos = response.data;
         this.videoList = "Finish";
@@ -317,22 +323,36 @@ export default {
     },
     searchVideo: function() {
       let vm = this;
-      let video = this.videoSearch.split("?");
-      let vid = video[0];
-      vid = vid.substring(vid.length - 9);
+      let vid;
+      if (
+        this.videoSearchType == "搜尋項目" ||
+        this.videoSearchType == "vod_id"
+      ) {
+        let video = this.videoSearch.split("?");
+        vid = video[0];
+        vid = vid.substring(vid.length - 9);
+      } else vid = this.videoSearch;
+
       this.highlightSearch = "Loading";
       this.highlightShow = true;
       this.searchVideos = null;
       this.axios
         .get(ip + "/api/vod/highlight", {
           params: {
-            highlight_id: vid
+            vod_id:
+              vm.videoSearchType == "搜尋項目" || vm.videoSearchType == "vod_id"
+                ? vid
+                : null,
+            highlight_id: vm.videoSearchType == "highlight_id" ? vid : null,
+            game: vm.videoSearchType == "game" ? vid : null,
+            channel_id: vm.videoSearchType == "channel_id" ? vid : null
           }
         })
         .then(response => {
           vm.searchVideos = response.data;
           if (vm.searchVideos == "") vm.highlightSearch = "Error";
           else vm.highlightSearch = "Find";
+          vm.videoSearchType = "搜尋項目";
         })
         .catch(function(error) {
           console.log(error);
