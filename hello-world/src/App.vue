@@ -28,14 +28,22 @@
     <router-view />
 
     <footer class="mt-3">
-      <div class="container">
-        <b-button
-          @click="opinionModalShow = !opinionModalShow"
-          pill
-          variant="info"
-          class="mx-4 my-2"
-        >意見回饋</b-button>
+      <div class="fixed-bottom">
+        <div class="float-right">
+          <b-button
+            @click="opinionModalShow = !opinionModalShow"
+            pill
+            variant="info"
+            v-b-tooltip.hover
+            title="意見回饋"
+            class="m-4"
+          >
+            <i class="fas fa-info-circle fa-lg"></i>
+          </b-button>
+        </div>
+      </div>
 
+      <div class="container">
         <b-modal v-model="opinionModalShow" title="意見回饋" hide-footer>
           <form @submit.prevent="opinion">
             <div class="form-group">
