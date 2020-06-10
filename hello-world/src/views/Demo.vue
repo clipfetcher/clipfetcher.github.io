@@ -93,6 +93,7 @@
           :game="searchVideo.game"
           :youtube_url="searchVideo.youtube_url"
           :avg_score="searchVideo.avg_score"
+          :memo="analysisVideo.memo"
         ></HighlightList>
       </div>
       <div v-else class="alert alert-danger" role="alert">
@@ -103,15 +104,31 @@
     </div>
 
     <!-- 分析 -->
-    <div class="row justify-content-center my-4" v-show="vodAnalysisBtnShow">
-      <div class="col-10 col-md-6">
-        <button
-          id="videoStartAnalysisBtn"
-          type="button"
-          class="btn btn-success btn-lg btn-block"
-          @click="analysisVideo"
-        >開始分析</button>
-      </div>
+    <div class="my-4" v-show="vodAnalysisBtnShow">
+      <form @submit.prevent="analysisVideo">
+        <div class="form-group my-4">
+          <label for="memo">備註：</label>
+          <input
+            type="text"
+            class="form-control"
+            name="memo"
+            id="memo"
+            placeholder="輸入您的備註"
+            v-model="memo"
+            maxlength="20"
+          />
+        </div>
+        <div class="row justify-content-center my-4">
+          <div class="col-10 col-md-6">
+            <button
+              id="videoStartAnalysisBtn"
+              type="button"
+              class="btn btn-success btn-lg btn-block"
+              @click="analysisVideo"
+            >開始分析</button>
+          </div>
+        </div>
+      </form>
     </div>
 
     <div v-show="vodAnalysisSendStatusShow" class="row justify-content-center my-2">
@@ -123,6 +140,9 @@
       <div v-else-if="vodAnalysisSendStatus === 'Success'" class="alert alert-info" role="alert">
         <p class="text-center my-2 py-2">
           <span>我們已收到您的分析請求！將會在分析完成後通知您！</span>
+          <br />
+          <span>你的Id {{ videoHighlightId }}</span>
+          <b-link :to="'/highlight/' + videoHighlightId" target="_blank">精華連結</b-link>
         </p>
       </div>
       <div v-else-if="vodAnalysisSendStatus === 'Error'" class="alert alert-danger" role="alert">
@@ -142,6 +162,7 @@
         :game="analyseVideos.game"
         :youtube_url="analyseVideos.youtube_url"
         :avg_score="analyseVideos.avg_score"
+        :memo="analyseVideos.memo"
       ></HighlightList>
     </div>
     <br />
@@ -165,6 +186,7 @@
           :game="highlight.game"
           :youtube_url="highlight.youtube_url"
           :avg_score="highlight.avg_score"
+          :memo="highlight.memo"
         ></HighlightList>
       </div>
     </div>
@@ -228,6 +250,9 @@ export default {
 
       //search
       searchVideos: null,
+
+      videoHighlightId: null,
+      memo: "",
 
       api: null
     };
@@ -309,11 +334,13 @@ export default {
       this.vodAnalysisSendStatus = "Loading";
       this.axios
         .post(ip + "/api/vod", {
-          vod_id: this.vod_id
+          vod_id: this.vod_id,
+          memo: this.memo
         })
         .then(response => {
           vm.vodAnalysisSendStatus = "Success";
-          this.api = response;
+          this.memo = "";
+          this.videoHighlightId = response.data.highlight_id;
         })
         .catch(function(error) {
           console.log(error);
