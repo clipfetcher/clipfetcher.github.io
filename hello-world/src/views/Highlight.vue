@@ -72,6 +72,15 @@ export default {
       })
       .then(response => {
         this.highlightVideo = response.data[0];
+        if (this.highlightVideo == "" || this.highlightVideo == null)
+          this.highlightPage = "Error";
+        else {
+          this.highlightPage = "Find";
+          if (this.highlightVideo.channel_id == "")
+            this.analysisComplete = false;
+          else this.analysisComplete = true;
+        }
+        /*
         this.axios
           .post("https://clip-fetcher.herokuapp.com/api/vod/status", {
             vod_id: this.highlight_id
@@ -79,12 +88,15 @@ export default {
           .then(response => {
             if (this.highlightVideo == "" || this.highlightVideo == null)
               this.highlightPage = "Error";
-            else this.highlightPage = "Find";
-            if (response.data.status == 3) this.analysisComplete = true;
+            else {
+              this.highlightPage = "Find";
+              if (response.data.status != 2) this.analysisComplete = true;
+            }
           })
           .catch(function(error) {
             console.log(error.response);
           });
+          */
       })
       .catch(function(error) {
         console.log(error.response);
