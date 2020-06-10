@@ -16,10 +16,11 @@
           <i class="fas fa-link fa-lg" data-toggle="tooltip" title="VOD網址"></i>
         </a>
         <p class="text-left m-0">ID：{{ vod_id }}</p>
+        <p class="text-left m-0">Highlight：{{ highlight_id }}</p>
         <p class="text-left m-0">實況主：{{ channel_id }}</p>
-        <!--<p class="text-left m-0">標題：</p>-->
         <p class="text-left m-0">遊戲分類：{{ game }}</p>
         <p class="text-left m-0">目前分數：{{ avg_score }}</p>
+        <p class="text-left m-0">備註：{{ memo }}</p>
         <b-button
           v-show="!haveAppraise"
           @click="appraiseModalShow = !appraiseModalShow"
@@ -107,7 +108,8 @@ export default {
     "channel_id",
     "game",
     "youtube_url",
-    "avg_score"
+    "avg_score",
+    "memo"
   ],
   data() {
     return {
