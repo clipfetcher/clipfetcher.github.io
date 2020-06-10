@@ -96,6 +96,15 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "news" */ '../views/TestComponent.vue')
   },
+  {
+    path: '/highlight/:highlight_id',
+    name: 'Highlight',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import('../views/Highlight.vue'),
+    props: true,
+  },
   { path: '/404', component: () => import(/* webpackChunkName: "user" */ '../views/NotFoundComponent.vue'), },
   { path: '*', redirect: '/404' }
 ]
