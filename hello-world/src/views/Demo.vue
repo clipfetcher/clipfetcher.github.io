@@ -10,7 +10,7 @@
         <!-- 精華生成輸入列 -->
         <section class="my-3" v-if="inputBar" key="create">
           <form @submit.prevent="loadVideo">
-            <label for="vodData">請輸入你想要分析的 Vod Id 或 Vod 網址</label>
+            <label for="vodData">請輸入你想要分析的 Vod ID 或 Vod 網址</label>
             <div class="input-group">
               <input
                 id="vodData"
@@ -32,7 +32,7 @@
         <!-- 精華搜尋輸入列 -->
         <section class="my-3" v-else-if="!inputBar" key="search">
           <form @submit.prevent="searchVideo">
-            <label for="videoSearch">請輸入你想要尋找的精華 Vod Id 或其他關鍵字</label>
+            <label for="videoSearch">請輸入你想要尋找的精華 Vod ID 或其他關鍵字</label>
             <b-input-group>
               <template v-slot:prepend>
                 <b-dropdown :text="videoSearchType" variant="primary">
@@ -141,7 +141,8 @@
         <p class="text-center my-2 py-2">
           <span>我們已收到您的分析請求！將會在分析完成後通知您！</span>
           <br />
-          <span>你的Id {{ videoHighlightId }}</span>
+          <span>你的ID：{{ videoHighlightId }}</span>
+          <br />
           <b-link :to="'/highlight/' + videoHighlightId" target="_blank">精華連結</b-link>
         </p>
       </div>
@@ -188,6 +189,16 @@
           :avg_score="highlight.avg_score"
           :memo="highlight.memo"
         ></HighlightList>
+      </div>
+      <div v-else-if="videoList === 'Empty'" class="alert alert-info" role="alert">
+        <p class="text-center my-2 py-2">
+          <span>目前還沒有精華影片！！</span>
+        </p>
+      </div>
+      <div v-else class="alert alert-danger" role="alert">
+        <p class="text-center my-2 py-2">
+          <span>發生錯誤請重新整理頁面！</span>
+        </p>
       </div>
     </div>
   </div>
@@ -263,10 +274,12 @@ export default {
       .get(ip + "/api/vod/highlight")
       .then(response => {
         this.highlightVideos = response.data;
-        this.videoList = "Finish";
+        if (this.highlightVideos == "") this.videoList = "Empty";
+        else this.videoList = "Finish";
       })
       .catch(function(error) {
         console.log(error.response);
+        this.videoList = "Error";
       });
   },
   methods: {
