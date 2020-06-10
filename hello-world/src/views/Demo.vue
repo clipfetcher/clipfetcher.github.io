@@ -273,8 +273,8 @@ export default {
     this.axios
       .get(ip + "/api/vod/highlight")
       .then(response => {
-        this.highlightVideos = response.data;
-        if (this.highlightVideos == "") this.videoList = "Empty";
+        this.highlightVideos = response.data.reverse();
+        if (this.highlightVideos.length == 0) this.videoList = "Empty";
         else this.videoList = "Finish";
       })
       .catch(function(error) {
