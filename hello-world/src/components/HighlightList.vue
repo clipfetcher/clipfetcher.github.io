@@ -15,6 +15,13 @@
         >
           <i class="fas fa-link fa-lg" data-toggle="tooltip" title="VOD網址"></i>
         </a>
+        <b-link
+          :to="'/highlight/' + highlight_id"
+          target="_blank"
+          class="card-link float-right pr-2"
+        >
+          <i class="fas fa-share-square fa-lg" data-toggle="tooltip" title="精華連結"></i>
+        </b-link>
         <p class="text-left m-0">ID：{{ vod_id }}</p>
         <p class="text-left m-0">Highlight：{{ highlight_id }}</p>
         <p class="text-left m-0">實況主：{{ channel_id }}</p>
