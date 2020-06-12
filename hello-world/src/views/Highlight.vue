@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <h4>您的精華影片 {{ highlight_id }}</h4>
+    <!--<p>{{ highlightVideo }}</p>-->
     <br />
     <br />
     <div class="m-2">
