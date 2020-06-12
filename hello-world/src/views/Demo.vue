@@ -323,7 +323,9 @@ export default {
         .then(() => {
           vm.vodValid = true;
           vm.vidAnalysis =
-            "https://player.twitch.tv/?video=v" + vid + "&autoplay=false";
+            "https://player.twitch.tv/?video=v" +
+            vid +
+            "&autoplay=false&parent=localhost";
           vm.vodLoadBtn = "重新載入";
           vm.videoResult = false;
           vm.vodShow = true;
