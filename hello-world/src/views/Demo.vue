@@ -1,23 +1,31 @@
 <template>
   <div class="container">
     <div class="my-3 p-1">
-      <nav class="nav nav-pills nav-justified">
-        <a class="nav-item nav-link" :class="{active:inputBar}" @click="changeBar('create')">精華生成</a>
-        <a class="nav-item nav-link" :class="{active:!inputBar}" @click="changeBar('search')">精華搜尋</a>
+      <nav class="nav nav-pills nav-fill">
+        <a
+          class="nav-item nav-link border rounded"
+          :class="{active:inputBar}"
+          @click="changeBar('create')"
+        >Highlight Generate</a>
+        <a
+          class="nav-item nav-link border rounded"
+          :class="{active:!inputBar}"
+          @click="changeBar('search')"
+        >Highlight Search</a>
       </nav>
 
       <transition name="fade" mode="out-in">
         <!-- 精華生成輸入列 -->
         <section class="my-3" v-if="inputBar" key="create">
           <form @submit.prevent="loadVideo">
-            <label for="vodData">請輸入你想要分析的 Vod ID 或 Vod 網址</label>
+            <!-- <label for="vodData">請輸入你想要分析的 Vod ID 或 Vod 網址</label> -->
             <div class="input-group">
               <input
                 id="vodData"
                 type="text"
                 class="form-control"
                 aria-describedby="videoData"
-                placeholder="Vod Id 或 Vod 網址"
+                placeholder="Twitch Vod Id or URL"
                 v-model="vodData"
                 :class="vodValid ? 'is-Valid' : 'is-invalid'"
               />
@@ -32,14 +40,14 @@
         <!-- 精華搜尋輸入列 -->
         <section class="my-3" v-else-if="!inputBar" key="search">
           <form @submit.prevent="searchVideo">
-            <label for="videoSearch">請輸入你想要尋找的精華 Vod ID 或其他關鍵字</label>
+            <!-- <label for="videoSearch">請輸入你想要尋找的精華 Vod ID 或其他關鍵字</label> -->
             <b-input-group>
               <template v-slot:prepend>
                 <b-dropdown :text="videoSearchType" variant="primary">
-                  <b-dropdown-item @click="videoSearchType = 'vod_id'">VOD Id</b-dropdown-item>
-                  <b-dropdown-item @click="videoSearchType = 'highlight_id'">Highlight Id</b-dropdown-item>
+                  <b-dropdown-item @click="videoSearchType = 'vod_id'">VOD</b-dropdown-item>
+                  <b-dropdown-item @click="videoSearchType = 'highlight_id'">Highlight</b-dropdown-item>
                   <b-dropdown-item @click="videoSearchType = 'game'">Game</b-dropdown-item>
-                  <b-dropdown-item @click="videoSearchType = 'channel_id'">Channel Id</b-dropdown-item>
+                  <b-dropdown-item @click="videoSearchType = 'channel_id'">Channel</b-dropdown-item>
                 </b-dropdown>
               </template>
               <input
@@ -47,7 +55,7 @@
                 type="text"
                 class="form-control"
                 aria-describedby="videoSearchText"
-                placeholder="輸入您要搜尋的關鍵字"
+                placeholder="..."
                 v-model="videoSearch"
               />
 
@@ -107,13 +115,13 @@
     <div class="my-4" v-show="vodAnalysisBtnShow">
       <form @submit.prevent="analysisVideo">
         <div class="form-group my-4">
-          <label for="memo">備註：</label>
+          <!-- <label for="memo">Comment：</label> -->
           <input
             type="text"
             class="form-control"
             name="memo"
             id="memo"
-            placeholder="輸入您的備註"
+            placeholder="Write your comments down..."
             v-model="memo"
             maxlength="20"
           />
@@ -125,7 +133,7 @@
               type="button"
               class="btn btn-success btn-lg btn-block"
               @click="analysisVideo"
-            >開始分析</button>
+            >Analysis</button>
           </div>
         </div>
       </form>
@@ -224,13 +232,13 @@ export default {
     return {
       //顯示名稱
       title: "Highlight Clip Fetcher",
-      vodLoadBtn: "載入",
-      vodAnalysisBtn: "開始分析",
-      vodSearchBtn: "搜尋",
+      vodLoadBtn: "Load",
+      vodAnalysisBtn: "Analysis",
+      vodSearchBtn: "Search",
       vodData: "",
       vidId: "",
       videoSearch: "",
-      videoSearchType: "搜尋項目",
+      videoSearchType: "Type",
 
       vidAnalysis: "",
       vidSearch: "",
@@ -326,7 +334,7 @@ export default {
             "https://player.twitch.tv/?video=v" +
             vid +
             "&autoplay=false&parent=clipfetcher.github.io";
-          vm.vodLoadBtn = "重新載入";
+          vm.vodLoadBtn = "reload";
           vm.videoResult = false;
           vm.vodShow = true;
           vm.vodAnalysisBtnShow = true;
@@ -336,9 +344,9 @@ export default {
           console.log(error);
           vm.vodValid = false;
           if (vm.vodData == "") {
-            vm.vodErrorData = "輸入不得為空";
+            vm.vodErrorData = "Input cannot be empty.";
           } else {
-            vm.vodErrorData = "請確認 Vod Id 或 Vod 網址正確";
+            vm.vodErrorData = "Please check Vod's Id or VOD's URL is valid.";
           }
         });
     },
