@@ -199,12 +199,8 @@ export default {
   computed: {
     youtube_embed: function() {
       let vodData = this.youtube_url;
-      vodData = vodData.split("?");
-      let vid = vodData[0];
-      vid = vid.split("/");
-      let i = 0;
-      for (i = 0; i < vid.length; i++);
-      let url = vid[i - 1];
+      vodData = vodData.split("=");
+      let url = vodData[1];
       return "https://www.youtube.com/embed/" + url + "?rel=0";
     }
   }
