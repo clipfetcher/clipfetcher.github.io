@@ -3,8 +3,13 @@
   <div class="m-4">
     <div class="row">
       <div class="col-12 col-md-4 my-2">
-        <div class="embed-responsive embed-responsive-16by9">
+        <div v-if="youtube_url" class="embed-responsive embed-responsive-16by9">
           <iframe class="embed-responsive-item" :src="youtube_embed" allowfullscreen></iframe>
+        </div>
+        <div v-else class="alert alert-info" role="alert">
+          <p class="text-center my-4 py-4">
+            <span>分析中</span>
+          </p>
         </div>
       </div>
       <div class="col-12 col-md-8">
@@ -24,7 +29,7 @@
         </b-link>
         <p class="text-left m-0">ID：{{ vod_id }}</p>
         <p class="text-left m-0">Highlight：{{ highlight_id }}</p>
-        <p class="text-left m-0">實況主：{{ channel_id }}</p>
+        <p class="text-left m-0">實況主：{{ streamerName }}</p>
         <p class="text-left m-0">遊戲分類：{{ game }}</p>
         <p class="text-left m-0">目前分數：{{ avg_score }}</p>
         <p class="text-left m-0">備註：{{ memo }}</p>
@@ -113,6 +118,7 @@ export default {
     "vod_id",
     "highlight_id",
     "channel_id",
+    "streamerName",
     "game",
     "youtube_url",
     "avg_score",
