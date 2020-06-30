@@ -217,16 +217,12 @@
 
 <script>
 import HighlightList from "@/components/HighlightList.vue";
-
-const ip = "https://clip-fetcher.herokuapp.com";
-
 var vodShow = false;
 var vodAnalysisBtnShow = false;
 var vodAnalysisSendStatusShow = false;
 var videoResult = false;
 var active = true;
 var highlightShow = false;
-
 export default {
   name: "demo",
   data() {
@@ -280,7 +276,7 @@ export default {
   components: { HighlightList },
   mounted() {
     this.axios
-      .get(ip + "/api/vod/highlight")
+      .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight")
       .then(response => {
         this.highlightVideos = response.data.reverse();
         if (this.highlightVideos.length == 0) this.videoList = "Empty";
@@ -296,7 +292,7 @@ export default {
       this.videoResult = false;
       let vm = this;
       this.axios
-        .get(ip + "/api/vod/highlight", {
+        .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
           params: {
             highlight_id: this.vod_id
           }
@@ -357,7 +353,7 @@ export default {
       this.vodAnalysisSendStatusShow = true;
       this.vodAnalysisSendStatus = "Loading";
       this.axios
-        .post(ip + "/api/vod", {
+        .post(process.env.VUE_APP_ROOT_API + "/api/vod", {
           vod_id: this.vod_id,
           memo: this.memo
         })
@@ -388,7 +384,7 @@ export default {
       this.highlightShow = true;
       this.searchVideos = null;
       this.axios
-        .get(ip + "/api/vod/highlight", {
+        .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
           params: {
             vod_id:
               vm.videoSearchType == "搜尋項目" || vm.videoSearchType == "vod_id"

@@ -81,8 +81,6 @@
 </template>
 
 <script>
-const ip = "https://clip-fetcher.herokuapp.com";
-
 export default {
   name: "App",
   data() {
@@ -131,7 +129,7 @@ export default {
         this.contentError = true;
       } else {
         this.axios
-          .post(ip + "/api/opinion", {
+          .post(process.env.VUE_APP_ROOT_API + "/api/opinion", {
             mail: this.mail,
             content: this.content
           })

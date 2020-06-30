@@ -112,8 +112,6 @@
 </template>
 
 <script>
-const ip = "https://clip-fetcher.herokuapp.com";
-
 export default {
   name: "HighlightList",
   props: [
@@ -188,7 +186,7 @@ export default {
       } else {
         this.validationText = false;
         this.axios
-          .post(ip + "/api/vod/appraise", {
+          .post(process.env.VUE_APP_ROOT_API + "/api/vod/appraise", {
             highlight_id: this.vod_id,
             text: this.text,
             score: this.starRating

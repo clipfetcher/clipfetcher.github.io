@@ -58,8 +58,6 @@
 </template>
 
 <script>
-const ip = "https://clip-fetcher.herokuapp.com";
-
 export default {
   name: "Axios",
   data() {
@@ -83,7 +81,7 @@ export default {
   methods: {
     tryApi_1() {
       this.axios
-        .post(ip + "/api/vod", {
+        .post(process.env.VUE_APP_ROOT_API + "/api/vod", {
           vod_id: this.vod
         })
         .then(response => (this.api_test_1 = response))
@@ -93,7 +91,7 @@ export default {
     },
     tryApi_2() {
       this.axios
-        .get(ip + "/api/vod", {
+        .get(process.env.VUE_APP_ROOT_API + "/api/vod", {
           params: {
             vod_id: this.vod
           }
@@ -105,7 +103,7 @@ export default {
     },
     tryApi_3() {
       this.axios
-        .post(ip + "/api/vod/check", {
+        .post(process.env.VUE_APP_ROOT_API + "/api/vod/check", {
           vod_id: this.vod
         })
         .then(response => (this.api_test_3 = response))
@@ -115,7 +113,7 @@ export default {
     },
     tryApi_4() {
       this.axios
-        .post(ip + "/api/vod/status", {
+        .post(process.env.VUE_APP_ROOT_API + "/api/vod/status", {
           vod_id: this.vod
         })
         .then(response => (this.api_test_4 = response.data))
@@ -125,7 +123,7 @@ export default {
     },
     tryApi_5() {
       this.axios
-        .get(ip + "/api/vod/highlight", {
+        .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
           params: {
             highlight_id: this.vod
           }
@@ -137,7 +135,7 @@ export default {
     },
     tryApi_6() {
       this.axios
-        .post(ip + "/api/vod/appraise", {
+        .post(process.env.VUE_APP_ROOT_API + "/api/vod/appraise", {
           highlight_id: this.vod,
           text: this.text,
           score: this.score
@@ -149,7 +147,7 @@ export default {
     },
     tryApi_7() {
       this.axios
-        .post(ip + "/api/opinion", {
+        .post(process.env.VUE_APP_ROOT_API + "/api/opinion", {
           mail: this.mail,
           content: this.content
         })
