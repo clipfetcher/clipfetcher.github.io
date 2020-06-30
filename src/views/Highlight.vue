@@ -53,6 +53,8 @@
 </template>
 
 <script>
+const ip = "https://clip-fetcher.herokuapp.com";
+
 export default {
   name: "Highlight",
   props: ["highlight_id"],
@@ -66,7 +68,7 @@ export default {
   },
   mounted() {
     this.axios
-      .get("https://clip-fetcher.herokuapp.com/api/vod/highlight", {
+      .get(ip + "/api/vod/highlight", {
         params: {
           highlight_id: this.highlight_id
         }

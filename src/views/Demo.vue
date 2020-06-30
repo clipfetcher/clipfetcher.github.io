@@ -218,9 +218,7 @@
 <script>
 import HighlightList from "@/components/HighlightList.vue";
 
-//var ip = "http://192.168.1.109:3000";
-var ip = "https://clip-fetcher.herokuapp.com";
-//https://clip-fetcher.herokuapp.com
+const ip = "https://clip-fetcher.herokuapp.com";
 
 var vodShow = false;
 var vodAnalysisBtnShow = false;

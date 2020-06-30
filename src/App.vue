@@ -81,7 +81,7 @@
 </template>
 
 <script>
-var ip = "https://clip-fetcher.herokuapp.com";
+const ip = "https://clip-fetcher.herokuapp.com";
 
 export default {
   name: "App",

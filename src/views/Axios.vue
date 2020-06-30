@@ -58,8 +58,8 @@
 </template>
 
 <script>
-//var ip = "http://192.168.1.109:3000";
-var ip = "https://clip-fetcher.herokuapp.com";
+const ip = "https://clip-fetcher.herokuapp.com";
+
 export default {
   name: "Axios",
   data() {
