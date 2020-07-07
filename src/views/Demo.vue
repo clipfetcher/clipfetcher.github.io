@@ -330,7 +330,7 @@ export default {
           vm.vidAnalysis =
             "https://player.twitch.tv/?video=v" +
             vid +
-            "&autoplay=false&parent=clipfetcher.github.io";
+            "&autoplay=false&parent=clipfetcher.com";
           vm.vodLoadBtn = "reload";
           vm.videoResult = false;
           vm.vodShow = true;
