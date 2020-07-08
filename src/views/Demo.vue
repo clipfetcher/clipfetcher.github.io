@@ -217,6 +217,7 @@
 
 <script>
 import HighlightList from "@/components/HighlightList.vue";
+
 var vodShow = false;
 var vodAnalysisBtnShow = false;
 var vodAnalysisSendStatusShow = false;
@@ -326,16 +327,12 @@ export default {
         })
         .get("videos/" + vid)
         .then(() => {
-          vm.vodValid = true;
           vm.vidAnalysis =
             "https://player.twitch.tv/?video=v" +
             vid +
             "&autoplay=false&parent=clipfetcher.com";
-          vm.vodLoadBtn = "reload";
-          vm.videoResult = false;
-          vm.vodShow = true;
-          vm.vodAnalysisBtnShow = true;
           vm.vod_id = vid;
+          this.checkDuplicate(vm);
         })
         .catch(function(error) {
           console.log(error);
@@ -404,6 +401,34 @@ export default {
         .catch(function(error) {
           console.log(error);
           vm.highlightSearch = "Error";
+        });
+    },
+    checkDuplicate: function(vm) {
+      console.log("checkDuplicate");
+      this.axios
+        .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
+          params: {
+            vod_id: vm.vod_id,
+            highlight_id: null,
+            game: null,
+            channel_id: null
+          }
+        })
+        .then(response => {
+          if (response.data != "") {
+            vm.vodValid = false;
+            vm.vodErrorData = "Duplicate!";
+          } else {
+            vm.vodValid = true;
+            vm.vodLoadBtn = "reload";
+            vm.videoResult = false;
+            vm.vodShow = true;
+            vm.vodAnalysisBtnShow = true;
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+          this.highlightSearch = "Error";
         });
     },
     changeBar: function(type) {
