@@ -105,6 +105,14 @@ const routes = [
     component: () => import('../views/Highlight.vue'),
     props: true,
   },
+  {
+    path: '/results',
+    name: 'HighlightSearch',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import('../views/HighlightSearch.vue')
+  },
   { path: '/404', component: () => import(/* webpackChunkName: "user" */ '../views/NotFoundComponent.vue'), },
   { path: '*', redirect: '/404' }
 ]

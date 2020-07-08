@@ -102,7 +102,7 @@
           :game="searchVideo.game"
           :youtube_url="searchVideo.youtube_url"
           :avg_score="searchVideo.avg_score"
-          :memo="analysisVideo.memo"
+          :memo="searchVideo.memo"
         ></HighlightList>
       </div>
       <div v-else class="alert alert-danger" role="alert">

@@ -29,8 +29,14 @@
         </b-link>
         <p class="text-left m-0">ID：{{ vod_id }}</p>
         <p class="text-left m-0">Highlight：{{ highlight_id }}</p>
-        <p class="text-left m-0">實況主：{{ streamerName }}</p>
-        <p class="text-left m-0">遊戲分類：{{ game }}</p>
+        <p class="text-left m-0">
+          實況主：
+          <b-link @click="channelSearch">{{ streamerName }}</b-link>
+        </p>
+        <p class="text-left m-0">
+          遊戲分類：
+          <b-link @click="gameSearch">{{ game }}</b-link>
+        </p>
         <p class="text-left m-0">目前分數：{{ avg_score }}</p>
         <p class="text-left m-0">備註：{{ memo }}</p>
         <b-button
@@ -199,6 +205,24 @@ export default {
             console.log(error);
           });
         this.appraiseModalShow = !this.appraiseModalShow;
+      }
+    },
+    channelSearch: function() {
+      this.$router.push({
+        name: "HighlightSearch",
+        query: { channel_id: this.channel_id }
+      });
+      if (this.$router.currentRoute.name === "HighlightSearch") {
+        this.$router.go(0);
+      }
+    },
+    gameSearch: function() {
+      this.$router.push({
+        name: "HighlightSearch",
+        query: { game: this.game }
+      });
+      if (this.$router.currentRoute.name === "HighlightSearch") {
+        this.$router.go(0);
       }
     }
   },
