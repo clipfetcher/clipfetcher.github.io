@@ -404,7 +404,6 @@ export default {
         });
     },
     checkDuplicate: function(vm) {
-      console.log("checkDuplicate");
       this.axios
         .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
           params: {
