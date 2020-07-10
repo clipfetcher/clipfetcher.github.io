@@ -330,7 +330,8 @@ export default {
           vm.vidAnalysis =
             "https://player.twitch.tv/?video=v" +
             vid +
-            "&autoplay=false&parent=clipfetcher.com";
+            "&autoplay=false&parent=" +
+            window.location.hostname;
           vm.vod_id = vid;
           this.checkDuplicate(vm);
         })
