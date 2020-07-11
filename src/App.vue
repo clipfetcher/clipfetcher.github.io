@@ -18,7 +18,7 @@
 
       <b-collapse id="navbar-toggle-collapse" is-nav>
         <b-navbar-nav class="ml-auto">
-          <b-nav-item to="/demo">Demo</b-nav-item>
+          <b-nav-item to="/home">Vue Home</b-nav-item>
           <b-nav-item to="/axios">Axios</b-nav-item>
           <b-nav-item to="/test">TestComponent</b-nav-item>
         </b-navbar-nav>

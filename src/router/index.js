@@ -6,7 +6,7 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
+    path: '/home',
     name: 'Home',
     component: Home
   },
@@ -81,7 +81,7 @@ const routes = [
     props: true,
   },
   {
-    path: '/demo',
+    path: '/',
     name: 'Demo',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
