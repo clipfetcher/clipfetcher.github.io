@@ -31,11 +31,14 @@
         <p class="text-left m-0">Highlight：{{ highlight_id }}</p>
         <p class="text-left m-0">
           實況主：
-          <b-link @click="channelSearch">{{ streamerName }}</b-link>
+          <b-link
+            :to="'/results?channel_id=' + channel_id"
+            @click.prevent="channelSearch"
+          >{{ streamerName }}</b-link>
         </p>
         <p class="text-left m-0">
           遊戲分類：
-          <b-link @click="gameSearch">{{ game }}</b-link>
+          <b-link :to="'/results?game=' + game" @click.prevent="gameSearch">{{ game }}</b-link>
         </p>
         <p class="text-left m-0">目前分數：{{ avg_score }}</p>
         <p class="text-left m-0">備註：{{ memo }}</p>
