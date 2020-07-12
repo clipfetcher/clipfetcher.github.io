@@ -42,7 +42,8 @@ export default {
   },
   mounted() {
     let query = this.query;
-    this.searchVideos = null;
+    let vm = this;
+    vm.searchVideos = null;
     this.axios
       .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
         params: {
@@ -53,13 +54,13 @@ export default {
         }
       })
       .then(response => {
-        this.searchVideos = response.data;
-        if (this.searchVideos == "") this.highlightSearch = "Error";
-        else this.highlightSearch = "Find";
+        vm.searchVideos = response.data;
+        if (vm.searchVideos == "") vm.highlightSearch = "Error";
+        else vm.highlightSearch = "Find";
       })
       .catch(function(error) {
         console.log(error);
-        this.highlightSearch = "Error";
+        vm.highlightSearch = "Error";
       });
   },
   components: { HighlightList }

@@ -208,7 +208,7 @@
       </div>
       <div v-else class="alert alert-danger" role="alert">
         <p class="text-center my-2 py-2">
-          <span>發生錯誤請重新整理頁面！</span>
+          <span>系統連線發生錯誤 請等待問題排除或重新整理頁面嘗試 感謝！</span>
         </p>
       </div>
     </div>
@@ -276,6 +276,7 @@ export default {
   },
   components: { HighlightList },
   mounted() {
+    let vm = this;
     this.axios
       .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight")
       .then(response => {
@@ -285,7 +286,7 @@ export default {
       })
       .catch(function(error) {
         console.log(error.response);
-        this.videoList = "Error";
+        vm.videoList = "Error";
       });
   },
   methods: {
@@ -428,7 +429,7 @@ export default {
         })
         .catch(function(error) {
           console.log(error);
-          this.highlightSearch = "Error";
+          vm.highlightSearch = "Error";
         });
     },
     changeBar: function(type) {
