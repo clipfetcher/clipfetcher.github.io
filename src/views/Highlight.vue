@@ -18,14 +18,14 @@
                 <iframe class="embed-responsive-item" :src="youtube_embed" allowfullscreen></iframe>
               </div>
               <div v-else class="alert alert-info" role="alert">
-                <p class="text-center my-2 py-2">
+                <p class="text-center my-4 py-4">
                   <span>分析中</span>
                 </p>
               </div>
             </div>
             <div class="col-12 col-md-8">
               <a
-                :href="'https://www.twitch.tv/videos/' + vod_id"
+                :href="'https://www.twitch.tv/videos/' + highlightVideo.vod_id"
                 target="_blank"
                 class="card-link float-right"
               >
@@ -33,8 +33,16 @@
               </a>
               <p class="text-left m-0">ID：{{ highlightVideo.vod_id }}</p>
               <p class="text-left m-0">Highlight：{{ highlightVideo.highlight_id }}</p>
-              <p class="text-left m-0">實況主：{{ highlightVideo.channel_id }}</p>
-              <p class="text-left m-0">遊戲分類：{{ highlightVideo.game }}</p>
+              <p class="text-left m-0">
+                實況主：
+                <b-link
+                  :to="'/results?channel_id=' + highlightVideo.channel_id"
+                >{{ highlightVideo.streamerName }}</b-link>
+              </p>
+              <p class="text-left m-0">
+                遊戲分類：
+                <b-link :to="'/results?game=' + highlightVideo.game">{{ highlightVideo.game }}</b-link>
+              </p>
               <p class="text-left m-0">目前分數：{{ highlightVideo.avg_score }}</p>
               <p class="text-left m-0">備註：{{ highlightVideo.memo }}</p>
             </div>
@@ -58,30 +66,34 @@ export default {
   props: ["highlight_id"],
   data() {
     return {
-      vod_id: "",
       highlightPage: "Loading",
       highlightVideo: null,
       analysisComplete: false
     };
   },
   mounted() {
-    this.axios
-      .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
-        params: {
-          highlight_id: this.highlight_id
-        }
-      })
-      .then(response => {
-        this.highlightVideo = response.data[0];
-        if (this.highlightVideo == "" || this.highlightVideo == null)
-          this.highlightPage = "Error";
-        else {
-          this.highlightPage = "Find";
-          if (this.highlightVideo.channel_id == "")
-            this.analysisComplete = false;
-          else this.analysisComplete = true;
-        }
-        /*
+    this.getContent();
+  },
+  methods: {
+    getContent() {
+      this.highlightPage = "Loading";
+      this.axios
+        .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
+          params: {
+            highlight_id: this.highlight_id
+          }
+        })
+        .then(response => {
+          this.highlightVideo = response.data[0];
+          if (this.highlightVideo == "" || this.highlightVideo == null)
+            this.highlightPage = "Error";
+          else {
+            this.highlightPage = "Find";
+            if (this.highlightVideo.channel_id == "")
+              this.analysisComplete = false;
+            else this.analysisComplete = true;
+          }
+          /*
         this.axios
           .post("https://clip-fetcher.herokuapp.com/api/vod/status", {
             vod_id: this.highlight_id
@@ -98,10 +110,16 @@ export default {
             console.log(error.response);
           });
           */
-      })
-      .catch(function(error) {
-        console.log(error.response);
-      });
+        })
+        .catch(function(error) {
+          console.log(error.response);
+        });
+    }
+  },
+  watch: {
+    $route() {
+      this.getContent();
+    }
   },
   computed: {
     youtube_embed: function() {
