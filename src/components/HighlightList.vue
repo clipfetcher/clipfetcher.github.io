@@ -196,7 +196,7 @@ export default {
         this.validationText = false;
         this.axios
           .post(process.env.VUE_APP_ROOT_API + "/api/vod/appraise", {
-            highlight_id: this.vod_id,
+            highlight_id: this.highlight_id,
             text: this.text,
             score: this.starRating
           })
