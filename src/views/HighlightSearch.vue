@@ -40,30 +40,42 @@ export default {
       searchVideos: null
     };
   },
+  components: { HighlightList },
   mounted() {
-    let query = this.query;
-    let vm = this;
-    vm.searchVideos = null;
-    this.axios
-      .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
-        params: {
-          vod_id: query.vod_id,
-          highlight_id: query.highlight_id,
-          game: query.game,
-          channel_id: query.channel_id
-        }
-      })
-      .then(response => {
-        vm.searchVideos = response.data;
-        if (vm.searchVideos == "") vm.highlightSearch = "Error";
-        else vm.highlightSearch = "Find";
-      })
-      .catch(function(error) {
-        console.log(error);
-        vm.highlightSearch = "Error";
-      });
+    this.getContent();
   },
-  components: { HighlightList }
+  methods: {
+    getContent() {
+      let query = this.query;
+      let vm = this;
+      vm.highlightSearch = "Loading";
+      vm.searchVideos = null;
+      this.axios
+        .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
+          params: {
+            vod_id: query.vod_id,
+            highlight_id: query.highlight_id,
+            game: query.game,
+            channel_id: query.channel_id
+          }
+        })
+        .then(response => {
+          vm.searchVideos = response.data;
+          if (vm.searchVideos == "") vm.highlightSearch = "Error";
+          else vm.highlightSearch = "Find";
+        })
+        .catch(function(error) {
+          console.log(error);
+          vm.highlightSearch = "Error";
+        });
+    }
+  },
+  watch: {
+    $route() {
+      this.query = this.$route.query;
+      this.getContent();
+    }
+  }
 };
 </script>
 
