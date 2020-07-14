@@ -135,8 +135,8 @@ export default {
   ],
   data() {
     return {
-      temp_starRating: 0,
-      starRating: 0,
+      temp_starRating: 4,
+      starRating: 4,
       text: "",
       appraiseModalShow: false,
 
@@ -153,7 +153,7 @@ export default {
       this.starRating = val;
     },
     mouseOutRrating: function() {
-      if (!this.isRating) this.starRating = 0;
+      if (!this.isRating) this.starRating = 4;
       else this.starRating = this.temp_starRating;
       this.temp_starRating = 0;
     },
