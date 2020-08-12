@@ -271,7 +271,7 @@ export default {
       videoHighlightId: null,
       memo: "",
 
-      api: null
+      api: null,
     };
   },
   components: { HighlightList },
@@ -279,36 +279,36 @@ export default {
     let vm = this;
     this.axios
       .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight")
-      .then(response => {
+      .then((response) => {
         this.highlightVideos = response.data.reverse();
         if (this.highlightVideos.length == 0) this.videoList = "Empty";
         else this.videoList = "Finish";
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error.response);
         vm.videoList = "Error";
       });
   },
   methods: {
-    showAnalyseVideo: function() {
+    showAnalyseVideo: function () {
       this.videoResult = false;
       let vm = this;
       this.axios
         .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
           params: {
-            highlight_id: this.vod_id
-          }
+            highlight_id: this.vod_id,
+          },
         })
-        .then(response => {
+        .then((response) => {
           this.analyseVideos = response.data;
           vm.videoResult = true;
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
           vm.videoResult = false;
         });
     },
-    loadVideo: function() {
+    loadVideo: function () {
       this.vodShow = false;
       this.vodAnalysisBtnShow = false;
       this.vodAnalysisSendStatusShow = false;
@@ -323,8 +323,8 @@ export default {
           baseURL: "https://api.twitch.tv/kraken/",
           headers: {
             Accept: "application/vnd.twitchtv.v5+json",
-            "Client-ID": "ildytfqanhzvdaprp96m5rkylap16k"
-          }
+            "Client-ID": "ildytfqanhzvdaprp96m5rkylap16k",
+          },
         })
         .get("videos/" + vid)
         .then(() => {
@@ -336,7 +336,7 @@ export default {
           vm.vod_id = vid;
           this.checkDuplicate(vm);
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
           vm.vodValid = false;
           if (vm.vodData == "") {
@@ -346,7 +346,7 @@ export default {
           }
         });
     },
-    analysisVideo: function() {
+    analysisVideo: function () {
       let vm = this;
       this.vodAnalysisBtnShow = false;
       this.vodAnalysisSendStatusShow = true;
@@ -354,20 +354,20 @@ export default {
       this.axios
         .post(process.env.VUE_APP_ROOT_API + "/api/vod", {
           vod_id: this.vod_id,
-          memo: this.memo
+          memo: this.memo,
         })
-        .then(response => {
+        .then((response) => {
           vm.vodAnalysisSendStatus = "Success";
           this.memo = "";
           this.videoHighlightId = response.data.highlight_id;
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
           vm.vodAnalysisBtnShow = true;
           vm.vodAnalysisSendStatus = "Error";
         });
     },
-    searchVideo: function() {
+    searchVideo: function () {
       let vm = this;
       let vid;
       if (
@@ -391,34 +391,35 @@ export default {
                 : null,
             highlight_id: vm.videoSearchType == "highlight_id" ? vid : null,
             game: vm.videoSearchType == "game" ? vid : null,
-            channel_id: vm.videoSearchType == "channel_id" ? vid : null
-          }
+            channel_id: vm.videoSearchType == "channel_id" ? vid : null,
+          },
         })
-        .then(response => {
+        .then((response) => {
           vm.searchVideos = response.data;
           if (vm.searchVideos == "") vm.highlightSearch = "Error";
           else vm.highlightSearch = "Find";
           vm.videoSearchType = "搜尋項目";
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
           vm.highlightSearch = "Error";
         });
     },
-    checkDuplicate: function(vm) {
+    checkDuplicate: function (vm) {
       this.axios
         .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
           params: {
             vod_id: vm.vod_id,
             highlight_id: null,
             game: null,
-            channel_id: null
-          }
+            channel_id: null,
+          },
         })
-        .then(response => {
+        .then((response) => {
           if (response.data != "") {
             vm.vodValid = false;
-            vm.vodErrorData = "Duplicate!";
+            vm.vodErrorData =
+              "Vod's Id or VOD's URL is duplicate! You can search the highlight on our website.";
           } else {
             vm.vodValid = true;
             vm.vodLoadBtn = "reload";
@@ -427,12 +428,12 @@ export default {
             vm.vodAnalysisBtnShow = true;
           }
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
           vm.highlightSearch = "Error";
         });
     },
-    changeBar: function(type) {
+    changeBar: function (type) {
       if (type === "create" && !this.inputBar) {
         highlightShow = this.highlightShow;
         this.vodShow = vodShow;
@@ -455,7 +456,7 @@ export default {
         this.active = false;
         this.inputBar = !this.inputBar;
       }
-    }
-  }
+    },
+  },
 };
 </script>
