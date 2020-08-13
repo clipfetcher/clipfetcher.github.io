@@ -116,31 +116,112 @@
     <div class="my-4" v-show="vodAnalysisBtnShow">
       <form @submit.prevent="analysisVideo">
         <div class="form-group my-4">
-          <!-- <label for="memo">Comment：</label> -->
+          <label for="highlightTitle">標題：</label>
           <input
             type="text"
             class="form-control"
-            name="memo"
-            id="memo"
-            placeholder="Write your comments down..."
-            v-model="memo"
+            :class="titleValid ? 'is-Valid' : 'is-invalid'"
+            name="highlightTitle"
+            id="highlightTitle"
+            placeholder="為您的精華影片想一個特別的標題..."
+            v-model="highlightTitle"
             maxlength="20"
           />
+          <div v-if="!titleValid" class="invalid-feedback">{{ titleErrorFeedback }}</div>
         </div>
         <div class="row justify-content-center my-4">
           <div class="col-10 col-md-6">
             <button
               id="videoStartAnalysisBtn"
               type="button"
-              class="btn btn-success btn-lg btn-block"
+              class="btn btn-success btn-lg btn-block my-2"
               @click="analysisVideo"
-            >Analysis</button>
+            >自動分析</button>
+          </div>
+          <div class="col-10 col-md-6">
+            <button
+              type="button"
+              class="btn btn-success btn-lg btn-block my-2"
+              @click="manualEditor"
+            >手動剪輯</button>
           </div>
         </div>
       </form>
     </div>
 
-    <div v-show="vodAnalysisSendStatusShow" class="row justify-content-center my-2">
+    <div v-show="manualEditorShow">
+      <div>
+        <div class="form-group my-4">
+          <label for="highlightTitle">標題：</label>
+          <input
+            type="text"
+            class="form-control"
+            :class="titleValid ? 'is-Valid' : 'is-invalid'"
+            name="highlightTitle"
+            placeholder="為您的精華影片想一個特別的標題..."
+            v-model="highlightTitle"
+            maxlength="20"
+          />
+          <div v-if="!titleValid" class="invalid-feedback">{{ titleErrorFeedback }}</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-8">
+          <div class="embed-responsive embed-responsive-16by9 my-1">
+            <iframe
+              class="embed-responsive-item"
+              :src="vidAnalysis"
+              scrolling="yes"
+              allowfullscreen="true"
+            ></iframe>
+          </div>
+          <div class="justify-content-center">
+            <div class="form-row">
+              <div class="col-6 col-md-5">
+                <label for="startTime">開始時間：</label>
+                <input type="text" class="form-control" id="startTime" v-model="startTime" required />
+              </div>
+              <div class="col-6 col-md-5">
+                <label for="endTime">結束時間：</label>
+                <input type="text" class="form-control" id="endTime" v-model="endTime" required />
+              </div>
+              <div class="col-12 col-md-2">
+                <button
+                  id="videoStartAnalysisBtn"
+                  type="button"
+                  class="btn btn-success btn-lg btn-block my-2"
+                  @click="addClipTime"
+                >
+                  <i class="far fa-plus-square"></i> 加入
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-4">
+          <div class="card">
+            <div class="card-header">目前片段</div>
+            <div class="card-body overflow-auto" style="height: 340px; max-height: 340px;">
+              <ul>
+                <li v-for="time in clip_timeSort" :key="time.index">
+                  {{ time.start }} ~ {{ time.end }}
+                  <i class="far fa-edit mx-1"></i>
+                  <i class="far fa-trash-alt mx-1"></i>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <button
+            type="button"
+            class="btn btn-danger btn-lg btn-block my-2"
+            @click="cancelManualEditor"
+          >取消</button>
+          <button type="button" class="btn btn-success btn-lg btn-block my-2">完成剪輯</button>
+        </div>
+      </div>
+    </div>
+
+    <div v-show="vodAnalysisSendStatusShow" class="row justify-content-center m-2">
       <div v-if="vodAnalysisSendStatus === 'Loading'">
         <div class="spinner-border text-secondary" role="status">
           <span class="sr-only">Loading...</span>
@@ -256,7 +337,10 @@ export default {
       highlightShow: false,
       highlightSearch: "Loading",
       videoList: "Loading",
+      manualEditorShow: false,
       //api control
+      titleValid: true,
+      titleErrorFeedback: "",
       vodValid: true,
       vodErrorData: "",
       vod_id: "",
@@ -269,7 +353,11 @@ export default {
       searchVideos: null,
 
       videoHighlightId: null,
-      memo: "",
+      highlightTitle: "",
+      // manual editor
+      clip_time: [],
+      startTime: "",
+      endTime: "",
 
       api: null,
     };
@@ -348,24 +436,27 @@ export default {
     },
     analysisVideo: function () {
       let vm = this;
-      this.vodAnalysisBtnShow = false;
-      this.vodAnalysisSendStatusShow = true;
-      this.vodAnalysisSendStatus = "Loading";
-      this.axios
-        .post(process.env.VUE_APP_ROOT_API + "/api/vod", {
-          vod_id: this.vod_id,
-          memo: this.memo,
-        })
-        .then((response) => {
-          vm.vodAnalysisSendStatus = "Success";
-          this.memo = "";
-          this.videoHighlightId = response.data.highlight_id;
-        })
-        .catch(function (error) {
-          console.log(error);
-          vm.vodAnalysisBtnShow = true;
-          vm.vodAnalysisSendStatus = "Error";
-        });
+      this.checkHighlightTitle();
+      if (this.titleValid) {
+        this.vodAnalysisBtnShow = false;
+        this.vodAnalysisSendStatusShow = true;
+        this.vodAnalysisSendStatus = "Loading";
+        this.axios
+          .post(process.env.VUE_APP_ROOT_API + "/api/vod", {
+            vod_id: this.vod_id,
+            memo: this.highlightTitle,
+          })
+          .then((response) => {
+            vm.vodAnalysisSendStatus = "Success";
+            this.highlightTitle = "";
+            this.videoHighlightId = response.data.highlight_id;
+          })
+          .catch(function (error) {
+            console.log(error);
+            vm.vodAnalysisBtnShow = true;
+            vm.vodAnalysisSendStatus = "Error";
+          });
+      }
     },
     searchVideo: function () {
       let vm = this;
@@ -405,6 +496,13 @@ export default {
           vm.highlightSearch = "Error";
         });
     },
+    checkHighlightTitle: function () {
+      this.titleErrorFeedback = "";
+      if (this.highlightTitle == "") {
+        this.titleValid = false;
+        this.titleErrorFeedback = "Input cannot be empty.";
+      } else this.titleValid = true;
+    },
     checkDuplicate: function (vm) {
       this.axios
         .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
@@ -433,6 +531,26 @@ export default {
           vm.highlightSearch = "Error";
         });
     },
+    manualEditor: function () {
+      this.checkHighlightTitle();
+      if (this.titleValid) {
+        this.vodShow = false;
+        this.vodAnalysisBtnShow = false;
+        this.manualEditorShow = true;
+      }
+    },
+    cancelManualEditor: function () {
+      this.manualEditorShow = false;
+      this.vodAnalysisBtnShow = true;
+      this.vodShow = true;
+    },
+    addClipTime: function () {
+      let time = {
+        start: this.startTime,
+        end: this.endTime,
+      };
+      this.clip_time.push(time);
+    },
     changeBar: function (type) {
       if (type === "create" && !this.inputBar) {
         highlightShow = this.highlightShow;
@@ -456,6 +574,31 @@ export default {
         this.active = false;
         this.inputBar = !this.inputBar;
       }
+    },
+  },
+  computed: {
+    clip_timeSort: function () {
+      function compare(a, b) {
+        let time1 = a.start.split(":");
+        let time2 = b.start.split(":");
+        let hour1 = time1[0];
+        let min1 = time1[1];
+        let sec1 = time1[2];
+        let hour2 = time2[0];
+        let min2 = time2[1];
+        let sec2 = time2[2];
+
+        if (hour1 < hour2) return -1;
+        if (hour1 > hour2) return 1;
+        if (min1 < min2) return -1;
+        if (min1 > min2) return 1;
+        if (sec1 < sec2) return -1;
+        if (sec1 > sec2) return 1;
+        return 0;
+      }
+
+      let arr = this.clip_time;
+      return arr.sort(compare);
     },
   },
 };
