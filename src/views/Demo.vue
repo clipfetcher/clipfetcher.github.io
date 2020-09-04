@@ -205,8 +205,20 @@
               <ul>
                 <li v-for="time in clip_timeSort" :key="time.index">
                   {{ time.start }} ~ {{ time.end }}
-                  <i class="far fa-edit mx-1"></i>
-                  <i class="far fa-trash-alt mx-1"></i>
+                  <button
+                    type="button"
+                    class="btn btn-outline-info m-1"
+                    @click="editClipTime(time)"
+                  >
+                    <i class="far fa-edit"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-danger m-1"
+                    @click="removeClipTime(time)"
+                  >
+                    <i class="far fa-trash-alt"></i>
+                  </button>
                 </li>
               </ul>
             </div>
@@ -529,6 +541,13 @@ export default {
         .catch(function (error) {
           console.log(error);
           vm.highlightSearch = "Error";
+          //---
+          vm.vodValid = true;
+          vm.vodLoadBtn = "reload";
+          vm.videoResult = false;
+          vm.vodShow = true;
+          vm.vodAnalysisBtnShow = true;
+          //---
         });
     },
     manualEditor: function () {
@@ -550,6 +569,13 @@ export default {
         end: this.endTime,
       };
       this.clip_time.push(time);
+    },
+    removeClipTime: function (time) {
+      this.clip_time.pop(time);
+    },
+    editClipTime: function (time) {
+      this.startTime = time.start;
+      this.endTime = time.end;
     },
     changeBar: function (type) {
       if (type === "create" && !this.inputBar) {

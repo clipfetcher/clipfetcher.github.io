@@ -93,7 +93,7 @@ export default {
 
       emailErrorText: "",
       emailError: false,
-      contentError: false
+      contentError: false,
     };
   },
   methods: {
@@ -106,7 +106,7 @@ export default {
       //this.$router.go(-1);
     }
     */
-    opinion: function() {
+    opinion: function () {
       let vm = this;
       let reg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       this.emailError = false;
@@ -131,20 +131,20 @@ export default {
         this.axios
           .post(process.env.VUE_APP_ROOT_API + "/api/opinion", {
             mail: this.mail,
-            content: this.content
+            content: this.content,
           })
-          .then(response => {
+          .then((response) => {
             vm.response = response.status;
           })
-          .catch(function(error) {
+          .catch(function (error) {
             console.log(error);
           });
         this.opinionModalShow = !this.opinionModalShow;
         this.mail = "";
         this.content = "";
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
