@@ -5,12 +5,12 @@
         <a
           class="nav-item nav-link border rounded"
           :class="{active:inputBar}"
-          @click="changeBar('create')"
+          @click="inputBar = !inputBar"
         >Highlight Generate</a>
         <a
           class="nav-item nav-link border rounded"
           :class="{active:!inputBar}"
-          @click="changeBar('search')"
+          @click="inputBar = !inputBar"
         >Highlight Search</a>
       </nav>
 
@@ -68,206 +68,216 @@
       </transition>
     </div>
 
-    <!-- 影片紀錄檔顯示 -->
-    <div class="row justify-content-center" v-show="vodShow">
-      <div class="col-12 col-md-8">
-        <div id="videoShow" class="embed-responsive embed-responsive-16by9 my-2">
-          <iframe
-            id="videoAnalysis"
-            class="embed-responsive-item"
-            :src="vidAnalysis"
-            scrolling="no"
-            allowfullscreen="true"
-          ></iframe>
-        </div>
-      </div>
-    </div>
-
-    <!-- 精華影片搜尋顯示 -->
-    <div v-show="highlightShow">
-      <div v-if="highlightSearch === 'Loading'" class="d-flex justify-content-center my-2">
-        <div class="spinner-border text-secondary" role="status">
-          <span class="sr-only">Loading...</span>
-        </div>
-      </div>
-      <div v-else-if="highlightSearch === 'Find'" class="card my-2">
-        <h5 class="card-header">精華搜尋結果</h5>
-        <HighlightList
-          v-for="searchVideo in searchVideos"
-          :key="searchVideo.index"
-          :vod_id="searchVideo.vod_id"
-          :highlight_id="searchVideo.highlight_id"
-          :channel_id="searchVideo.channel_id"
-          :streamerName="searchVideo.streamerName"
-          :game="searchVideo.game"
-          :youtube_url="searchVideo.youtube_url"
-          :avg_score="searchVideo.avg_score"
-          :memo="searchVideo.memo"
-        ></HighlightList>
-      </div>
-      <div v-else class="alert alert-danger" role="alert">
-        <p class="text-center my-2 py-2">
-          <span>很抱歉！找不到您要搜尋的精華影片！</span>
-        </p>
-      </div>
-    </div>
-
-    <!-- 分析 -->
-    <div class="my-4" v-show="vodAnalysisBtnShow">
-      <form @submit.prevent="analysisVideo">
-        <div class="form-group my-4">
-          <label for="highlightTitle">標題：</label>
-          <input
-            type="text"
-            class="form-control"
-            :class="titleValid ? 'is-Valid' : 'is-invalid'"
-            name="highlightTitle"
-            id="highlightTitle"
-            placeholder="為您的精華影片想一個特別的標題..."
-            v-model="highlightTitle"
-            maxlength="20"
-          />
-          <div v-if="!titleValid" class="invalid-feedback">{{ titleErrorFeedback }}</div>
-        </div>
-        <div class="row justify-content-center my-4">
-          <div class="col-10 col-md-6">
-            <button
-              id="videoStartAnalysisBtn"
-              type="button"
-              class="btn btn-success btn-lg btn-block my-2"
-              @click="analysisVideo"
-            >自動分析</button>
-          </div>
-          <div class="col-10 col-md-6">
-            <button
-              type="button"
-              class="btn btn-success btn-lg btn-block my-2"
-              @click="manualEditor"
-            >手動剪輯</button>
-          </div>
-        </div>
-      </form>
-    </div>
-
-    <div v-show="manualEditorShow">
-      <div>
-        <div class="form-group my-4">
-          <label for="highlightTitle">標題：</label>
-          <input
-            type="text"
-            class="form-control"
-            :class="titleValid ? 'is-Valid' : 'is-invalid'"
-            name="highlightTitle"
-            placeholder="為您的精華影片想一個特別的標題..."
-            v-model="highlightTitle"
-            maxlength="20"
-          />
-          <div v-if="!titleValid" class="invalid-feedback">{{ titleErrorFeedback }}</div>
-        </div>
-      </div>
-      <div class="row">
+    <div v-if="inputBar">
+      <!-- 影片紀錄檔顯示 -->
+      <div class="row justify-content-center" v-show="vodShow">
         <div class="col-12 col-md-8">
-          <div class="embed-responsive embed-responsive-16by9 my-1">
+          <div id="videoShow" class="embed-responsive embed-responsive-16by9 my-2">
             <iframe
+              id="videoAnalysis"
               class="embed-responsive-item"
               :src="vidAnalysis"
-              scrolling="yes"
+              scrolling="no"
               allowfullscreen="true"
             ></iframe>
           </div>
-          <div class="justify-content-center">
-            <div class="form-row">
-              <div class="col-6 col-md-5">
-                <label for="startTime">開始時間：</label>
-                <input type="text" class="form-control" id="startTime" v-model="startTime" required />
-              </div>
-              <div class="col-6 col-md-5">
-                <label for="endTime">結束時間：</label>
-                <input type="text" class="form-control" id="endTime" v-model="endTime" required />
-              </div>
-              <div class="col-12 col-md-2">
-                <button
-                  id="videoStartAnalysisBtn"
-                  type="button"
-                  class="btn btn-success btn-lg btn-block my-2"
-                  @click="addClipTime"
-                >
-                  <i class="far fa-plus-square"></i> 加入
-                </button>
+        </div>
+      </div>
+
+      <!-- 分析 -->
+      <div class="my-4" v-show="vodAnalysisBtnShow">
+        <form @submit.prevent="analysisVideo">
+          <div class="form-group my-4">
+            <label for="highlightTitle">標題：</label>
+            <input
+              type="text"
+              class="form-control"
+              :class="titleValid ? 'is-Valid' : 'is-invalid'"
+              name="highlightTitle"
+              id="highlightTitle"
+              placeholder="為您的精華影片想一個特別的標題..."
+              v-model="highlightTitle"
+              maxlength="20"
+            />
+            <div v-if="!titleValid" class="invalid-feedback">{{ titleErrorFeedback }}</div>
+          </div>
+          <div class="row justify-content-center my-4">
+            <div class="col-10 col-md-6">
+              <button
+                id="videoStartAnalysisBtn"
+                type="button"
+                class="btn btn-success btn-lg btn-block my-2"
+                @click="analysisVideo"
+              >自動分析</button>
+            </div>
+            <div class="col-10 col-md-6">
+              <button
+                type="button"
+                class="btn btn-success btn-lg btn-block my-2"
+                @click="manualEditor"
+              >手動剪輯</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div v-show="manualEditorShow">
+        <div>
+          <div class="form-group my-4">
+            <label for="highlightTitle">標題：</label>
+            <input
+              type="text"
+              class="form-control"
+              :class="titleValid ? 'is-Valid' : 'is-invalid'"
+              name="highlightTitle"
+              placeholder="為您的精華影片想一個特別的標題..."
+              v-model="highlightTitle"
+              maxlength="20"
+            />
+            <div v-if="!titleValid" class="invalid-feedback">{{ titleErrorFeedback }}</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 col-md-8">
+            <div class="embed-responsive embed-responsive-16by9 my-1">
+              <iframe
+                class="embed-responsive-item"
+                :src="vidAnalysis"
+                scrolling="yes"
+                allowfullscreen="true"
+              ></iframe>
+            </div>
+            <div class="justify-content-center">
+              <div class="form-row">
+                <div class="col-6 col-md-5">
+                  <label for="startTime">開始時間：</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="startTime"
+                    v-model="startTime"
+                    required
+                  />
+                </div>
+                <div class="col-6 col-md-5">
+                  <label for="endTime">結束時間：</label>
+                  <input type="text" class="form-control" id="endTime" v-model="endTime" required />
+                </div>
+                <div class="col-12 col-md-2">
+                  <button
+                    id="videoStartAnalysisBtn"
+                    type="button"
+                    class="btn btn-success btn-lg btn-block my-2"
+                    @click="addClipTime"
+                  >
+                    <i class="far fa-plus-square"></i> 加入
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="col-12 col-md-4">
-          <div class="card">
-            <div class="card-header">目前片段</div>
-            <div class="card-body overflow-auto" style="height: 340px; max-height: 340px;">
-              <ul>
-                <li v-for="time in clip_timeSort" :key="time.index">
-                  {{ time.start }} ~ {{ time.end }}
-                  <button
-                    type="button"
-                    class="btn btn-outline-info m-1"
-                    @click="editClipTime(time)"
-                  >
-                    <i class="far fa-edit"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-outline-danger m-1"
-                    @click="removeClipTime(time)"
-                  >
-                    <i class="far fa-trash-alt"></i>
-                  </button>
-                </li>
-              </ul>
+          <div class="col-12 col-md-4">
+            <div class="card">
+              <div class="card-header">目前片段</div>
+              <div class="card-body overflow-auto" style="height: 340px; max-height: 340px;">
+                <ul>
+                  <li v-for="time in clip_timeSort" :key="time.index">
+                    {{ time.start }} ~ {{ time.end }}
+                    <button
+                      type="button"
+                      class="btn btn-outline-info m-1"
+                      @click="editClipTime(time)"
+                    >
+                      <i class="far fa-edit"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-outline-danger m-1"
+                      @click="removeClipTime(time)"
+                    >
+                      <i class="far fa-trash-alt"></i>
+                    </button>
+                  </li>
+                </ul>
+              </div>
             </div>
+            <button
+              type="button"
+              class="btn btn-danger btn-lg btn-block my-2"
+              @click="cancelManualEditor"
+            >取消</button>
+            <button type="button" class="btn btn-success btn-lg btn-block my-2">完成剪輯</button>
           </div>
-          <button
-            type="button"
-            class="btn btn-danger btn-lg btn-block my-2"
-            @click="cancelManualEditor"
-          >取消</button>
-          <button type="button" class="btn btn-success btn-lg btn-block my-2">完成剪輯</button>
         </div>
+      </div>
+
+      <div v-show="vodAnalysisSendStatusShow" class="row justify-content-center m-2">
+        <div v-if="vodAnalysisSendStatus === 'Loading'">
+          <div class="spinner-border text-secondary" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+        <div v-else-if="vodAnalysisSendStatus === 'Success'" class="alert alert-info" role="alert">
+          <p class="text-center my-2 py-2">
+            <span>我們已收到您的分析請求！將會在分析完成後通知您！</span>
+            <br />
+            <span>你的ID：{{ videoHighlightId }}</span>
+            <br />
+            <b-link :to="'/highlight/' + videoHighlightId" target="_blank">精華連結</b-link>
+          </p>
+        </div>
+        <div v-else-if="vodAnalysisSendStatus === 'Error'" class="alert alert-danger" role="alert">
+          <p class="text-center my-2 py-2">
+            <span>很抱歉！分析影片失敗 請重新嘗試！</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- 分析結果顯示 -->
+      <div id="videoResult" class="card my-2" v-if="videoResult">
+        <h5 class="card-header">分析結果精華影片</h5>
+        <HighlightList
+          :vod_id="analyseVideos.vod_id"
+          :highlight_id="analyseVideos.highlight_id"
+          :channel_id="analyseVideos.channel_id"
+          :streamerName="analyseVideos.streamerName"
+          :game="analyseVideos.game"
+          :youtube_url="analyseVideos.youtube_url"
+          :avg_score="analyseVideos.avg_score"
+          :memo="analyseVideos.memo"
+        ></HighlightList>
       </div>
     </div>
 
-    <div v-show="vodAnalysisSendStatusShow" class="row justify-content-center m-2">
-      <div v-if="vodAnalysisSendStatus === 'Loading'">
-        <div class="spinner-border text-secondary" role="status">
-          <span class="sr-only">Loading...</span>
+    <div v-else-if="!inputBar">
+      <!-- 精華影片搜尋顯示 -->
+      <div v-show="highlightShow">
+        <div v-if="highlightSearch === 'Loading'" class="d-flex justify-content-center my-2">
+          <div class="spinner-border text-secondary" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+        <div v-else-if="highlightSearch === 'Find'" class="card my-2">
+          <h5 class="card-header">精華搜尋結果</h5>
+          <HighlightList
+            v-for="searchVideo in searchVideos"
+            :key="searchVideo.index"
+            :vod_id="searchVideo.vod_id"
+            :highlight_id="searchVideo.highlight_id"
+            :channel_id="searchVideo.channel_id"
+            :streamerName="searchVideo.streamerName"
+            :game="searchVideo.game"
+            :youtube_url="searchVideo.youtube_url"
+            :avg_score="searchVideo.avg_score"
+            :memo="searchVideo.memo"
+          ></HighlightList>
+        </div>
+        <div v-else class="alert alert-danger" role="alert">
+          <p class="text-center my-2 py-2">
+            <span>很抱歉！找不到您要搜尋的精華影片！</span>
+          </p>
         </div>
       </div>
-      <div v-else-if="vodAnalysisSendStatus === 'Success'" class="alert alert-info" role="alert">
-        <p class="text-center my-2 py-2">
-          <span>我們已收到您的分析請求！將會在分析完成後通知您！</span>
-          <br />
-          <span>你的ID：{{ videoHighlightId }}</span>
-          <br />
-          <b-link :to="'/highlight/' + videoHighlightId" target="_blank">精華連結</b-link>
-        </p>
-      </div>
-      <div v-else-if="vodAnalysisSendStatus === 'Error'" class="alert alert-danger" role="alert">
-        <p class="text-center my-2 py-2">
-          <span>很抱歉！分析影片失敗 請重新嘗試！</span>
-        </p>
-      </div>
-    </div>
-
-    <!-- 分析結果顯示 -->
-    <div id="videoResult" class="card my-2" v-if="videoResult">
-      <h5 class="card-header">分析結果精華影片</h5>
-      <HighlightList
-        :vod_id="analyseVideos.vod_id"
-        :highlight_id="analyseVideos.highlight_id"
-        :channel_id="analyseVideos.channel_id"
-        :streamerName="analyseVideos.streamerName"
-        :game="analyseVideos.game"
-        :youtube_url="analyseVideos.youtube_url"
-        :avg_score="analyseVideos.avg_score"
-        :memo="analyseVideos.memo"
-      ></HighlightList>
     </div>
     <br />
     <hr />
@@ -311,12 +321,6 @@
 <script>
 import HighlightList from "@/components/HighlightList.vue";
 
-var vodShow = false;
-var vodAnalysisBtnShow = false;
-var vodAnalysisSendStatusShow = false;
-var videoResult = false;
-var active = true;
-var highlightShow = false;
 export default {
   name: "demo",
   data() {
@@ -576,30 +580,6 @@ export default {
     editClipTime: function (time) {
       this.startTime = time.start;
       this.endTime = time.end;
-    },
-    changeBar: function (type) {
-      if (type === "create" && !this.inputBar) {
-        highlightShow = this.highlightShow;
-        this.vodShow = vodShow;
-        this.vodAnalysisBtnShow = vodAnalysisBtnShow;
-        this.vodAnalysisSendStatusShow = vodAnalysisSendStatusShow;
-        this.videoResult = videoResult;
-        this.active = active;
-        this.highlightShow = false;
-        this.inputBar = !this.inputBar;
-      } else if (type === "search" && this.inputBar) {
-        this.highlightShow = highlightShow;
-        vodShow = this.vodShow;
-        vodAnalysisBtnShow = this.vodAnalysisBtnShow;
-        vodAnalysisSendStatusShow = this.vodAnalysisSendStatusShow;
-        videoResult = this.videoResult;
-        this.vodShow = false;
-        this.vodAnalysisBtnShow = false;
-        this.vodAnalysisSendStatusShow = false;
-        this.videoResult = false;
-        this.active = false;
-        this.inputBar = !this.inputBar;
-      }
     },
   },
   computed: {
