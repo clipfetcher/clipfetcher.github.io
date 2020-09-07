@@ -602,11 +602,16 @@ export default {
       this.vodShow = true;
     },
     addClipTime: function () {
-      let time = {
-        start: this.startTime,
-        end: this.endTime,
-      };
-      this.clip_time.push(time);
+      let reg = /\d*:[0-5][0-9]:[0-5][0-9]/;
+      if (reg.test(this.startTime) && reg.test(this.endTime)) {
+        let time = {
+          start: this.startTime,
+          end: this.endTime,
+        };
+        this.clip_time.push(time);
+      } else {
+        window.alert("時間格式錯誤 應為HH:MM:SS");
+      }
     },
     removeClipTime: function (time) {
       this.clip_time.pop(time);
