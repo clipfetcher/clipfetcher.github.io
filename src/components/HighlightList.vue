@@ -13,22 +13,24 @@
         </div>
       </div>
       <div class="col-12 col-md-8">
-        <a
-          :href="'https://www.twitch.tv/videos/' + vod_id"
-          target="_blank"
-          class="card-link float-right"
+        <b-dropdown
+          size="lg"
+          variant="link"
+          toggle-class="text-decoration-none"
+          class="float-right"
+          no-caret
         >
-          <i class="fas fa-link fa-lg" data-toggle="tooltip" title="VOD網址"></i>
-        </a>
-        <b-link
-          :to="'/highlight/' + highlight_id"
-          target="_blank"
-          class="card-link float-right pr-2"
-        >
-          <i class="fas fa-share-square fa-lg" data-toggle="tooltip" title="精華連結"></i>
-        </b-link>
-        <p class="text-left m-0">ID：{{ vod_id }}</p>
-        <p class="text-left m-0">Highlight：{{ highlight_id }}</p>
+          <template v-slot:button-content>
+            <i class="fas fa-chevron-circle-down"></i>
+          </template>
+          <b-dropdown-item :href="'https://www.twitch.tv/videos/' + vod_id" target="_blank">
+            <i class="fas fa-link fa-lg m-1" data-toggle="tooltip" title="VOD網址"></i> 原始鏈結
+          </b-dropdown-item>
+          <b-dropdown-item :to="'/highlight/' + highlight_id" target="_blank">
+            <i class="fas fa-share-square fa-lg m-1" data-toggle="tooltip" title="精華連結"></i> 精華頁面
+          </b-dropdown-item>
+        </b-dropdown>
+        <p class="text-left m-0">標題：{{ memo }}</p>
         <p class="text-left m-0">
           實況主：
           <b-link
@@ -41,7 +43,8 @@
           <b-link :to="'/results?game=' + game" @click.prevent="gameSearch">{{ game }}</b-link>
         </p>
         <p class="text-left m-0">目前分數：{{ avg_score }}</p>
-        <p class="text-left m-0">備註：{{ memo }}</p>
+        <p class="text-left m-0">建立者：</p>
+        <p class="text-left m-0">觀看次數：</p>
         <b-button
           v-show="!haveAppraise"
           @click="appraiseModalShow = !appraiseModalShow"
@@ -131,7 +134,7 @@ export default {
     "game",
     "youtube_url",
     "avg_score",
-    "memo"
+    "memo",
   ],
   data() {
     return {
@@ -144,24 +147,24 @@ export default {
       videoLong: false,
       analysisLong: false,
       validationText: false,
-      haveAppraise: false
+      haveAppraise: false,
     };
   },
   methods: {
-    mouseOverRrating: function(val) {
+    mouseOverRrating: function (val) {
       this.temp_starRating = this.starRating;
       this.starRating = val;
     },
-    mouseOutRrating: function() {
+    mouseOutRrating: function () {
       if (!this.isRating) this.starRating = 4;
       else this.starRating = this.temp_starRating;
       this.temp_starRating = 0;
     },
-    clickRating: function(val) {
+    clickRating: function (val) {
       this.starRating = this.temp_starRating = val;
       this.isRating = true;
     },
-    textButton: function(button) {
+    textButton: function (button) {
       let output = "";
       if (button == "notAccurate") {
         this.notAccurate = !this.notAccurate;
@@ -181,14 +184,14 @@ export default {
       }
       this.text = output;
     },
-    checkText: function() {
+    checkText: function () {
       if (this.text == "" || this.text == null) {
         this.validationText = true;
       } else {
         this.validationText = false;
       }
     },
-    appraise: function() {
+    appraise: function () {
       let vm = this;
       if (this.text == "" || this.text == null) {
         this.validationText = true;
@@ -198,44 +201,44 @@ export default {
           .post(process.env.VUE_APP_ROOT_API + "/api/vod/appraise", {
             highlight_id: this.highlight_id,
             text: this.text,
-            score: this.starRating
+            score: this.starRating,
           })
-          .then(response => {
+          .then((response) => {
             vm.response = response;
             vm.haveAppraise = true;
           })
-          .catch(function(error) {
+          .catch(function (error) {
             console.log(error);
           });
         this.appraiseModalShow = !this.appraiseModalShow;
       }
     },
-    channelSearch: function() {
+    channelSearch: function () {
       this.$router.push({
         name: "HighlightSearch",
-        query: { channel_id: this.channel_id }
+        query: { channel_id: this.channel_id },
       });
       if (this.$router.currentRoute.name === "HighlightSearch") {
         this.$router.go(0);
       }
     },
-    gameSearch: function() {
+    gameSearch: function () {
       this.$router.push({
         name: "HighlightSearch",
-        query: { game: this.game }
+        query: { game: this.game },
       });
       if (this.$router.currentRoute.name === "HighlightSearch") {
         this.$router.go(0);
       }
-    }
+    },
   },
   computed: {
-    youtube_embed: function() {
+    youtube_embed: function () {
       let vodData = this.youtube_url;
       vodData = vodData.split("=");
       let url = vodData[1];
       return "https://www.youtube.com/embed/" + url + "?rel=0";
-    }
-  }
+    },
+  },
 };
 </script>
