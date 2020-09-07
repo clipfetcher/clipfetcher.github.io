@@ -178,7 +178,14 @@
           </div>
           <div class="col-12 col-md-4">
             <div class="card">
-              <div class="card-header">目前片段</div>
+              <div class="card-header">
+                目前片段
+                <span
+                  v-if="clip_totalTime <= 20"
+                  style="float:right"
+                >累積時間 {{ clip_totalTime }} 分鐘</span>
+                <span v-else style="float:right;color:red">累積時間 {{ clip_totalTime }} 分鐘</span>
+              </div>
               <div class="card-body overflow-auto" style="height: 340px; max-height: 340px;">
                 <ul>
                   <li v-for="time in clip_timeSort" :key="time.index">
@@ -546,9 +553,26 @@ export default {
     manualEditor: function () {
       this.checkHighlightTitle();
       if (this.titleValid) {
-        this.vodShow = false;
-        this.vodAnalysisBtnShow = false;
-        this.manualEditorShow = true;
+        this.axios
+          .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
+            params: {
+              vod_id: this.vod_id,
+              highlight_id: null,
+              game: null,
+              channel_id: null,
+            },
+          })
+          .then((response) => {
+            if (response.data != "") {
+              window.confirm("發現已分析過資料 是否載入時間軸");
+            }
+            this.vodShow = false;
+            this.vodAnalysisBtnShow = false;
+            this.manualEditorShow = true;
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
       }
     },
     cancelManualEditor: function () {
@@ -594,6 +618,23 @@ export default {
 
       let arr = this.clip_time;
       return arr.sort(compare);
+    },
+    clip_totalTime: function () {
+      let total = 0;
+      let arr = this.clip_time;
+      arr.forEach((element) => {
+        let start = element.start.split(":");
+        let end = element.end.split(":");
+        let startSec =
+          parseInt(start[0] * 60 * 60) +
+          parseInt(start[1] * 60) +
+          parseInt(start[2]);
+        let endSec =
+          parseInt(end[0] * 60 * 60) + parseInt(end[1] * 60) + parseInt(end[2]);
+        let diff = Math.abs(endSec - startSec);
+        total += diff / 60;
+      });
+      return total.toFixed(2);
     },
   },
 };
