@@ -1,7 +1,13 @@
 <template>
   <div>
-    <span>this is appraise</span>
-    <b-table striped hover :items="appraiseList"></b-table>
+    <br />
+    <b-table striped hover :items="appraiseList" :fields="fields">
+      <template v-slot:cell(manage)>
+        <b-button size="sm" class="mr-2">
+          <i class="fas fa-mail-bulk"></i> 聯繫用戶
+        </b-button>
+      </template>
+    </b-table>
   </div>
 </template>
 
@@ -10,6 +16,7 @@ export default {
   name: "appraise",
   data() {
     return {
+      fields: ["mail", "content", "manage"],
       appraiseList: null,
     };
   },
