@@ -69,6 +69,27 @@
     </div>
 
     <div v-if="inputBar">
+      <!--使用教學-->
+      <div class="my-2">
+        <b-card-group deck>
+          <b-card title="Step 1">
+            <b-card-text>輸入您想分析的 Twitch 直播影片網址</b-card-text>
+          </b-card>
+
+          <b-card title="Step 2">
+            <b-card-text>確認影片正確後點擊自動分析/手動剪輯</b-card-text>
+          </b-card>
+
+          <b-card title="Step 3">
+            <b-card-text>等待本系統處理您的精華影片</b-card-text>
+          </b-card>
+
+          <b-card title="Step 4">
+            <b-card-text>分析完成後即可觀看您的精華影片</b-card-text>
+          </b-card>
+        </b-card-group>
+      </div>
+
       <!-- 影片紀錄檔顯示 -->
       <div class="row justify-content-center" v-show="vodShow">
         <div class="col-12 col-md-8">
