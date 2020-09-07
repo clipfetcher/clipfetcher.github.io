@@ -438,7 +438,11 @@ export default {
             "&autoplay=false&parent=" +
             window.location.hostname;
           vm.vod_id = vid;
-          this.checkDuplicate(vm);
+          vm.vodValid = true;
+          vm.vodLoadBtn = "reload";
+          vm.videoResult = false;
+          vm.vodShow = true;
+          vm.vodAnalysisBtnShow = true;
         })
         .catch(function (error) {
           console.log(error);
@@ -454,23 +458,43 @@ export default {
       let vm = this;
       this.checkHighlightTitle();
       if (this.titleValid) {
-        this.vodAnalysisBtnShow = false;
-        this.vodAnalysisSendStatusShow = true;
-        this.vodAnalysisSendStatus = "Loading";
         this.axios
-          .post(process.env.VUE_APP_ROOT_API + "/api/vod", {
-            vod_id: this.vod_id,
-            memo: this.highlightTitle,
+          .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
+            params: {
+              vod_id: vm.vod_id,
+              highlight_id: null,
+              game: null,
+              channel_id: null,
+            },
           })
           .then((response) => {
-            vm.vodAnalysisSendStatus = "Success";
-            this.highlightTitle = "";
-            this.videoHighlightId = response.data.highlight_id;
+            if (response.data != "") {
+              vm.titleValid = false;
+              vm.titleErrorFeedback =
+                "Vod's Id or VOD's URL is duplicate! You can search the highlight on our website.";
+            } else {
+              vm.vodAnalysisBtnShow = false;
+              vm.vodAnalysisSendStatusShow = true;
+              vm.vodAnalysisSendStatus = "Loading";
+              vm.axios
+                .post(process.env.VUE_APP_ROOT_API + "/api/vod", {
+                  vod_id: vm.vod_id,
+                  memo: vm.highlightTitle,
+                })
+                .then((response) => {
+                  vm.vodAnalysisSendStatus = "Success";
+                  vm.highlightTitle = "";
+                  vm.videoHighlightId = response.data.highlight_id;
+                })
+                .catch(function (error) {
+                  console.log(error);
+                  vm.vodAnalysisBtnShow = true;
+                  vm.vodAnalysisSendStatus = "Error";
+                });
+            }
           })
           .catch(function (error) {
             console.log(error);
-            vm.vodAnalysisBtnShow = true;
-            vm.vodAnalysisSendStatus = "Error";
           });
       }
     },
@@ -518,41 +542,6 @@ export default {
         this.titleValid = false;
         this.titleErrorFeedback = "Input cannot be empty.";
       } else this.titleValid = true;
-    },
-    checkDuplicate: function (vm) {
-      this.axios
-        .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
-          params: {
-            vod_id: vm.vod_id,
-            highlight_id: null,
-            game: null,
-            channel_id: null,
-          },
-        })
-        .then((response) => {
-          if (response.data != "") {
-            vm.vodValid = false;
-            vm.vodErrorData =
-              "Vod's Id or VOD's URL is duplicate! You can search the highlight on our website.";
-          } else {
-            vm.vodValid = true;
-            vm.vodLoadBtn = "reload";
-            vm.videoResult = false;
-            vm.vodShow = true;
-            vm.vodAnalysisBtnShow = true;
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-          vm.highlightSearch = "Error";
-          //---
-          vm.vodValid = true;
-          vm.vodLoadBtn = "reload";
-          vm.videoResult = false;
-          vm.vodShow = true;
-          vm.vodAnalysisBtnShow = true;
-          //---
-        });
     },
     manualEditor: function () {
       this.checkHighlightTitle();
