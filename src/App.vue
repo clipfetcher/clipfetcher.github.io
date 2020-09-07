@@ -21,6 +21,7 @@
           <b-nav-item to="/home">Vue Home</b-nav-item>
           <b-nav-item to="/axios">Axios</b-nav-item>
           <b-nav-item to="/test">TestComponent</b-nav-item>
+          <b-nav-item to="/admin">Admin</b-nav-item>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>

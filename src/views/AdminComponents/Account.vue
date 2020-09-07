@@ -1,6 +1,6 @@
 <template>
   <div>
-    <span>this is account</span>
+    <span>帳號管理頁面</span>
   </div>
 </template>
 
