@@ -602,7 +602,7 @@ export default {
       this.vodShow = true;
     },
     addClipTime: function () {
-      let reg = /[0-9]{2,3}*:[0-5][0-9]:[0-5][0-9]/;
+      let reg = /[0-9]{2,3}:[0-5][0-9]:[0-5][0-9]/;
       if (reg.test(this.startTime) && reg.test(this.endTime)) {
         let time = {
           start: this.startTime,
