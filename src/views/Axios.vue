@@ -9,6 +9,9 @@
     <p>{{ vod }}</p>
     <button class="btn btn-primary m-1" @click="tryApi_twitch()">Test_Twitch_api</button>
     <p>{{ api_test_twitch }}</p>
+    <button class="btn btn-primary m-1" @click="tryApi_jwtLogin()">Test_jwtLogin</button>
+    <p>{{ api_test_jwtLogin }}</p>
+    <p>token:{{ token }}</p>
     <h2 class="text-success">vod_post</h2>
     <button class="btn btn-primary m-1" @click="tryApi_1()">Test</button>
     <p>{{ api_test_1 }}</p>
@@ -68,6 +71,7 @@ export default {
       score: 0,
       mail: "",
       content: "",
+      token: "",
       api_test_1: null,
       api_test_2: null,
       api_test_3: null,
@@ -75,17 +79,18 @@ export default {
       api_test_5: null,
       api_test_6: null,
       api_test_7: null,
-      api_test_twitch: null
+      api_test_twitch: null,
+      api_test_jwtLogin: null,
     };
   },
   methods: {
     tryApi_1() {
       this.axios
         .post(process.env.VUE_APP_ROOT_API + "/api/vod", {
-          vod_id: this.vod
+          vod_id: this.vod,
         })
-        .then(response => (this.api_test_1 = response))
-        .catch(function(error) {
+        .then((response) => (this.api_test_1 = response))
+        .catch(function (error) {
           console.log(error);
         });
     },
@@ -93,31 +98,31 @@ export default {
       this.axios
         .get(process.env.VUE_APP_ROOT_API + "/api/vod", {
           params: {
-            vod_id: this.vod
-          }
+            vod_id: this.vod,
+          },
         })
-        .then(response => (this.api_test_2 = response.data))
-        .catch(function(error) {
+        .then((response) => (this.api_test_2 = response.data))
+        .catch(function (error) {
           console.log(error.response);
         });
     },
     tryApi_3() {
       this.axios
         .post(process.env.VUE_APP_ROOT_API + "/api/vod/check", {
-          vod_id: this.vod
+          vod_id: this.vod,
         })
-        .then(response => (this.api_test_3 = response))
-        .catch(function(error) {
+        .then((response) => (this.api_test_3 = response))
+        .catch(function (error) {
           console.log(error);
         });
     },
     tryApi_4() {
       this.axios
         .post(process.env.VUE_APP_ROOT_API + "/api/vod/status", {
-          vod_id: this.vod
+          vod_id: this.vod,
         })
-        .then(response => (this.api_test_4 = response.data))
-        .catch(function(error) {
+        .then((response) => (this.api_test_4 = response.data))
+        .catch(function (error) {
           console.log(error);
         });
     },
@@ -125,11 +130,11 @@ export default {
       this.axios
         .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
           params: {
-            highlight_id: this.vod
-          }
+            highlight_id: this.vod,
+          },
         })
-        .then(response => (this.api_test_5 = response.data))
-        .catch(function(error) {
+        .then((response) => (this.api_test_5 = response.data))
+        .catch(function (error) {
           console.log(error);
         });
     },
@@ -138,10 +143,10 @@ export default {
         .post(process.env.VUE_APP_ROOT_API + "/api/vod/appraise", {
           highlight_id: this.vod,
           text: this.text,
-          score: this.score
+          score: this.score,
         })
-        .then(response => (this.api_test_6 = response))
-        .catch(function(error) {
+        .then((response) => (this.api_test_6 = response))
+        .catch(function (error) {
           console.log(error);
         });
     },
@@ -149,12 +154,22 @@ export default {
       this.axios
         .post(process.env.VUE_APP_ROOT_API + "/api/opinion", {
           mail: this.mail,
-          content: this.content
+          content: this.content,
         })
-        .then(response => (this.api_test_7 = response))
-        .catch(function(error) {
+        .then((response) => (this.api_test_7 = response))
+        .catch(function (error) {
           console.log(error);
         });
+    },
+    tryApi_jwtLogin() {
+      let token = "QWERTY";
+
+      this.$store.dispatch("auth/setAuth", {
+        token: token,
+        isLogin: true,
+      });
+
+      this.token = this.$store.state.auth.token;
     },
     tryApi_twitch() {
       this.axios
@@ -162,16 +177,16 @@ export default {
           baseURL: "https://api.twitch.tv/kraken/",
           headers: {
             Accept: "application/vnd.twitchtv.v5+json",
-            "Client-ID": "ildytfqanhzvdaprp96m5rkylap16k"
-          }
+            "Client-ID": "ildytfqanhzvdaprp96m5rkylap16k",
+          },
         })
         .get("videos/" + this.vod)
-        .then(response => (this.api_test_twitch = response))
-        .catch(function(error) {
+        .then((response) => (this.api_test_twitch = response))
+        .catch(function (error) {
           console.log(error);
         });
-    }
-  }
+    },
+  },
 };
 </script>
 
