@@ -9,9 +9,18 @@
     <p>{{ vod }}</p>
     <button class="btn btn-primary m-1" @click="tryApi_twitch()">Test_Twitch_api</button>
     <p>{{ api_test_twitch }}</p>
+    <div class="form-group">
+      <label>token:</label>
+      <br />
+      <input type="text" name="token" v-model="token" />
+      <br />
+      <button class="btn btn-primary m-1" @click="getToken()">Get_Token</button>
+      <button class="btn btn-primary m-1" @click="editToken()">Edit_Token</button>
+    </div>
     <button class="btn btn-primary m-1" @click="tryApi_jwtLogin()">Test_jwtLogin</button>
-    <p>{{ api_test_jwtLogin }}</p>
-    <p>token:{{ token }}</p>
+    <button class="btn btn-primary m-1" @click="tryApi_jwtLogout()">Test_jwtLogout</button>
+    <button class="btn btn-primary m-1" @click="tryApi_jwtToken()">Test_jwtToken</button>
+    <p>{{ api_test_jwtToken }}</p>
     <h2 class="text-success">vod_post</h2>
     <button class="btn btn-primary m-1" @click="tryApi_1()">Test</button>
     <p>{{ api_test_1 }}</p>
@@ -80,7 +89,7 @@ export default {
       api_test_6: null,
       api_test_7: null,
       api_test_twitch: null,
-      api_test_jwtLogin: null,
+      api_test_jwtToken: null,
     };
   },
   methods: {
@@ -161,12 +170,48 @@ export default {
           console.log(error);
         });
     },
-    tryApi_jwtLogin() {
-      let token = "QWERTY";
-
+    getToken() {
+      this.token = this.$store.state.auth.token;
+    },
+    editToken() {
       this.$store.dispatch("auth/setAuth", {
-        token: token,
+        token: this.token,
         isLogin: true,
+      });
+    },
+    tryApi_jwtLogin() {
+      this.axios
+        .post("http://localhost:3000/api/auth")
+        .then((response) => {
+          let token = response.data.token;
+          this.$store.dispatch("auth/setAuth", {
+            token: token,
+            isLogin: true,
+          });
+
+          this.token = this.$store.state.auth.token;
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    tryApi_jwtToken() {
+      let vm = this;
+      this.api_test_jwtToken = "";
+      this.axios
+        .post("http://localhost:3000/api/testToken", {
+          token: this.$store.state.auth.token,
+        })
+        .then((response) => (this.api_test_jwtToken = response.data))
+        .catch(function (error) {
+          vm.api_test_jwtToken = error.response.data;
+          console.log(error);
+        });
+    },
+    tryApi_jwtLogout() {
+      this.$store.dispatch("auth/setAuth", {
+        token: "",
+        isLogin: false,
       });
 
       this.token = this.$store.state.auth.token;
