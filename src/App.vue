@@ -18,13 +18,16 @@
 
       <b-collapse id="navbar-toggle-collapse" is-nav>
         <b-navbar-nav class="ml-auto">
-          <b-nav-item>
+          <b-nav-item v-if="!isLogin">
             <b-button
               @click="accountModalShow = !accountModalShow;accountModalTitle = '登入'"
               size="sm"
               class="my-2 my-sm-0"
               variant="info"
             >Login</b-button>
+          </b-nav-item>
+          <b-nav-item v-else>
+            <b-button @click="logout" size="sm" class="my-2 my-sm-0" variant="info">Logout</b-button>
           </b-nav-item>
           <b-nav-item to="/home">Vue Home</b-nav-item>
           <b-nav-item to="/axios">Axios</b-nav-item>
@@ -87,123 +90,141 @@
 
         <b-modal v-model="accountModalShow" :title="accountModalTitle" hide-footer>
           <!--登入-->
-          <form v-if="accountModalTitle==='登入'" @submit.prevent="login">
-            <div class="form-group">
-              <label for="loginAccount">帳號：</label>
-              <input
-                type="text"
-                class="form-control"
-                :class="loginAccountError?'is-invalid':''"
-                id="loginAccount"
-                v-model="loginAccount"
-              />
-              <div class="invalid-feedback">{{ loginAccountErrorText }}</div>
-            </div>
-            <div class="form-group">
-              <label for="loginPassword">密碼：</label>
-              <input
-                type="text"
-                class="form-control"
-                :class="loginPasswordError?'is-invalid':''"
-                id="loginPassword"
-                v-model="loginPassword"
-                aria-describedby="loginPasswordHelp"
-              />
-              <div class="invalid-feedback">{{ loginPasswordErrorText }}</div>
-              <small id="loginPasswordHelp" class="form-text">
-                <b-link @click="accountModalTitle='忘記密碼'">忘記密碼</b-link>
-              </small>
-            </div>
-            <div class="form-group">
-              <span>
-                還沒有帳號嗎？
-                <b-link @click="accountModalTitle='註冊'">註冊帳號</b-link>
-              </span>
-              <button type="submit" class="btn btn-primary float-right">登入</button>
-            </div>
-          </form>
+          <div v-if="accountModalTitle==='登入'">
+            <form @submit.prevent="login">
+              <div class="form-group">
+                <label for="loginAccount">帳號：</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  :class="loginAccountError?'is-invalid':''"
+                  id="loginAccount"
+                  v-model="loginAccount"
+                />
+                <div class="invalid-feedback">{{ loginAccountErrorText }}</div>
+              </div>
+              <div class="form-group">
+                <label for="loginPassword">密碼：</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  :class="loginPasswordError?'is-invalid':''"
+                  id="loginPassword"
+                  v-model="loginPassword"
+                  aria-describedby="loginPasswordHelp"
+                />
+                <div class="invalid-feedback">{{ loginPasswordErrorText }}</div>
+                <small id="loginPasswordHelp" class="form-text">
+                  <b-link @click="accountModalTitle='忘記密碼'">忘記密碼</b-link>
+                </small>
+              </div>
+              <div class="form-group">
+                <span>
+                  還沒有帳號嗎？
+                  <b-link @click="accountModalTitle='註冊';signupSuccess=false;signupFail=false;">註冊帳號</b-link>
+                </span>
+                <button type="submit" class="btn btn-primary float-right">登入</button>
+              </div>
+            </form>
+          </div>
 
           <!--註冊-->
-          <form v-else-if="accountModalTitle==='註冊'" @submit.prevent="signup">
-            <div class="form-group">
-              <span>
-                已經有帳號了嗎？
-                <b-link @click="accountModalTitle='登入'">登入帳號</b-link>
-              </span>
-            </div>
-            <div class="form-group">
-              <label for="signupAccount">帳號：</label>
-              <input
-                type="text"
-                class="form-control"
-                :class="signupAccountError?'is-invalid':''"
-                id="signupAccount"
-                v-model="signupAccount"
-              />
-              <div class="invalid-feedback">{{ signupAccountErrorText }}</div>
-            </div>
-            <div class="form-group">
-              <label for="signupMail">電子信箱：</label>
-              <input
-                type="text"
-                class="form-control"
-                :class="signupMailError?'is-invalid':''"
-                id="signupMail"
-                v-model="signupMail"
-              />
-              <div class="invalid-feedback">{{ signupMailErrorText }}</div>
-            </div>
-            <div class="form-group">
-              <label for="signupPassword">設定密碼</label>
-              <input
-                type="text"
-                class="form-control"
-                :class="signupPasswordError?'is-invalid':''"
-                id="signupPassword"
-                v-model="signupPassword"
-              />
-              <div class="invalid-feedback">{{ signupPasswordErrorText }}</div>
-            </div>
-            <div class="form-group">
-              <label for="signupCheckPassword">確認密碼</label>
-              <input
-                type="text"
-                class="form-control"
-                :class="signupCheckPasswordError?'is-invalid':''"
-                id="signupCheckPassword"
-                v-model="signupCheckPassword"
-              />
-              <div class="invalid-feedback">{{ signupCheckPasswordErrorText }}</div>
-            </div>
-            <div class="form-group">
-              <p class="text-center">
-                點擊註冊及代表您已閱讀並了解
-                <b-link>服務條款</b-link>及
-                <b-link>隱私權聲明</b-link>
-              </p>
-              <p class="text-center">
-                <button type="submit" class="btn btn-primary">註冊</button>
+          <div v-else-if="accountModalTitle==='註冊'">
+            <div v-if="signupSuccess" class="alert alert-success" role="alert">
+              <p class="text-center my-2 py-2">
+                <span>驗證信已寄出 請至註冊時填寫的信箱查看!</span>
               </p>
             </div>
-          </form>
+            <div v-else>
+              <form @submit.prevent="signup">
+                <div class="form-group">
+                  <span>
+                    已經有帳號了嗎？
+                    <b-link @click="accountModalTitle='登入'">登入帳號</b-link>
+                  </span>
+                </div>
+                <div v-if="signupFail" class="alert alert-danger" role="alert">
+                  <p class="text-center m-0">
+                    <span>帳號已被註冊!</span>
+                  </p>
+                </div>
+                <div class="form-group">
+                  <label for="signupAccount">帳號：</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    :class="signupAccountError?'is-invalid':''"
+                    id="signupAccount"
+                    v-model="signupAccount"
+                  />
+                  <div class="invalid-feedback">{{ signupAccountErrorText }}</div>
+                </div>
+                <div class="form-group">
+                  <label for="signupMail">電子信箱：</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    :class="signupMailError?'is-invalid':''"
+                    id="signupMail"
+                    v-model="signupMail"
+                  />
+                  <div class="invalid-feedback">{{ signupMailErrorText }}</div>
+                </div>
+                <div class="form-group">
+                  <label for="signupPassword">設定密碼</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    :class="signupPasswordError?'is-invalid':''"
+                    id="signupPassword"
+                    v-model="signupPassword"
+                  />
+                  <div class="invalid-feedback">{{ signupPasswordErrorText }}</div>
+                </div>
+                <div class="form-group">
+                  <label for="signupCheckPassword">確認密碼</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    :class="signupCheckPasswordError?'is-invalid':''"
+                    id="signupCheckPassword"
+                    v-model="signupCheckPassword"
+                  />
+                  <div class="invalid-feedback">{{ signupCheckPasswordErrorText }}</div>
+                </div>
+                <div class="form-group">
+                  <p class="text-center">
+                    點擊註冊及代表您已閱讀並了解
+                    <b-link>服務條款</b-link>及
+                    <b-link>隱私權聲明</b-link>
+                  </p>
+                  <p class="text-center">
+                    <button type="submit" class="btn btn-primary">註冊</button>
+                  </p>
+                </div>
+              </form>
+            </div>
+          </div>
 
           <!--忘記密碼-->
-          <form v-else-if="accountModalTitle==='忘記密碼'" @submit.prevent="forgotPassword">
-            <div class="form-group">
-              <label for="forgotPasswordId">請輸入帳號或電子信箱：</label>
-              <input
-                type="text"
-                class="form-control"
-                :class="forgotPasswordIdError?'is-invalid':''"
-                id="forgotPasswordId"
-                v-model="forgotPasswordId"
-              />
-              <div class="invalid-feedback">{{ forgotPasswordIdErrorText }}</div>
-            </div>
-            <div class="form-group">
-              <button type="submit" class="btn btn-primary float-right">傳送驗證信件</button>
-            </div>
-          </form>
+          <div v-else-if="accountModalTitle==='忘記密碼'">
+            <form @submit.prevent="forgotPassword">
+              <div class="form-group">
+                <label for="forgotPasswordId">請輸入帳號或電子信箱：</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  :class="forgotPasswordIdError?'is-invalid':''"
+                  id="forgotPasswordId"
+                  v-model="forgotPasswordId"
+                />
+                <div class="invalid-feedback">{{ forgotPasswordIdErrorText }}</div>
+              </div>
+              <div class="form-group">
+                <button type="submit" class="btn btn-primary float-right">傳送驗證信件</button>
+              </div>
+            </form>
+          </div>
         </b-modal>
       </div>
     </footer>
@@ -247,12 +268,15 @@ export default {
       signupPasswordError: false,
       signupCheckPasswordErrorText: "",
       signupCheckPasswordError: false,
+      signupSuccess: false,
+      signupFail: false,
       //account-forgotPassword
       forgotPasswordId: "",
       forgotPasswordIdErrorText: "",
       forgotPasswordIdError: false,
 
       response: null,
+      modalResponse: null,
     };
   },
   methods: {
@@ -303,9 +327,66 @@ export default {
         this.content = "";
       }
     },
-    login: function () {},
-    signup: function () {},
+    login: function () {
+      this.axios
+        .post(process.env.VUE_APP_ROOT_API + "/api/user/login", {
+          account: this.loginAccount,
+          password: this.loginPassword,
+        })
+        .then((response) => {
+          this.loginAccount = "";
+          this.loginPassword = "";
+
+          let token = response.data.token;
+          this.$store.dispatch("auth/setAuth", {
+            token: token,
+            isLogin: true,
+          });
+          this.accountModalShow = false;
+          window.alert("login success!");
+        })
+        .catch(function (error) {
+          console.log(error);
+          window.alert("login fail!");
+        });
+    },
+    logout: function () {
+      this.$store.dispatch("auth/setAuth", {
+        token: "",
+        isLogin: false,
+      });
+      window.alert("logout success!");
+    },
+    signup: function () {
+      let vm = this;
+      this.axios
+        .post(process.env.VUE_APP_ROOT_API + "/api/user/signup", {
+          account: this.signupAccount,
+          email: this.signupMail,
+          password: this.signupPassword,
+        })
+        .then(() => {
+          this.signupAccount = "";
+          this.signupMail = "";
+          this.signupPassword = "";
+          this.signupCheckPassword = "";
+          this.signupSuccess = true;
+        })
+        .catch(function (error) {
+          console.log(error);
+          vm.signupAccount = "";
+          vm.signupMail = "";
+          vm.signupPassword = "";
+          vm.signupCheckPassword = "";
+          vm.signupFail = true;
+        });
+    },
     forgotPassword: function () {},
+  },
+  computed: {
+    isLogin: function () {
+      return this.$store.state.auth.isLogin;
+    },
   },
 };
 </script>

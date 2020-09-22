@@ -114,6 +114,15 @@ const routes = [
     component: () => import('../views/HighlightSearch.vue')
   },
   {
+    path: '/certificate/:certificate_token',
+    name: 'Certificate',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import('../views/Certificate.vue'),
+    props: true,
+  },
+  {
     path: '/admin',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
