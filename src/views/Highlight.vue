@@ -68,7 +68,7 @@ export default {
     return {
       highlightPage: "Loading",
       highlightVideo: null,
-      analysisComplete: false
+      analysisComplete: false,
     };
   },
   mounted() {
@@ -80,10 +80,10 @@ export default {
       this.axios
         .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
           params: {
-            highlight_id: this.highlight_id
-          }
+            highlight_id: this.highlight_id,
+          },
         })
-        .then(response => {
+        .then((response) => {
           this.highlightVideo = response.data[0];
           if (this.highlightVideo == "" || this.highlightVideo == null)
             this.highlightPage = "Error";
@@ -111,23 +111,23 @@ export default {
           });
           */
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error.response);
         });
-    }
+    },
   },
   watch: {
     $route() {
       this.getContent();
-    }
+    },
   },
   computed: {
-    youtube_embed: function() {
+    youtube_embed: function () {
       let vodData = this.highlightVideo.youtube_url;
       vodData = vodData.split("=");
       let url = vodData[1];
       return "https://www.youtube.com/embed/" + url + "?rel=0";
-    }
-  }
+    },
+  },
 };
 </script>

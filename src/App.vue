@@ -19,12 +19,7 @@
       <b-collapse id="navbar-toggle-collapse" is-nav>
         <b-navbar-nav class="ml-auto">
           <b-nav-item v-if="!isLogin">
-            <b-button
-              @click="accountModalShow = !accountModalShow;accountModalTitle = '登入'"
-              size="sm"
-              class="my-2 my-sm-0"
-              variant="info"
-            >Login</b-button>
+            <b-button @click="modalLogin()" size="sm" class="my-2 my-sm-0" variant="info">Login</b-button>
           </b-nav-item>
           <b-nav-item v-else>
             <b-button @click="logout" size="sm" class="my-2 my-sm-0" variant="info">Logout</b-button>
@@ -115,15 +110,22 @@
                 />
                 <div class="invalid-feedback">{{ loginPasswordErrorText }}</div>
                 <small id="loginPasswordHelp" class="form-text">
-                  <b-link @click="accountModalTitle='忘記密碼'">忘記密碼</b-link>
+                  <b-link @click="modalForgotPassword">忘記密碼</b-link>
                 </small>
               </div>
               <div class="form-group">
                 <span>
                   還沒有帳號嗎？
-                  <b-link @click="accountModalTitle='註冊';signupSuccess=false;signupFail=false;">註冊帳號</b-link>
+                  <b-link @click="modalSignup">註冊帳號</b-link>
                 </span>
-                <button type="submit" class="btn btn-primary float-right">登入</button>
+                <div v-if="logging">
+                  <div class="spinner-border text-secondary float-right" role="status">
+                    <span class="sr-only">Loading...</span>
+                  </div>
+                </div>
+                <div v-else>
+                  <button type="submit" class="btn btn-primary float-right">登入</button>
+                </div>
               </div>
             </form>
           </div>
@@ -145,7 +147,7 @@
                 </div>
                 <div v-if="signupFail" class="alert alert-danger" role="alert">
                   <p class="text-center m-0">
-                    <span>帳號已被註冊!</span>
+                    <span>{{ signupFailText }}</span>
                   </p>
                 </div>
                 <div class="form-group">
@@ -198,9 +200,16 @@
                     <b-link>服務條款</b-link>及
                     <b-link>隱私權聲明</b-link>
                   </p>
-                  <p class="text-center">
-                    <button type="submit" class="btn btn-primary">註冊</button>
-                  </p>
+                  <div class="text-center">
+                    <div v-if="signupping">
+                      <div class="spinner-border text-secondary" role="status">
+                        <span class="sr-only">Loading...</span>
+                      </div>
+                    </div>
+                    <div v-else>
+                      <button type="submit" class="btn btn-primary">註冊</button>
+                    </div>
+                  </div>
                 </div>
               </form>
             </div>
@@ -255,6 +264,7 @@ export default {
       loginAccountError: false,
       loginPasswordErrorText: "",
       loginPasswordError: false,
+      logging: false,
       //account-signup
       signupAccount: "",
       signupMail: "",
@@ -270,6 +280,8 @@ export default {
       signupCheckPasswordError: false,
       signupSuccess: false,
       signupFail: false,
+      signupFailText: "",
+      signupping: false,
       //account-forgotPassword
       forgotPasswordId: "",
       forgotPasswordIdErrorText: "",
@@ -289,6 +301,42 @@ export default {
       //this.$router.go(-1);
     }
     */
+    modalLogin() {
+      this.accountModalShow = !this.accountModalShow;
+      this.accountModalTitle = "登入";
+      this.loginAccount = "";
+      this.loginPassword = "";
+      this.loginAccountErrorText = "";
+      this.loginAccountError = false;
+      this.loginPasswordErrorText = "";
+      this.loginPasswordError = false;
+      this.logging = false;
+    },
+    modalSignup() {
+      this.accountModalTitle = "註冊";
+      this.signupAccount = "";
+      this.signupMail = "";
+      this.signupPassword = "";
+      this.signupCheckPassword = "";
+      this.signupAccountErrorText = "";
+      this.signupAccountError = false;
+      this.signupMailErrorText = "";
+      this.signupMailError = false;
+      this.signupPasswordErrorTex = "";
+      this.signupPasswordError = false;
+      this.signupCheckPasswordErrorText = "";
+      this.signupCheckPasswordError = false;
+      this.signupSuccess = false;
+      this.signupFail = false;
+      this.signupFailText = "";
+      this.signupping = false;
+    },
+    modalForgotPassword() {
+      this.accountModalTitle = "忘記密碼";
+      this.forgotPasswordId = "";
+      this.forgotPasswordIdErrorText = "";
+      this.forgotPasswordIdError = false;
+    },
     opinion: function () {
       let vm = this;
       let reg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -328,58 +376,131 @@ export default {
       }
     },
     login: function () {
-      this.axios
-        .post(process.env.VUE_APP_ROOT_API + "/api/user/login", {
-          account: this.loginAccount,
-          password: this.loginPassword,
-        })
-        .then((response) => {
-          this.loginAccount = "";
-          this.loginPassword = "";
+      let isValid = true;
+      let vm = this;
+      this.loginAccountError = false;
+      this.loginPasswordError = false;
+      this.logging = true;
+      if (this.loginAccount.length == 0) {
+        this.loginAccountError = true;
+        this.loginAccountErrorText = "帳號輸入為空";
+        isValid = false;
+      }
+      if (this.loginPassword.length == 0) {
+        this.loginPasswordError = true;
+        this.loginPasswordErrorText = "密碼輸入為空";
+        isValid = false;
+      }
+      console.log(isValid);
+      if (isValid) {
+        this.axios
+          .post(process.env.VUE_APP_ROOT_API + "/api/user/login", {
+            account: this.loginAccount,
+            password: this.loginPassword,
+          })
+          .then((response) => {
+            this.loginAccount = "";
+            this.loginPassword = "";
 
-          let token = response.data.token;
-          this.$store.dispatch("auth/setAuth", {
-            token: token,
-            isLogin: true,
+            let token = response.data.token;
+            this.$store.dispatch("auth/setAuth", {
+              token: token,
+              isLogin: true,
+            });
+            this.accountModalShow = false;
+            this.logging = false;
+          })
+          .catch(function (error) {
+            console.log(error);
+            if (error.response.data == "accountError") {
+              vm.loginAccountError = true;
+              vm.loginAccountErrorText = "帳號不存在";
+            }
+            if (error.response.data == "passwordError") {
+              vm.loginPasswordError = true;
+              vm.loginPasswordErrorText = "密碼錯誤";
+            }
+            vm.logging = false;
           });
-          this.accountModalShow = false;
-          window.alert("login success!");
-        })
-        .catch(function (error) {
-          console.log(error);
-          window.alert("login fail!");
-        });
+      } else {
+        this.logging = false;
+      }
     },
     logout: function () {
       this.$store.dispatch("auth/setAuth", {
         token: "",
         isLogin: false,
       });
-      window.alert("logout success!");
     },
     signup: function () {
+      let isValid = true;
       let vm = this;
-      this.axios
-        .post(process.env.VUE_APP_ROOT_API + "/api/user/signup", {
-          account: this.signupAccount,
-          email: this.signupMail,
-          password: this.signupPassword,
-        })
-        .then(() => {
-          this.signupAccount = "";
-          this.signupMail = "";
-          this.signupPassword = "";
-          this.signupCheckPassword = "";
-          this.signupSuccess = true;
-        })
-        .catch(function (error) {
-          console.log(error);
-          vm.signupAccount = "";
-          vm.signupMail = "";
-          vm.signupPassword = "";
-          vm.signupCheckPassword = "";
-          vm.signupFail = true;
-        });
+      let reg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      this.signupAccountError = false;
+      this.signupMailError = false;
+      this.signupPasswordError = false;
+      this.signupCheckPasswordError = false;
+      this.signupping = true;
+      if (this.signupAccount.length == 0) {
+        this.signupAccountError = true;
+        this.signupAccountErrorText = "帳號輸入為空";
+        isValid = false;
+      }
+      if (this.signupMail.length == 0) {
+        this.signupMailError = true;
+        this.signupMailErrorText = "信箱輸入為空";
+        isValid = false;
+      } else if (reg.test(this.signupMail) == false) {
+        this.signupMailError = true;
+        this.signupMailErrorText = "信箱格式不正確";
+        isValid = false;
+      }
+      if (this.signupPassword.length == 0) {
+        this.signupPasswordError = true;
+        this.signupPasswordErrorText = "密碼輸入為空";
+        isValid = false;
+      }
+      if (this.signupCheckPassword.length == 0) {
+        this.signupCheckPasswordError = true;
+        this.signupCheckPasswordErrorText = "確認密碼輸入為空";
+        isValid = false;
+      } else if (this.signupPassword != this.signupCheckPassword) {
+        this.signupCheckPasswordError = true;
+        this.signupCheckPasswordErrorText = "密碼不相符。請再試一次";
+        isValid = false;
+      }
+      if (isValid) {
+        this.axios
+          .post(process.env.VUE_APP_ROOT_API + "/api/user/signup", {
+            account: this.signupAccount,
+            email: this.signupMail,
+            password: this.signupPassword,
+          })
+          .then(() => {
+            this.signupAccount = "";
+            this.signupMail = "";
+            this.signupPassword = "";
+            this.signupCheckPassword = "";
+            this.signupping = false;
+            this.signupSuccess = true;
+          })
+          .catch(function (error) {
+            console.log(error);
+            vm.signupAccount = "";
+            vm.signupMail = "";
+            vm.signupPassword = "";
+            vm.signupCheckPassword = "";
+            vm.signupping = false;
+            if (error.response.data === "accountDuplicate") {
+              vm.signupFailText = "帳號已被註冊!";
+            } else {
+              vm.signupFailText = "註冊時發生錯誤 請重新註冊";
+            }
+            vm.signupFail = true;
+          });
+      } else {
+        this.signupping = false;
+      }
     },
     forgotPassword: function () {},
   },
