@@ -44,7 +44,6 @@
         </p>
         <p class="text-left m-0">目前分數：{{ avg_score }}</p>
         <p class="text-left m-0">建立者：</p>
-        <p class="text-left m-0">觀看次數：</p>
         <b-button
           v-show="!haveAppraise"
           @click="appraiseModalShow = !appraiseModalShow"
