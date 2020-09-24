@@ -83,8 +83,83 @@
       </div>
     </div>
     <b-collapse v-model="collapseVisible" class="mt-2">
-      <b-card v-if="collapseType == 'edit'">I should start open! edit</b-card>
-      <b-card v-else-if="collapseType == 'appraise'">I should start open! appraise</b-card>
+      <b-tabs content-class="mt-3">
+        <b-tab title="精華編輯" active>
+          <b-card>
+            <b-form @submit.prevent="highlightEdit">
+              <b-form-group v-if="vod_id != null" label="vod_id">
+                <b-form-input v-model="formHighlightEdit.vod_id" type="text"></b-form-input>
+              </b-form-group>
+
+              <b-form-group v-if="highlight_id != null" label="highlight_id">
+                <b-form-input v-model="formHighlightEdit.highlight_id" type="text"></b-form-input>
+              </b-form-group>
+
+              <b-form-group v-if="channel_id != null" label="channel_id">
+                <b-form-input v-model="formHighlightEdit.channel_id" type="text"></b-form-input>
+              </b-form-group>
+
+              <b-form-group v-if="streamerName != null" label="streamerName">
+                <b-form-input v-model="formHighlightEdit.streamerName" type="text"></b-form-input>
+              </b-form-group>
+
+              <b-form-group v-if="game != null" label="game">
+                <b-form-input v-model="formHighlightEdit.game" type="text"></b-form-input>
+              </b-form-group>
+
+              <b-form-group v-if="youtube_url != null" label="youtube_url">
+                <b-form-input v-model="formHighlightEdit.youtube_url" type="text"></b-form-input>
+              </b-form-group>
+
+              <b-form-group v-if="avg_score != null" label="avg_score">
+                <b-form-input v-model="formHighlightEdit.avg_score" type="text" disabled></b-form-input>
+              </b-form-group>
+
+              <b-form-group v-if="memo != null" label="memo">
+                <b-form-input v-model="formHighlightEdit.memo" type="text"></b-form-input>
+              </b-form-group>
+
+              <b-form-group v-if="author != null" label="author">
+                <b-form-input v-model="formHighlightEdit.author" type="text"></b-form-input>
+              </b-form-group>
+
+              <b-form-group v-if="status != null" label="status">
+                <b-form-input v-model="formHighlightEdit.status" type="text"></b-form-input>
+              </b-form-group>
+
+              <b-form-group v-if="analysis != null" label="analysis">
+                <b-form-input v-model="formHighlightEdit.analysis" type="text" disabled></b-form-input>
+              </b-form-group>
+
+              <div v-if="editting">
+                <div class="spinner-border text-secondary float-right" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+              </div>
+              <div v-else>
+                <button type="submit" class="btn btn-primary float-right">修改</button>
+              </div>
+            </b-form>
+          </b-card>
+        </b-tab>
+        <b-tab title="精華評價" @click="highlightAppraise">
+          <b-card style="max-height: 20rem;overflow-y: auto;">
+            <div v-if="appraiseList === 'Loading'" class="d-flex justify-content-center my-5">
+              <div class="spinner-grow text-secondary" role="status">
+                <span class="sr-only">Loading...</span>
+              </div>
+            </div>
+            <div v-else-if="appraiseList === 'Finish'">
+              <b-table striped hover :items="appraises" :fields="fields"></b-table>
+            </div>
+            <div v-else class="alert alert-danger" role="alert">
+              <p class="text-center my-2 py-2">
+                <span>系統連線發生錯誤 請等待問題排除或重新整理頁面嘗試 感謝！</span>
+              </p>
+            </div>
+          </b-card>
+        </b-tab>
+      </b-tabs>
     </b-collapse>
     <hr class="my-4" />
   </div>
@@ -102,12 +177,32 @@ export default {
     "youtube_url",
     "avg_score",
     "memo",
+    "author",
+    "status",
+    "analysis",
   ],
   data() {
     return {
       text: "",
       appraiseModalShow: false,
+      fields: ["author", "text", "score"],
+      appraises: null,
+      appraiseList: "Loading",
+      formHighlightEdit: {
+        vod_id: this.vod_id,
+        highlight_id: this.highlight_id,
+        channel_id: this.channel_id,
+        streamerName: this.streamerName,
+        game: this.game,
+        youtube_url: this.youtube_url,
+        avg_score: this.avg_score,
+        memo: this.memo,
+        author: this.author,
+        status: this.status,
+        analysis: this.analysis,
+      },
 
+      editting: false,
       notAccurate: false,
       videoLong: false,
       analysisLong: false,
@@ -115,7 +210,6 @@ export default {
       haveAppraise: false,
       isDelete: false,
       collapseVisible: false,
-      collapseType: "edit",
     };
   },
   methods: {
@@ -144,19 +238,65 @@ export default {
           vod_id: this.vod_id,
           highlight_id: this.highlight_id,
         })
-        .then((response) => console.log(response))
+        .then((response) => {
+          console.log(response);
+          window.alert("送出成功!");
+        })
         .catch(function (error) {
           console.log(error);
+          window.alert("送出失敗!");
         });
     },
     highlightManage() {
       this.collapseVisible = !this.collapseVisible;
+      this.editting = false;
     },
     highlightEdit() {
-      this.collapseType = "edit";
+      let vm = this;
+      this.editting = true;
+      this.axios
+        .post(process.env.VUE_APP_ROOT_API + "/api/admin/highlightEdit", {
+          token: this.$store.state.auth.token,
+          vod_id: this.formHighlightEdit.vod_id,
+          highlight_id: this.formHighlightEdit.highlight_id,
+          channel_id: this.formHighlightEdit.channel_id,
+          streamerName: this.formHighlightEdit.streamerName,
+          game: this.formHighlightEdit.game,
+          youtube_url: this.formHighlightEdit.youtube_url,
+          avg_score: this.formHighlightEdit.avg_score,
+          memo: this.formHighlightEdit.memo,
+          author: this.formHighlightEdit.author,
+          status: this.formHighlightEdit.status,
+          analysis: this.formHighlightEdit.analysis,
+        })
+        .then((response) => {
+          console.log(response);
+          this.editting = false;
+          window.alert("修改成功!");
+        })
+        .catch(function (error) {
+          console.log(error);
+          vm.editting = false;
+          window.alert("修改發生錯誤!");
+        });
     },
     highlightAppraise() {
-      this.collapseType = "appraise";
+      this.appraiseList = "Loading";
+      this.axios
+        .get(process.env.VUE_APP_ROOT_API + "/api/admin/highlightAppraise", {
+          params: {
+            token: this.$store.state.auth.token,
+            highlight_id: this.highlight_id,
+          },
+        })
+        .then((response) => {
+          this.appraiseList = "Finish";
+          this.appraises = response.data;
+        })
+        .catch(function (error) {
+          console.log(error);
+          this.appraiseList = "Error";
+        });
     },
     highlightDelete() {
       if (window.confirm("確定要刪除嗎?")) {
@@ -167,9 +307,11 @@ export default {
           })
           .then((response) => {
             console.log(response);
+            window.alert("刪除成功!");
           })
           .catch(function (error) {
             console.log(error);
+            window.alert("刪除失敗!");
           });
         this.isDelete = true;
       }

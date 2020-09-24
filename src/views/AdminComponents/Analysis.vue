@@ -18,6 +18,9 @@
         :youtube_url="highlight.youtube_url"
         :avg_score="highlight.avg_score"
         :memo="highlight.memo"
+        :author="highlight.author"
+        :status="highlight.status"
+        :analysis="highlight.analysis"
       ></AdminHighlightList>
     </div>
     <div v-else-if="videoList === 'Empty'" class="alert alert-info" role="alert">
