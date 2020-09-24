@@ -158,6 +158,7 @@
                     :class="signupAccountError?'is-invalid':''"
                     id="signupAccount"
                     v-model="signupAccount"
+                    @keyup="signupAccountLengthCheck"
                   />
                   <div class="invalid-feedback">{{ signupAccountErrorText }}</div>
                 </div>
@@ -180,6 +181,7 @@
                     :class="signupPasswordError?'is-invalid':''"
                     id="signupPassword"
                     v-model="signupPassword"
+                    @keyup="signupPasswordLengthCheck"
                   />
                   <div class="invalid-feedback">{{ signupPasswordErrorText }}</div>
                 </div>
@@ -191,6 +193,7 @@
                     :class="signupCheckPasswordError?'is-invalid':''"
                     id="signupCheckPassword"
                     v-model="signupCheckPassword"
+                    @keyup="signupCheckPasswordSameCheck"
                   />
                   <div class="invalid-feedback">{{ signupCheckPasswordErrorText }}</div>
                 </div>
@@ -412,13 +415,14 @@ export default {
           })
           .catch(function (error) {
             console.log(error);
-            if (error.response.data == "accountError") {
+            if (
+              error.response.data == "accountError" ||
+              error.response.data == "passwordError"
+            ) {
               vm.loginAccountError = true;
-              vm.loginAccountErrorText = "帳號不存在";
-            }
-            if (error.response.data == "passwordError") {
+              vm.loginAccountErrorText = "";
               vm.loginPasswordError = true;
-              vm.loginPasswordErrorText = "密碼錯誤";
+              vm.loginPasswordErrorText = "帳號/密碼輸入錯誤";
             }
             vm.logging = false;
           });
@@ -445,6 +449,10 @@ export default {
         this.signupAccountError = true;
         this.signupAccountErrorText = "帳號輸入為空";
         isValid = false;
+      } else if (this.signupAccount.length < 4) {
+        this.signupAccountError = true;
+        this.signupAccountErrorText = "帳號過短。帳號長度請 >= 4";
+        isValid = false;
       }
       if (this.signupMail.length == 0) {
         this.signupMailError = true;
@@ -458,6 +466,10 @@ export default {
       if (this.signupPassword.length == 0) {
         this.signupPasswordError = true;
         this.signupPasswordErrorText = "密碼輸入為空";
+        isValid = false;
+      } else if (this.signupPassword.length < 8) {
+        this.signupPasswordError = true;
+        this.signupPasswordErrorText = "密碼過短。密碼長度請 >= 8";
         isValid = false;
       }
       if (this.signupCheckPassword.length == 0) {
@@ -500,6 +512,36 @@ export default {
           });
       } else {
         this.signupping = false;
+      }
+    },
+    signupAccountLengthCheck() {
+      if (this.signupAccount.length == 0) {
+        this.signupAccountError = true;
+        this.signupAccountErrorText = "帳號輸入為空";
+      } else if (this.signupAccount.length < 4) {
+        this.signupAccountError = true;
+        this.signupAccountErrorText = "帳號過短。帳號長度請 >= 4";
+      } else {
+        this.signupAccountError = false;
+      }
+    },
+    signupPasswordLengthCheck() {
+      if (this.signupPassword.length == 0) {
+        this.signupPasswordError = true;
+        this.signupPasswordErrorText = "密碼輸入為空";
+      } else if (this.signupPassword.length < 8) {
+        this.signupPasswordError = true;
+        this.signupPasswordErrorText = "密碼過短。密碼長度請 >= 8";
+      } else {
+        this.signupPasswordError = false;
+      }
+    },
+    signupCheckPasswordSameCheck() {
+      if (this.signupPassword != this.signupCheckPassword) {
+        this.signupCheckPasswordError = true;
+        this.signupCheckPasswordErrorText = "密碼不相符";
+      } else {
+        this.signupCheckPasswordError = false;
       }
     },
     forgotPassword: function () {},
