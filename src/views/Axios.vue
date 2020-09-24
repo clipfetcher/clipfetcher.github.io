@@ -160,12 +160,14 @@ export default {
         });
     },
     tryApi_user() {
+      let vm = this;
       this.axios
         .post(process.env.VUE_APP_ROOT_API + "/api/user", {
           token: this.$store.state.auth.token,
         })
         .then((response) => (this.api_test_user = response))
         .catch(function (error) {
+          vm.api_test_user = error.response.data;
           console.log(error);
         });
     },
