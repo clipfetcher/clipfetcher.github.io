@@ -1,6 +1,6 @@
 <template>
   <!-- 精華影片顯示 -->
-  <div class="m-4">
+  <div class="m-4" v-show="!isDelete">
     <div class="row">
       <div class="col-12 col-md-4 my-2">
         <div v-if="youtube_url" class="embed-responsive embed-responsive-16by9">
@@ -44,20 +44,37 @@
         </p>
         <p class="text-left m-0">目前分數：{{ avg_score }}</p>
         <p class="text-left m-0">建立者：</p>
-        <p class="text-left m-0">觀看次數：</p>
         <div class="float-right m-1">
           <b-list-group horizontal>
             <b-list-group-item variant="success">影片下載</b-list-group-item>
             <b-list-group-item variant="info">影片分析</b-list-group-item>
             <b-list-group-item>影片上傳</b-list-group-item>
             <b-list-group-item class="p-1">
-              <b-button class="mx-1" variant="outline-primary" v-b-tooltip.hover title="重新分析">
+              <b-button
+                class="mx-1"
+                variant="outline-primary"
+                v-b-tooltip.hover
+                title="重新分析"
+                @click="highlightReanalysis"
+              >
                 <i class="fas fa-redo-alt"></i>
               </b-button>
-              <b-button class="mx-1" variant="outline-primary" v-b-tooltip.hover title="編輯精華">
+              <b-button
+                class="mx-1"
+                variant="outline-primary"
+                v-b-tooltip.hover
+                title="精華管理"
+                @click="highlightManage"
+              >
                 <i class="fas fa-user-edit"></i>
               </b-button>
-              <b-button class="mx-1" variant="outline-primary" v-b-tooltip.hover title="刪除精華">
+              <b-button
+                class="mx-1"
+                variant="outline-primary"
+                v-b-tooltip.hover
+                title="刪除精華"
+                @click="highlightDelete"
+              >
                 <i class="fas fa-trash-alt"></i>
               </b-button>
             </b-list-group-item>
@@ -65,6 +82,10 @@
         </div>
       </div>
     </div>
+    <b-collapse v-model="collapseVisible" class="mt-2">
+      <b-card v-if="collapseType == 'edit'">I should start open! edit</b-card>
+      <b-card v-else-if="collapseType == 'appraise'">I should start open! appraise</b-card>
+    </b-collapse>
     <hr class="my-4" />
   </div>
 </template>
@@ -92,6 +113,9 @@ export default {
       analysisLong: false,
       validationText: false,
       haveAppraise: false,
+      isDelete: false,
+      collapseVisible: false,
+      collapseType: "edit",
     };
   },
   methods: {
@@ -111,6 +135,43 @@ export default {
       });
       if (this.$router.currentRoute.name === "HighlightSearch") {
         this.$router.go(0);
+      }
+    },
+    highlightReanalysis() {
+      this.axios
+        .post(process.env.VUE_APP_ROOT_API + "/api/admin/highlightReanalysis", {
+          token: this.$store.state.auth.token,
+          vod_id: this.vod_id,
+          highlight_id: this.highlight_id,
+        })
+        .then((response) => console.log(response))
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    highlightManage() {
+      this.collapseVisible = !this.collapseVisible;
+    },
+    highlightEdit() {
+      this.collapseType = "edit";
+    },
+    highlightAppraise() {
+      this.collapseType = "appraise";
+    },
+    highlightDelete() {
+      if (window.confirm("確定要刪除嗎?")) {
+        this.axios
+          .post(process.env.VUE_APP_ROOT_API + "/api/admin/highlightDelete", {
+            token: this.$store.state.auth.token,
+            highlight_id: this.highlight_id,
+          })
+          .then((response) => {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+        this.isDelete = true;
       }
     },
   },
