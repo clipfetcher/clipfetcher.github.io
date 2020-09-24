@@ -486,6 +486,9 @@ export default {
       let vm = this;
       this.checkHighlightTitle();
       if (this.titleValid) {
+        this.vodAnalysisBtnShow = false;
+        this.vodAnalysisSendStatusShow = true;
+        this.vodAnalysisSendStatus = "Loading";
         this.axios
           .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
             params: {
@@ -497,6 +500,8 @@ export default {
           })
           .then((response) => {
             if (response.data != "") {
+              vm.vodAnalysisBtnShow = true;
+              vm.vodAnalysisSendStatusShow = false;
               vm.titleValid = false;
               vm.titleErrorFeedback =
                 "Vod's Id or VOD's URL is duplicate! You can search the highlight on our website.";
