@@ -394,7 +394,6 @@ export default {
         this.loginPasswordErrorText = "密碼輸入為空";
         isValid = false;
       }
-      console.log(isValid);
       if (isValid) {
         this.axios
           .post(process.env.VUE_APP_ROOT_API + "/api/user/login", {
