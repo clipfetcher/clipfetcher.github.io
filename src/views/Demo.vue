@@ -273,6 +273,9 @@
           :youtube_url="analyseVideos.youtube_url"
           :avg_score="analyseVideos.avg_score"
           :memo="analyseVideos.memo"
+          :author="analyseVideos.author"
+          :status="analyseVideos.status"
+          :analysis="analyseVideos.analysis"
         ></HighlightList>
       </div>
     </div>
@@ -298,6 +301,9 @@
             :youtube_url="searchVideo.youtube_url"
             :avg_score="searchVideo.avg_score"
             :memo="searchVideo.memo"
+            :author="searchVideo.author"
+            :status="searchVideo.status"
+            :analysis="searchVideo.analysis"
           ></HighlightList>
         </div>
         <div v-else class="alert alert-danger" role="alert">
@@ -330,6 +336,9 @@
           :youtube_url="highlight.youtube_url"
           :avg_score="highlight.avg_score"
           :memo="highlight.memo"
+          :author="highlight.author"
+          :status="highlight.status"
+          :analysis="highlight.analysis"
         ></HighlightList>
       </div>
       <div v-else-if="videoList === 'Empty'" class="alert alert-info" role="alert">

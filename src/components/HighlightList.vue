@@ -43,7 +43,7 @@
           <b-link :to="'/results?game=' + game" @click.prevent="gameSearch">{{ game }}</b-link>
         </p>
         <p class="text-left m-0">目前分數：{{ avg_score }}</p>
-        <p class="text-left m-0">建立者：</p>
+        <p class="text-left m-0">建立者：{{ author }}</p>
         <b-button
           v-show="!haveAppraise"
           @click="appraiseModalShow = !appraiseModalShow"
@@ -134,6 +134,9 @@ export default {
     "youtube_url",
     "avg_score",
     "memo",
+    "author",
+    "status",
+    "analysis",
   ],
   data() {
     return {

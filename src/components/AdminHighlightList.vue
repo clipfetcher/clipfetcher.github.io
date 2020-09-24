@@ -43,7 +43,7 @@
           <b-link :to="'/results?game=' + game" @click.prevent="gameSearch">{{ game }}</b-link>
         </p>
         <p class="text-left m-0">目前分數：{{ avg_score }}</p>
-        <p class="text-left m-0">建立者：</p>
+        <p class="text-left m-0">建立者：{{ author }}</p>
         <div class="float-right m-1">
           <b-list-group horizontal>
             <b-list-group-item variant="success">影片下載</b-list-group-item>
