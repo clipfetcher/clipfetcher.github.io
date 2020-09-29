@@ -1,11 +1,19 @@
 <template>
   <div class="container">
-    <div v-if="certificate==='initialize'" class="alert alert-primary" role="alert">
+    <div
+      v-if="certificate === 'initialize'"
+      class="alert alert-primary"
+      role="alert"
+    >
       <p class="text-center my-2 py-2">
         <span>驗證中 請稍後!</span>
       </p>
     </div>
-    <div v-else-if="certificate==='error'" class="alert alert-danger" role="alert">
+    <div
+      v-else-if="certificate === 'error'"
+      class="alert alert-danger"
+      role="alert"
+    >
       <p class="text-center my-2 py-2">
         <span>驗證失敗!</span>
       </p>
@@ -28,10 +36,10 @@ export default {
     };
   },
   mounted() {
-    this.getContent();
+    this.certificate();
   },
   methods: {
-    getContent() {
+    certificate() {
       let vm = this;
       this.axios
         .get(
