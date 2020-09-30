@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div
-      v-if="certificate === 'initialize'"
+      v-if="certificateState === 'initialize'"
       class="alert alert-primary"
       role="alert"
     >
@@ -10,7 +10,7 @@
       </p>
     </div>
     <div
-      v-else-if="certificate === 'error'"
+      v-else-if="certificateState === 'error'"
       class="alert alert-danger"
       role="alert"
     >
@@ -32,7 +32,7 @@ export default {
   props: ["certificate_token"],
   data() {
     return {
-      certificate: "initialize",
+      certificateState: "initialize",
     };
   },
   mounted() {
@@ -48,11 +48,11 @@ export default {
             this.certificate_token
         )
         .then(() => {
-          this.certificate = "success";
+          this.certificateState = "success";
         })
         .catch(function (error) {
           console.log(error);
-          vm.certificate = "error";
+          vm.certificateState = "error";
         });
     },
   },
