@@ -200,8 +200,8 @@
                 <div class="form-group">
                   <p class="text-center">
                     點擊註冊及代表您已閱讀並了解
-                    <b-link>服務條款</b-link>及
-                    <b-link>隱私權聲明</b-link>
+                    <b-link to="/terms-of-service" target="_blank">服務條款</b-link>及
+                    <b-link to="/privacy-notice" target="_blank">隱私權聲明</b-link>
                   </p>
                   <div class="text-center">
                     <div v-if="signupping">
@@ -220,22 +220,36 @@
 
           <!--忘記密碼-->
           <div v-else-if="accountModalTitle==='忘記密碼'">
-            <form @submit.prevent="forgotPassword">
-              <div class="form-group">
-                <label for="forgotPasswordId">請輸入帳號或電子信箱：</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  :class="forgotPasswordIdError?'is-invalid':''"
-                  id="forgotPasswordId"
-                  v-model="forgotPasswordId"
-                />
-                <div class="invalid-feedback">{{ forgotPasswordIdErrorText }}</div>
-              </div>
-              <div class="form-group">
-                <button type="submit" class="btn btn-primary float-right">傳送驗證信件</button>
-              </div>
-            </form>
+            <div v-if="forgotPasswordSuccess" class="alert alert-success" role="alert">
+              <p class="text-center my-2 py-2">
+                <span>驗證信已寄出 請至註冊時填寫的信箱查看!</span>
+              </p>
+            </div>
+            <div v-else>
+              <form @submit.prevent="forgotPassword">
+                <div class="form-group">
+                  <label for="forgotPasswordId">請輸入帳號或電子信箱：</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    :class="forgotPasswordIdError?'is-invalid':''"
+                    id="forgotPasswordId"
+                    v-model="forgotPasswordId"
+                  />
+                  <div class="invalid-feedback">{{ forgotPasswordIdErrorText }}</div>
+                </div>
+                <div class="form-group">
+                  <div v-if="forgotPasswordLoading">
+                    <div class="spinner-border text-secondary float-right" role="status">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                  </div>
+                  <div v-else>
+                    <button type="submit" class="btn btn-primary float-right">傳送驗證信件</button>
+                  </div>
+                </div>
+              </form>
+            </div>
           </div>
         </b-modal>
       </div>
@@ -289,6 +303,8 @@ export default {
       forgotPasswordId: "",
       forgotPasswordIdErrorText: "",
       forgotPasswordIdError: false,
+      forgotPasswordSuccess: false,
+      forgotPasswordLoading: false,
 
       response: null,
       modalResponse: null,
@@ -339,6 +355,8 @@ export default {
       this.forgotPasswordId = "";
       this.forgotPasswordIdErrorText = "";
       this.forgotPasswordIdError = false;
+      this.forgotPasswordSuccess = false;
+      this.forgotPasswordLoading = false;
     },
     opinion: function () {
       let vm = this;
@@ -413,15 +431,23 @@ export default {
             this.logging = false;
           })
           .catch(function (error) {
-            console.log(error);
-            if (
-              error.response.data == "accountError" ||
-              error.response.data == "passwordError"
-            ) {
+            console.log(error.response);
+            if (error.response) {
+              if (error.response.status === 400) {
+                vm.loginAccountError = true;
+                vm.loginAccountErrorText = "";
+                vm.loginPasswordError = true;
+                vm.loginPasswordErrorText = "帳號/密碼輸入錯誤";
+              } else {
+                vm.loginAccountError = true;
+                vm.loginAccountErrorText = "";
+                vm.loginPasswordError = true;
+                vm.loginPasswordErrorText = "登入時發生錯誤 請重新嘗試";
+              }
+            } else {
               vm.loginAccountError = true;
-              vm.loginAccountErrorText = "";
               vm.loginPasswordError = true;
-              vm.loginPasswordErrorText = "帳號/密碼輸入錯誤";
+              vm.loginPasswordErrorText = "系統連線發生錯誤";
             }
             vm.logging = false;
           });
@@ -429,13 +455,13 @@ export default {
         this.logging = false;
       }
     },
-    logout: function () {
+    logout() {
       this.$store.dispatch("auth/setAuth", {
         token: "",
         isLogin: false,
       });
     },
-    signup: function () {
+    signup() {
       let isValid = true;
       let vm = this;
       let reg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -502,10 +528,22 @@ export default {
             vm.signupPassword = "";
             vm.signupCheckPassword = "";
             vm.signupping = false;
-            if (error.response.data === "accountDuplicate") {
-              vm.signupFailText = "帳號已被註冊!";
+            if (error.response) {
+              if (
+                error.response.status === 400 &&
+                error.response.data === "accountDuplicate"
+              ) {
+                vm.signupFailText = "此帳號已被註冊!";
+              } else if (
+                error.response.status === 400 &&
+                error.response.data === "emailDuplicate"
+              ) {
+                vm.signupFailText = "此信箱已被註冊!";
+              } else {
+                vm.signupFailText = "註冊時發生錯誤 請重新嘗試";
+              }
             } else {
-              vm.signupFailText = "註冊時發生錯誤 請重新註冊";
+              vm.signupFailText = "系統連線發生錯誤";
             }
             vm.signupFail = true;
           });
@@ -543,7 +581,44 @@ export default {
         this.signupCheckPasswordError = false;
       }
     },
-    forgotPassword: function () {},
+    forgotPassword() {
+      let vm = this;
+      if (this.forgotPasswordId.length == 0) {
+        this.forgotPasswordIdError = true;
+        this.forgotPasswordIdErrorText = "帳號或電子信箱輸入為空";
+      } else {
+        this.forgotPasswordIdError = false;
+      }
+      if (!this.forgotPasswordIdError) {
+        this.forgotPasswordLoading = true;
+        this.axios
+          .post(process.env.VUE_APP_ROOT_API + "/api/user/forgetPassword", {
+            email_account: this.forgotPasswordId,
+          })
+          .then(() => {
+            this.forgotPasswordId = "";
+            this.forgotPasswordSuccess = true;
+            this.forgotPasswordLoading = false;
+          })
+          .catch(function (error) {
+            vm.forgotPasswordLoading = false;
+            vm.forgotPasswordIdError = true;
+            if (error.response) {
+              if (
+                error.response.status === 400 &&
+                error.response.data == "email_accountError"
+              ) {
+                vm.forgotPasswordIdErrorText = "帳號或電子信箱輸入不存在";
+              } else {
+                vm.forgotPasswordIdErrorText = "發生錯誤 請重新嘗試";
+              }
+            } else {
+              vm.forgotPasswordIdErrorText = "系統連線發生錯誤";
+            }
+            vm.forgotPasswordSuccess = false;
+          });
+      }
+    },
   },
   computed: {
     isLogin: function () {
