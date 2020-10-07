@@ -1,26 +1,18 @@
 <template>
   <div class="container">
-    <div
-      v-if="certificateState === 'initialize'"
-      class="alert alert-primary"
-      role="alert"
-    >
+    <div v-if="certificateState === 'initialize'" class="alert alert-primary" role="alert">
       <p class="text-center my-2 py-2">
         <span>驗證中 請稍後!</span>
       </p>
     </div>
-    <div
-      v-else-if="certificateState === 'error'"
-      class="alert alert-danger"
-      role="alert"
-    >
+    <div v-else-if="certificateState === 'error'" class="alert alert-danger" role="alert">
       <p class="text-center my-2 py-2">
         <span>驗證失敗!</span>
       </p>
     </div>
     <div v-else class="alert alert-success" role="alert">
       <p class="text-center my-2 py-2">
-        <span>驗證成功!</span>
+        <span>驗證成功! 畫面將在5秒後跳轉至首頁</span>
       </p>
     </div>
   </div>
@@ -49,6 +41,9 @@ export default {
         )
         .then(() => {
           this.certificateState = "success";
+          setTimeout(() => {
+            this.$router.push({ path: "/" });
+          }, 5000);
         })
         .catch(function (error) {
           console.log(error);
