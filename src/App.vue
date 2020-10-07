@@ -460,6 +460,9 @@ export default {
         token: "",
         isLogin: false,
       });
+      setTimeout(() => {
+        this.$router.push({ path: "/" });
+      }, 2000);
     },
     signup() {
       let isValid = true;
