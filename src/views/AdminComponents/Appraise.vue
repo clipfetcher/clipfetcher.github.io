@@ -7,7 +7,7 @@
       </div>
     </div>
     <div v-else-if="appraiseList === 'Finish'">
-      <b-table striped hover :items="appraises" :fields="fields">
+      <b-table striped hover :items="appraises" :fields="fields" responsive="sm">
         <template v-slot:cell(manage)>
           <b-button size="sm" class="mr-2">
             <i class="fas fa-mail-bulk"></i> 聯繫用戶
@@ -38,6 +38,7 @@ export default {
   },
   methods: {
     getContent: function () {
+      let vm = this;
       this.axios
         .get(process.env.VUE_APP_ROOT_API + "/api/opinion")
         .then((response) => {
@@ -46,7 +47,7 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
-          this.appraiseList = "Error";
+          vm.appraiseList = "Error";
         });
     },
   },

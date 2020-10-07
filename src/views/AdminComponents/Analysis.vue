@@ -53,6 +53,7 @@ export default {
   },
   methods: {
     getContent: function () {
+      let vm = this;
       this.axios
         .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight")
         .then((response) => {
@@ -62,7 +63,7 @@ export default {
         })
         .catch(function (error) {
           console.log(error.response);
-          this.videoList = "Error";
+          vm.videoList = "Error";
         });
     },
   },
