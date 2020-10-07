@@ -3,29 +3,31 @@
     <div class="card">
       <div class="card-body">
         <form @submit.prevent="newPassword()">
-          <div class="form-group">
-            <label for="newPassword">設定新密碼：</label>
-            <input
-              type="password"
-              class="form-control"
-              :class="newPasswordForm.newPasswordPasswordError?'is-invalid':''"
-              id="newPassword"
-              v-model="newPasswordForm.newPasswordPassword"
-              @keyup="newPasswordPasswordLengthCheck()"
-            />
-            <div class="invalid-feedback">{{ newPasswordForm.newPasswordPasswordErrorText }}</div>
-          </div>
-          <div class="form-group">
-            <label for="newCheckPassword">確認新密碼：</label>
-            <input
-              type="password"
-              class="form-control"
-              :class="newPasswordForm.newPasswordCheckPasswordError?'is-invalid':''"
-              id="newCheckPassword"
-              v-model="newPasswordForm.newPasswordCheckPassword"
-              @keyup="newPasswordCheckPasswordSameCheck()"
-            />
-            <div class="invalid-feedback">{{ newPasswordForm.newPasswordCheckPasswordErrorText }}</div>
+          <div v-show="state != 'success'">
+            <div class="form-group">
+              <label for="newPassword">設定新密碼：</label>
+              <input
+                type="password"
+                class="form-control"
+                :class="newPasswordForm.newPasswordPasswordError?'is-invalid':''"
+                id="newPassword"
+                v-model="newPasswordForm.newPasswordPassword"
+                @keyup="newPasswordPasswordLengthCheck()"
+              />
+              <div class="invalid-feedback">{{ newPasswordForm.newPasswordPasswordErrorText }}</div>
+            </div>
+            <div class="form-group">
+              <label for="newCheckPassword">確認新密碼：</label>
+              <input
+                type="password"
+                class="form-control"
+                :class="newPasswordForm.newPasswordCheckPasswordError?'is-invalid':''"
+                id="newCheckPassword"
+                v-model="newPasswordForm.newPasswordCheckPassword"
+                @keyup="newPasswordCheckPasswordSameCheck()"
+              />
+              <div class="invalid-feedback">{{ newPasswordForm.newPasswordCheckPasswordErrorText }}</div>
+            </div>
           </div>
           <div class="form-group">
             <div v-if="state === 'init'">
