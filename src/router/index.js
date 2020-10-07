@@ -97,6 +97,22 @@ const routes = [
     component: () => import(/* webpackChunkName: "news" */ '../views/TestComponent.vue')
   },
   {
+    path: '/terms-of-service',
+    name: 'TermsOfService',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "news" */ '../views/TermsOfService.vue')
+  },
+  {
+    path: '/privacy-notice',
+    name: 'PrivacyNotice',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "news" */ '../views/PrivacyNotice.vue')
+  },
+  {
     path: '/highlight/:highlight_id',
     name: 'Highlight',
     // route level code-splitting
@@ -120,6 +136,15 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import('../views/Certificate.vue'),
+    props: true,
+  },
+  {
+    path: '/newPassword/:forgetPassword_token',
+    name: 'NewPassword',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import('../views/NewPassword.vue'),
     props: true,
   },
   {
