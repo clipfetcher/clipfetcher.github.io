@@ -46,9 +46,7 @@
         <p class="text-left m-0">建立者：{{ author }}</p>
         <div class="float-right m-1">
           <b-list-group horizontal>
-            <b-list-group-item variant="success">影片下載</b-list-group-item>
-            <b-list-group-item variant="info">影片分析</b-list-group-item>
-            <b-list-group-item>影片上傳</b-list-group-item>
+            <b-list-group-item variant="info">{{ highlightStatus }}</b-list-group-item>
             <b-list-group-item class="p-1">
               <b-button
                 class="mx-1"
@@ -150,7 +148,7 @@
               </div>
             </div>
             <div v-else-if="appraiseList === 'Finish'">
-              <b-table striped hover :items="appraises" :fields="fields"></b-table>
+              <b-table striped hover :items="appraises" :fields="fields" responsive="sm"></b-table>
             </div>
             <div v-else class="alert alert-danger" role="alert">
               <p class="text-center my-2 py-2">
@@ -323,6 +321,50 @@ export default {
       vodData = vodData.split("=");
       let url = vodData[1];
       return "https://www.youtube.com/embed/" + url + "?rel=0";
+    },
+    highlightStatus() {
+      let text;
+      switch (this.status) {
+        case "GETINFO":
+          text = "獲取資訊中";
+          break;
+        case "RUNALGO":
+          text = "影片分析中";
+          break;
+        case "FMVODDL":
+          text = "影片下載中";
+          break;
+        case "FMVODCB":
+          text = "影片合併中";
+          break;
+        case "YTVODUL":
+          text = "YT上傳中";
+          break;
+        case "FINISHED":
+          text = "已完成";
+          break;
+        case "NEWANALF":
+          text = "建立分析失敗";
+          break;
+        case "GETINFOF":
+          text = "獲取資訊失敗";
+          break;
+        case "RUNALGOF":
+          text = "影片分析失敗";
+          break;
+        case "FMVODDLF":
+          text = "影片下載失敗";
+          break;
+        case "FMVODCBF":
+          text = "影片合併失敗";
+          break;
+        case "YTVODULF":
+          text = "YT上傳失敗";
+          break;
+        default:
+          text = "Empty";
+      }
+      return text;
     },
   },
 };
