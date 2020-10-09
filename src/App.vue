@@ -37,7 +37,7 @@
             <template v-slot:button-content>
               <em>會員</em>
             </template>
-            <b-dropdown-item @click="setting()"
+            <b-dropdown-item @click="modalSetting()"
               ><i class="fas fa-cog mr-1"></i>設定</b-dropdown-item
             >
             <b-dropdown-item @click="logout()"
@@ -304,6 +304,92 @@
               </form>
             </div>
           </div>
+
+          <!--設定-->
+          <div v-else-if="accountModalTitle === '設定'">
+            <div v-if="accountSettingLoading">
+              <div
+                class="spinner-border text-secondary float-right"
+                role="status"
+              >
+                <span class="sr-only">Loading...</span>
+              </div>
+            </div>
+            <div v-else>
+              <b-form>
+                <b-form-group label="帳號">
+                  <b-form-input
+                    v-model="accountSettingForm.account"
+                    type="text"
+                    disabled
+                  ></b-form-input>
+                </b-form-group>
+
+                <b-form-group label="電子信箱">
+                  <b-form-input
+                    v-model="accountSettingForm.email"
+                    type="text"
+                    disabled
+                  ></b-form-input>
+                </b-form-group>
+
+                <b-button variant="primary" @click="modalUpdatePassword()"
+                  >修改密碼</b-button
+                >
+              </b-form>
+            </div>
+          </div>
+
+          <!--修改密碼-->
+          <div v-else-if="accountModalTitle === '修改密碼'">
+            <b-form @submit.prevent="updatePassword()">
+              <b-form-group>
+                <span>
+                  <b-link @click="accountModalTitle = '設定'"
+                    ><i class="fas fa-chevron-left mr-2"></i>返回</b-link
+                  >
+                </span>
+              </b-form-group>
+              <b-form-group label="舊密碼">
+                <b-form-input
+                  v-model="updatePasswordForm.oldPassword"
+                  type="text"
+                ></b-form-input>
+              </b-form-group>
+
+              <b-form-group label="設定新密碼">
+                <b-form-input
+                  v-model="updatePasswordForm.newPassword"
+                  type="text"
+                ></b-form-input>
+              </b-form-group>
+
+              <b-form-group label="確認新密碼">
+                <b-form-input
+                  v-model="updatePasswordForm.checkNewPassword"
+                  type="text"
+                ></b-form-input>
+              </b-form-group>
+
+              <div v-if="updatePasswordLoading">
+                <div
+                  class="spinner-border text-secondary float-right"
+                  role="status"
+                >
+                  <span class="sr-only">Loading...</span>
+                </div>
+              </div>
+              <div v-else>
+                <b-button
+                  type="submit"
+                  variant="primary"
+                  class="float-right"
+                  @click="modalUpdatePassword()"
+                  >修改密碼</b-button
+                >
+              </div>
+            </b-form>
+          </div>
         </b-modal>
       </div>
     </footer>
@@ -358,6 +444,19 @@ export default {
       forgotPasswordIdError: false,
       forgotPasswordSuccess: false,
       forgotPasswordLoading: false,
+      //account-setting
+      accountSettingLoading: true,
+      accountSettingForm: {
+        account: "",
+        email: "",
+      },
+      //account-updatePassword
+      updatePasswordLoading: false,
+      updatePasswordForm: {
+        oldPassword: "",
+        newPassword: "",
+        checkNewPassword: "",
+      },
 
       response: null,
       modalResponse: null,
@@ -410,6 +509,21 @@ export default {
       this.forgotPasswordIdError = false;
       this.forgotPasswordSuccess = false;
       this.forgotPasswordLoading = false;
+    },
+    modalSetting() {
+      this.accountModalShow = !this.accountModalShow;
+      this.accountModalTitle = "設定";
+      this.accountSettingLoading = true;
+      this.setting();
+    },
+    modalUpdatePassword() {
+      this.accountModalTitle = "修改密碼";
+      this.updatePasswordLoading = false;
+      this.updatePasswordForm = {
+        oldPassword: "",
+        newPassword: "",
+        checkNewPassword: "",
+      };
     },
     opinion: function () {
       let vm = this;
@@ -513,7 +627,7 @@ export default {
         token: "",
         isLogin: false,
       });
-      this.$router.push({ path: "/" });
+      // this.$router.push({ path: "/" });
     },
     signup() {
       let isValid = true;
@@ -673,7 +787,35 @@ export default {
           });
       }
     },
-    setting() {},
+    setting() {
+      let vm = this;
+      this.axios
+        .get(process.env.VUE_APP_ROOT_API + "/api/user", {
+          params: {
+            token: this.$store.state.auth.token,
+          },
+        })
+        .then((response) => {
+          this.accountSettingForm = response.data;
+          this.accountSettingLoading = false;
+        })
+        .catch(function (error) {
+          vm.accountSettingLoading = false;
+          if (error.response) {
+            if (
+              error.response.status === 401 ||
+              error.response.status === 400
+            ) {
+              vm.accountSettingForm.account = error.response.data;
+            } else {
+              vm.accountSettingForm.account = "獲取資料發生錯誤";
+            }
+          } else {
+            vm.accountSettingForm.account = "獲取資料發生錯誤";
+          }
+        });
+    },
+    updatePassword() {},
   },
   computed: {
     isLogin: function () {
