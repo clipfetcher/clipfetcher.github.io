@@ -4,7 +4,11 @@
     <div class="row">
       <div class="col-12 col-md-4 my-2">
         <div v-if="youtube_url" class="embed-responsive embed-responsive-16by9">
-          <iframe class="embed-responsive-item" :src="youtube_embed" allowfullscreen></iframe>
+          <iframe
+            class="embed-responsive-item"
+            :src="youtube_embed"
+            allowfullscreen
+          ></iframe>
         </div>
         <div v-else class="alert alert-info" role="alert">
           <p class="text-center my-4 py-4">
@@ -18,16 +22,30 @@
           variant="link"
           toggle-class="text-decoration-none"
           class="float-right"
+          right
           no-caret
         >
           <template v-slot:button-content>
             <i class="fas fa-chevron-circle-down"></i>
           </template>
-          <b-dropdown-item :href="'https://www.twitch.tv/videos/' + vod_id" target="_blank">
-            <i class="fas fa-link fa-lg m-1" data-toggle="tooltip" title="VOD網址"></i> 原始鏈結
+          <b-dropdown-item
+            :href="'https://www.twitch.tv/videos/' + vod_id"
+            target="_blank"
+          >
+            <i
+              class="fas fa-link fa-lg m-1"
+              data-toggle="tooltip"
+              title="VOD網址"
+            ></i>
+            原始鏈結
           </b-dropdown-item>
           <b-dropdown-item :to="'/highlight/' + highlight_id" target="_blank">
-            <i class="fas fa-share-square fa-lg m-1" data-toggle="tooltip" title="精華連結"></i> 精華頁面
+            <i
+              class="fas fa-share-square fa-lg m-1"
+              data-toggle="tooltip"
+              title="精華連結"
+            ></i>
+            精華頁面
           </b-dropdown-item>
         </b-dropdown>
         <p class="text-left m-0">標題：{{ memo }}</p>
@@ -36,11 +54,14 @@
           <b-link
             :to="'/results?channel_id=' + channel_id"
             @click.prevent="channelSearch"
-          >{{ streamerName }}</b-link>
+            >{{ streamerName }}</b-link
+          >
         </p>
         <p class="text-left m-0">
           遊戲分類：
-          <b-link :to="'/results?game=' + game" @click.prevent="gameSearch">{{ game }}</b-link>
+          <b-link :to="'/results?game=' + game" @click.prevent="gameSearch">{{
+            game
+          }}</b-link>
         </p>
         <p class="text-left m-0">目前分數：{{ avg_score }}</p>
         <p class="text-left m-0">建立者：{{ author }}</p>
@@ -49,7 +70,8 @@
           @click="appraiseModalShow = !appraiseModalShow"
           variant="outline-info"
           class="float-right m-1"
-        >我要評價</b-button>
+          >我要評價</b-button
+        >
 
         <b-modal v-model="appraiseModalShow" title="精華評價" hide-footer>
           <form @submit.prevent="appraise">
@@ -61,24 +83,32 @@
                 class="btn m-1"
                 :class="notAccurate ? 'btn-secondary' : 'btn-outline-secondary'"
                 @click="textButton('notAccurate')"
-              >影片不精準</button>
+              >
+                影片不精準
+              </button>
               <button
                 type="button"
                 class="btn m-1"
                 :class="videoLong ? 'btn-secondary' : 'btn-outline-secondary'"
                 @click="textButton('videoLong')"
-              >影片長度過長</button>
+              >
+                影片長度過長
+              </button>
               <button
                 type="button"
                 class="btn m-1"
-                :class="analysisLong ? 'btn-secondary' : 'btn-outline-secondary'"
+                :class="
+                  analysisLong ? 'btn-secondary' : 'btn-outline-secondary'
+                "
                 @click="textButton('analysisLong')"
-              >影片分析太久</button>
+              >
+                影片分析太久
+              </button>
               <br />
               <input
                 type="text"
                 class="form-control"
-                :class="validationText?'is-invalid':''"
+                :class="validationText ? 'is-invalid' : ''"
                 id="validationText"
                 @change="checkText"
                 @keyup="checkText"
@@ -113,7 +143,9 @@
               </template>
               {{ starRating }}
             </div>
-            <button type="submit" class="btn btn-primary float-right">送出</button>
+            <button type="submit" class="btn btn-primary float-right">
+              送出
+            </button>
           </form>
         </b-modal>
       </div>
