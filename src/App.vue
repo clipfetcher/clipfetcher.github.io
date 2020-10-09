@@ -1,34 +1,49 @@
 <template>
   <div id="app">
-    <b-navbar toggleable type="dark" variant="dark">
+    <b-navbar class="py-1" toggleable="lg" type="dark" variant="dark">
       <b-navbar-brand to="/">
         <img
           src="./assets/ClipFetcher.png"
           width="30"
           height="30"
-          class="d-inline-block align-top"
+          class="d-inline-block my-0 mr-1"
           alt="ClipFetcher Logo"
         />
         {{ title }}
       </b-navbar-brand>
 
-      <b-navbar-toggle target="navbar-toggle-collapse">
-        <span class="navbar-toggler-icon"></span>
-      </b-navbar-toggle>
+      <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
-      <b-collapse id="navbar-toggle-collapse" is-nav>
+      <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="ml-auto">
-          <b-nav-item v-if="!isLogin">
-            <b-button @click="modalLogin()" size="sm" class="my-2 my-sm-0" variant="info">Login</b-button>
-          </b-nav-item>
-          <b-nav-item v-else>
-            <b-button @click="logout" size="sm" class="my-2 my-sm-0" variant="info">Logout</b-button>
-          </b-nav-item>
-          <b-nav-item to="/home">Vue Home</b-nav-item>
-          <b-nav-item to="/axios">Axios</b-nav-item>
-          <b-nav-item to="/test">TestComponent</b-nav-item>
-          <b-nav-item to="/admin">Admin</b-nav-item>
-          <b-nav-item to="/user">User</b-nav-item>
+          <b-nav-item-dropdown class="mx-1" right>
+            <template v-slot:button-content>
+              <em>其他頁面</em>
+            </template>
+            <b-dropdown-item to="/home">Vue Home</b-dropdown-item>
+            <b-dropdown-item to="/axios">Axios</b-dropdown-item>
+            <b-dropdown-item to="/test">TestComponent</b-dropdown-item>
+            <b-dropdown-item to="/admin">Admin</b-dropdown-item>
+            <b-dropdown-item to="/user">User</b-dropdown-item>
+          </b-nav-item-dropdown>
+
+          <b-nav-form v-if="!isLogin"
+            ><b-button @click="modalLogin()" variant="info"
+              ><i class="fas fa-sign-in-alt mr-2"></i>登入</b-button
+            ></b-nav-form
+          >
+
+          <b-nav-item-dropdown class="mx-1" right v-if="isLogin">
+            <template v-slot:button-content>
+              <em>會員</em>
+            </template>
+            <b-dropdown-item @click="setting()"
+              ><i class="fas fa-cog mr-1"></i>設定</b-dropdown-item
+            >
+            <b-dropdown-item @click="logout()"
+              ><i class="fas fa-sign-out-alt mr-1"></i>登出</b-dropdown-item
+            >
+          </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
@@ -59,40 +74,48 @@
               <input
                 type="text"
                 class="form-control"
-                :class="emailError?'is-invalid':''"
+                :class="emailError ? 'is-invalid' : ''"
                 id="mail"
                 v-model="mail"
                 aria-describedby="emailHelp"
               />
               <div class="invalid-feedback">{{ emailErrorText }}</div>
-              <small id="emailHelp" class="form-text text-muted">我們將會使用這個信箱作為聯絡您的方式</small>
+              <small id="emailHelp" class="form-text text-muted"
+                >我們將會使用這個信箱作為聯絡您的方式</small
+              >
             </div>
             <div class="form-group">
               <label for="content">建議內容：</label>
               <input
                 type="text"
                 class="form-control"
-                :class="contentError?'is-invalid':''"
+                :class="contentError ? 'is-invalid' : ''"
                 placeholder="想要給本系統改善的建議"
                 id="content"
                 v-model="content"
               />
               <div class="invalid-feedback">建議內容不得為空</div>
             </div>
-            <button type="submit" class="btn btn-primary float-right">送出</button>
+            <button type="submit" class="btn btn-primary float-right">
+              送出
+            </button>
           </form>
         </b-modal>
 
-        <b-modal v-model="accountModalShow" :title="accountModalTitle" hide-footer>
+        <b-modal
+          v-model="accountModalShow"
+          :title="accountModalTitle"
+          hide-footer
+        >
           <!--登入-->
-          <div v-if="accountModalTitle==='登入'">
+          <div v-if="accountModalTitle === '登入'">
             <form @submit.prevent="login">
               <div class="form-group">
                 <label for="loginAccount">帳號：</label>
                 <input
                   type="text"
                   class="form-control"
-                  :class="loginAccountError?'is-invalid':''"
+                  :class="loginAccountError ? 'is-invalid' : ''"
                   id="loginAccount"
                   v-model="loginAccount"
                 />
@@ -103,7 +126,7 @@
                 <input
                   type="password"
                   class="form-control"
-                  :class="loginPasswordError?'is-invalid':''"
+                  :class="loginPasswordError ? 'is-invalid' : ''"
                   id="loginPassword"
                   v-model="loginPassword"
                   aria-describedby="loginPasswordHelp"
@@ -119,19 +142,24 @@
                   <b-link @click="modalSignup">註冊帳號</b-link>
                 </span>
                 <div v-if="logging">
-                  <div class="spinner-border text-secondary float-right" role="status">
+                  <div
+                    class="spinner-border text-secondary float-right"
+                    role="status"
+                  >
                     <span class="sr-only">Loading...</span>
                   </div>
                 </div>
                 <div v-else>
-                  <button type="submit" class="btn btn-primary float-right">登入</button>
+                  <button type="submit" class="btn btn-primary float-right">
+                    登入
+                  </button>
                 </div>
               </div>
             </form>
           </div>
 
           <!--註冊-->
-          <div v-else-if="accountModalTitle==='註冊'">
+          <div v-else-if="accountModalTitle === '註冊'">
             <div v-if="signupSuccess" class="alert alert-success" role="alert">
               <p class="text-center my-2 py-2">
                 <span>驗證信已寄出 請至註冊時填寫的信箱查看!</span>
@@ -142,7 +170,9 @@
                 <div class="form-group">
                   <span>
                     已經有帳號了嗎？
-                    <b-link @click="accountModalTitle='登入'">登入帳號</b-link>
+                    <b-link @click="accountModalTitle = '登入'"
+                      >登入帳號</b-link
+                    >
                   </span>
                 </div>
                 <div v-if="signupFail" class="alert alert-danger" role="alert">
@@ -155,19 +185,21 @@
                   <input
                     type="text"
                     class="form-control"
-                    :class="signupAccountError?'is-invalid':''"
+                    :class="signupAccountError ? 'is-invalid' : ''"
                     id="signupAccount"
                     v-model="signupAccount"
                     @keyup="signupAccountLengthCheck"
                   />
-                  <div class="invalid-feedback">{{ signupAccountErrorText }}</div>
+                  <div class="invalid-feedback">
+                    {{ signupAccountErrorText }}
+                  </div>
                 </div>
                 <div class="form-group">
                   <label for="signupMail">電子信箱：</label>
                   <input
                     type="text"
                     class="form-control"
-                    :class="signupMailError?'is-invalid':''"
+                    :class="signupMailError ? 'is-invalid' : ''"
                     id="signupMail"
                     v-model="signupMail"
                   />
@@ -178,30 +210,38 @@
                   <input
                     type="password"
                     class="form-control"
-                    :class="signupPasswordError?'is-invalid':''"
+                    :class="signupPasswordError ? 'is-invalid' : ''"
                     id="signupPassword"
                     v-model="signupPassword"
                     @keyup="signupPasswordLengthCheck"
                   />
-                  <div class="invalid-feedback">{{ signupPasswordErrorText }}</div>
+                  <div class="invalid-feedback">
+                    {{ signupPasswordErrorText }}
+                  </div>
                 </div>
                 <div class="form-group">
                   <label for="signupCheckPassword">確認密碼</label>
                   <input
                     type="password"
                     class="form-control"
-                    :class="signupCheckPasswordError?'is-invalid':''"
+                    :class="signupCheckPasswordError ? 'is-invalid' : ''"
                     id="signupCheckPassword"
                     v-model="signupCheckPassword"
                     @keyup="signupCheckPasswordSameCheck"
                   />
-                  <div class="invalid-feedback">{{ signupCheckPasswordErrorText }}</div>
+                  <div class="invalid-feedback">
+                    {{ signupCheckPasswordErrorText }}
+                  </div>
                 </div>
                 <div class="form-group">
                   <p class="text-center">
                     點擊註冊及代表您已閱讀並了解
-                    <b-link to="/terms-of-service" target="_blank">服務條款</b-link>及
-                    <b-link to="/privacy-notice" target="_blank">隱私權聲明</b-link>
+                    <b-link to="/terms-of-service" target="_blank"
+                      >服務條款</b-link
+                    >及
+                    <b-link to="/privacy-notice" target="_blank"
+                      >隱私權聲明</b-link
+                    >
                   </p>
                   <div class="text-center">
                     <div v-if="signupping">
@@ -210,7 +250,9 @@
                       </div>
                     </div>
                     <div v-else>
-                      <button type="submit" class="btn btn-primary">註冊</button>
+                      <button type="submit" class="btn btn-primary">
+                        註冊
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -219,8 +261,12 @@
           </div>
 
           <!--忘記密碼-->
-          <div v-else-if="accountModalTitle==='忘記密碼'">
-            <div v-if="forgotPasswordSuccess" class="alert alert-success" role="alert">
+          <div v-else-if="accountModalTitle === '忘記密碼'">
+            <div
+              v-if="forgotPasswordSuccess"
+              class="alert alert-success"
+              role="alert"
+            >
               <p class="text-center my-2 py-2">
                 <span>驗證信已寄出 請至註冊時填寫的信箱查看!</span>
               </p>
@@ -232,20 +278,27 @@
                   <input
                     type="text"
                     class="form-control"
-                    :class="forgotPasswordIdError?'is-invalid':''"
+                    :class="forgotPasswordIdError ? 'is-invalid' : ''"
                     id="forgotPasswordId"
                     v-model="forgotPasswordId"
                   />
-                  <div class="invalid-feedback">{{ forgotPasswordIdErrorText }}</div>
+                  <div class="invalid-feedback">
+                    {{ forgotPasswordIdErrorText }}
+                  </div>
                 </div>
                 <div class="form-group">
                   <div v-if="forgotPasswordLoading">
-                    <div class="spinner-border text-secondary float-right" role="status">
+                    <div
+                      class="spinner-border text-secondary float-right"
+                      role="status"
+                    >
                       <span class="sr-only">Loading...</span>
                     </div>
                   </div>
                   <div v-else>
-                    <button type="submit" class="btn btn-primary float-right">傳送驗證信件</button>
+                    <button type="submit" class="btn btn-primary float-right">
+                      傳送驗證信件
+                    </button>
                   </div>
                 </div>
               </form>
@@ -460,9 +513,7 @@ export default {
         token: "",
         isLogin: false,
       });
-      setTimeout(() => {
-        this.$router.push({ path: "/" });
-      }, 2000);
+      this.$router.push({ path: "/" });
     },
     signup() {
       let isValid = true;
@@ -622,6 +673,7 @@ export default {
           });
       }
     },
+    setting() {},
   },
   computed: {
     isLogin: function () {
