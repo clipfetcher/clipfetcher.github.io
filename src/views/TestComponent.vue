@@ -24,6 +24,6 @@ export default {
   data() {
     return {};
   },
-  components: { HighlightList }
+  components: { HighlightList },
 };
 </script>

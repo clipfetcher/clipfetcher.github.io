@@ -9,41 +9,64 @@
               <input
                 type="password"
                 class="form-control"
-                :class="newPasswordForm.newPasswordPasswordError?'is-invalid':''"
+                :class="
+                  newPasswordForm.newPasswordPasswordError ? 'is-invalid' : ''
+                "
                 id="newPassword"
                 v-model="newPasswordForm.newPasswordPassword"
                 @keyup="newPasswordPasswordLengthCheck()"
               />
-              <div class="invalid-feedback">{{ newPasswordForm.newPasswordPasswordErrorText }}</div>
+              <div class="invalid-feedback">
+                {{ newPasswordForm.newPasswordPasswordErrorText }}
+              </div>
             </div>
             <div class="form-group">
               <label for="newCheckPassword">確認新密碼：</label>
               <input
                 type="password"
                 class="form-control"
-                :class="newPasswordForm.newPasswordCheckPasswordError?'is-invalid':''"
+                :class="
+                  newPasswordForm.newPasswordCheckPasswordError
+                    ? 'is-invalid'
+                    : ''
+                "
                 id="newCheckPassword"
                 v-model="newPasswordForm.newPasswordCheckPassword"
                 @keyup="newPasswordCheckPasswordSameCheck()"
               />
-              <div class="invalid-feedback">{{ newPasswordForm.newPasswordCheckPasswordErrorText }}</div>
+              <div class="invalid-feedback">
+                {{ newPasswordForm.newPasswordCheckPasswordErrorText }}
+              </div>
             </div>
           </div>
           <div class="form-group">
             <div v-if="state === 'init'">
-              <button type="submit" class="btn btn-primary float-right">確認</button>
+              <button type="submit" class="btn btn-primary float-right">
+                確認
+              </button>
             </div>
             <div v-else-if="state === 'loading'">
-              <div class="spinner-border text-secondary float-right" role="status">
+              <div
+                class="spinner-border text-secondary float-right"
+                role="status"
+              >
                 <span class="sr-only">Loading...</span>
               </div>
             </div>
-            <div v-else-if="state === 'fail'" class="alert alert-danger" role="alert">
+            <div
+              v-else-if="state === 'fail'"
+              class="alert alert-danger"
+              role="alert"
+            >
               <p class="text-center my-2 py-2">
                 <span>{{ newPasswordFailText }}</span>
               </p>
             </div>
-            <div v-else-if="state === 'success'" class="alert alert-info" role="alert">
+            <div
+              v-else-if="state === 'success'"
+              class="alert alert-info"
+              role="alert"
+            >
               <p class="text-center my-2 py-2">
                 <span>密碼更新成功 請重新登入嘗試 將在5秒後自動跳轉至首頁</span>
               </p>
