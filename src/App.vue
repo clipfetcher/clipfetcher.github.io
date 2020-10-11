@@ -354,21 +354,41 @@
                 <b-form-input
                   v-model="updatePasswordForm.oldPassword"
                   type="text"
+                  :class="
+                    updatePasswordForm.oldPasswordError ? 'is-invalid' : ''
+                  "
                 ></b-form-input>
+                <div class="invalid-feedback">
+                  {{ updatePasswordForm.oldPasswordErrorText }}
+                </div>
               </b-form-group>
 
               <b-form-group label="設定新密碼">
                 <b-form-input
                   v-model="updatePasswordForm.newPassword"
                   type="text"
+                  :class="
+                    updatePasswordForm.newPasswordError ? 'is-invalid' : ''
+                  "
+                  @keyup="updatePasswordNewPasswordLengthCheck()"
                 ></b-form-input>
+                <div class="invalid-feedback">
+                  {{ updatePasswordForm.newPasswordErrorText }}
+                </div>
               </b-form-group>
 
               <b-form-group label="確認新密碼">
                 <b-form-input
                   v-model="updatePasswordForm.checkNewPassword"
                   type="text"
+                  :class="
+                    updatePasswordForm.checkNewPasswordError ? 'is-invalid' : ''
+                  "
+                  @keyup="updatePasswordCheckNewPasswordSameCheck()"
                 ></b-form-input>
+                <div class="invalid-feedback">
+                  {{ updatePasswordForm.checkNewPasswordErrorText }}
+                </div>
               </b-form-group>
 
               <div v-if="updatePasswordLoading">
@@ -454,8 +474,14 @@ export default {
       updatePasswordLoading: false,
       updatePasswordForm: {
         oldPassword: "",
+        oldPasswordError: false,
+        oldPasswordErrorText: "",
         newPassword: "",
+        newPasswordError: false,
+        newPasswordErrorText: "",
         checkNewPassword: "",
+        checkNewPasswordError: false,
+        checkNewPasswordErrorText: "",
       },
 
       response: null,
@@ -521,8 +547,14 @@ export default {
       this.updatePasswordLoading = false;
       this.updatePasswordForm = {
         oldPassword: "",
+        oldPasswordError: false,
+        oldPasswordErrorText: "",
         newPassword: "",
+        newPasswordError: false,
+        newPasswordErrorText: "",
         checkNewPassword: "",
+        checkNewPasswordError: false,
+        checkNewPasswordErrorText: "",
       };
     },
     opinion: function () {
@@ -815,11 +847,98 @@ export default {
           }
         });
     },
-    updatePassword() {},
+    updatePassword() {
+      let vm = this;
+      let isValid = true;
+      if (this.updatePasswordForm.oldPassword.length == 0) {
+        this.updatePasswordForm.oldPasswordError = true;
+        this.updatePasswordForm.oldPasswordErrorText = "舊密碼輸入為空";
+        isValid = false;
+      }
+      if (this.updatePasswordForm.newPassword.length == 0) {
+        this.updatePasswordForm.newPasswordError = true;
+        this.updatePasswordForm.newPasswordErrorText = "新密碼輸入為空";
+        isValid = false;
+      } else if (this.updatePasswordForm.newPassword.length < 8) {
+        this.updatePasswordForm.newPasswordError = true;
+        this.updatePasswordForm.newPasswordErrorText =
+          "新密碼過短。密碼長度請 >= 8";
+        isValid = false;
+      }
+      if (this.updatePasswordForm.checkNewPassword.length == 0) {
+        this.updatePasswordForm.checkNewPasswordError = true;
+        this.updatePasswordForm.checkNewPasswordErrorText =
+          "確認新密碼輸入為空";
+        isValid = false;
+      } else if (
+        this.updatePasswordForm.newPassword !=
+        this.updatePasswordForm.checkNewPassword
+      ) {
+        this.updatePasswordForm.checkNewPasswordError = true;
+        this.updatePasswordForm.checkNewPasswordErrorText =
+          "密碼不相符。請再試一次";
+        isValid = false;
+      }
+      if (isValid) {
+        this.updatePasswordLoading = true;
+        this.axios
+          .post(process.env.VUE_APP_ROOT_API + "/api/user/updatePassword ", {
+            token: this.$store.state.auth.token,
+            account: this.accountSettingForm.account,
+            oldPassword: this.updatePasswordForm.oldPassword,
+            newPassword: this.updatePasswordForm.newPassword,
+          })
+          .then(() => {})
+          .catch(function (error) {
+            if (error.response) {
+              this.updatePasswordLoading = false;
+              if (
+                error.response.status === 401 ||
+                error.response.status === 400
+              ) {
+                vm.accountSettingForm.account = error.response.data;
+              } else {
+                vm.accountSettingForm.account = "獲取資料發生錯誤";
+              }
+            } else {
+              vm.accountSettingForm.account = "獲取資料發生錯誤";
+            }
+          });
+      }
+    },
+    updatePasswordNewPasswordLengthCheck() {
+      if (this.updatePasswordForm.newPassword.length == 0) {
+        this.updatePasswordForm.newPasswordError = true;
+        this.updatePasswordForm.newPasswordErrorText = "新密碼輸入為空";
+      } else if (this.updatePasswordForm.newPassword.length < 8) {
+        this.updatePasswordForm.newPasswordError = true;
+        this.updatePasswordForm.newPasswordErrorText =
+          "新密碼過短。密碼長度請 >= 8";
+      }
+    },
+    updatePasswordCheckNewPasswordSameCheck() {
+      if (
+        this.updatePasswordForm.newPassword !=
+        this.updatePasswordForm.checkNewPassword
+      ) {
+        this.updatePasswordForm.checkNewPasswordError = true;
+        this.updatePasswordForm.checkNewPasswordErrorText =
+          "密碼不相符。請再試一次";
+      }
+    },
   },
   computed: {
     isLogin: function () {
       return this.$store.state.auth.isLogin;
+    },
+  },
+  watch: {
+    $route() {
+      if (this.$route.name == "NewPassword") {
+        // this.modalLogin();
+        // this.$router.push({ path: "/" });
+        console.log("NewPassword");
+      }
     },
   },
 };
