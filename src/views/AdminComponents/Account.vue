@@ -1,7 +1,10 @@
 <template>
   <div>
     <br />
-    <div v-if="accountList === 'Loading'" class="d-flex justify-content-center my-5">
+    <div
+      v-if="accountList === 'Loading'"
+      class="d-flex justify-content-center my-5"
+    >
       <div class="spinner-grow text-secondary" role="status">
         <span class="sr-only">Loading...</span>
       </div>
@@ -28,14 +31,7 @@ export default {
   name: "account",
   data() {
     return {
-      fields: [
-        "account",
-        "email",
-        "password",
-        "certification",
-        "role",
-        "manage",
-      ],
+      fields: ["account", "email", "certification", "role", "manage"],
       accountList: "Loading",
       accounts: null,
     };
