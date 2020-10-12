@@ -659,7 +659,11 @@ export default {
         token: "",
         isLogin: false,
       });
-      // this.$router.push({ path: "/" });
+      if (this.$router.currentRoute.path != "/") {
+        this.$router.push({ path: "/" });
+      } else {
+        this.$router.go(0);
+      }
     },
     signup() {
       let isValid = true;
