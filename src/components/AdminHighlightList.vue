@@ -4,11 +4,7 @@
     <div class="row">
       <div class="col-12 col-md-4 my-2">
         <div v-if="youtube_url" class="embed-responsive embed-responsive-16by9">
-          <iframe
-            class="embed-responsive-item"
-            :src="youtube_embed"
-            allowfullscreen
-          ></iframe>
+          <iframe class="embed-responsive-item" :src="youtube_embed" allowfullscreen></iframe>
         </div>
         <div v-else class="alert alert-info" role="alert">
           <p class="text-center my-4 py-4">
@@ -28,23 +24,12 @@
           <template v-slot:button-content>
             <i class="fas fa-chevron-circle-down"></i>
           </template>
-          <b-dropdown-item
-            :href="'https://www.twitch.tv/videos/' + vod_id"
-            target="_blank"
-          >
-            <i
-              class="fas fa-link fa-lg m-1"
-              data-toggle="tooltip"
-              title="VOD網址"
-            ></i>
+          <b-dropdown-item :href="'https://www.twitch.tv/videos/' + vod_id" target="_blank">
+            <i class="fas fa-link fa-lg m-1" data-toggle="tooltip" title="VOD網址"></i>
             原始鏈結
           </b-dropdown-item>
           <b-dropdown-item :to="'/highlight/' + highlight_id" target="_blank">
-            <i
-              class="fas fa-share-square fa-lg m-1"
-              data-toggle="tooltip"
-              title="精華連結"
-            ></i>
+            <i class="fas fa-share-square fa-lg m-1" data-toggle="tooltip" title="精華連結"></i>
             精華頁面
           </b-dropdown-item>
         </b-dropdown>
@@ -54,22 +39,25 @@
           <b-link
             :to="'/results?channel_id=' + channel_id"
             @click.prevent="channelSearch"
-            >{{ streamerName }}</b-link
-          >
+          >{{ streamerName }}</b-link>
         </p>
         <p class="text-left m-0">
           遊戲分類：
-          <b-link :to="'/results?game=' + game" @click.prevent="gameSearch">{{
+          <b-link :to="'/results?game=' + game" @click.prevent="gameSearch">
+            {{
             game
-          }}</b-link>
+            }}
+          </b-link>
         </p>
         <p class="text-left m-0">目前分數：{{ avg_score }}</p>
         <p class="text-left m-0">建立者：{{ author }}</p>
         <div class="float-right mt-2 mb-0">
           <b-list-group horizontal>
-            <b-list-group-item variant="info">{{
+            <b-list-group-item variant="info">
+              {{
               highlightStatus
-            }}</b-list-group-item>
+              }}
+            </b-list-group-item>
             <b-list-group-item class="p-1">
               <b-button
                 class="mx-1"
@@ -109,125 +97,76 @@
           <b-card>
             <b-form @submit.prevent="highlightEdit">
               <b-form-group v-if="vod_id != null" label="vod_id">
-                <b-form-input
-                  v-model="formHighlightEdit.vod_id"
-                  type="text"
-                ></b-form-input>
+                <b-form-input v-model="formHighlightEdit.vod_id" type="text"></b-form-input>
               </b-form-group>
 
               <b-form-group v-if="highlight_id != null" label="highlight_id">
-                <b-form-input
-                  v-model="formHighlightEdit.highlight_id"
-                  type="text"
-                ></b-form-input>
+                <b-form-input v-model="formHighlightEdit.highlight_id" type="text"></b-form-input>
               </b-form-group>
 
               <b-form-group v-if="channel_id != null" label="channel_id">
-                <b-form-input
-                  v-model="formHighlightEdit.channel_id"
-                  type="text"
-                ></b-form-input>
+                <b-form-input v-model="formHighlightEdit.channel_id" type="text"></b-form-input>
               </b-form-group>
 
               <b-form-group v-if="streamerName != null" label="streamerName">
-                <b-form-input
-                  v-model="formHighlightEdit.streamerName"
-                  type="text"
-                ></b-form-input>
+                <b-form-input v-model="formHighlightEdit.streamerName" type="text"></b-form-input>
               </b-form-group>
 
               <b-form-group v-if="game != null" label="game">
-                <b-form-input
-                  v-model="formHighlightEdit.game"
-                  type="text"
-                ></b-form-input>
+                <b-form-input v-model="formHighlightEdit.game" type="text"></b-form-input>
               </b-form-group>
 
               <b-form-group v-if="youtube_url != null" label="youtube_url">
-                <b-form-input
-                  v-model="formHighlightEdit.youtube_url"
-                  type="text"
-                ></b-form-input>
+                <b-form-input v-model="formHighlightEdit.youtube_url" type="text"></b-form-input>
               </b-form-group>
 
               <b-form-group v-if="avg_score != null" label="avg_score">
-                <b-form-input
-                  v-model="formHighlightEdit.avg_score"
-                  type="text"
-                  disabled
-                ></b-form-input>
+                <b-form-input v-model="formHighlightEdit.avg_score" type="text" disabled></b-form-input>
               </b-form-group>
 
               <b-form-group v-if="memo != null" label="memo">
-                <b-form-input
-                  v-model="formHighlightEdit.memo"
-                  type="text"
-                ></b-form-input>
+                <b-form-input v-model="formHighlightEdit.memo" type="text"></b-form-input>
               </b-form-group>
 
               <b-form-group v-if="author != null" label="author">
-                <b-form-input
-                  v-model="formHighlightEdit.author"
-                  type="text"
-                ></b-form-input>
+                <b-form-input v-model="formHighlightEdit.author" type="text"></b-form-input>
               </b-form-group>
 
               <b-form-group v-if="status != null" label="status">
-                <b-form-input
-                  v-model="formHighlightEdit.status"
-                  type="text"
-                ></b-form-input>
+                <b-form-input v-model="formHighlightEdit.status" type="text"></b-form-input>
               </b-form-group>
 
               <b-form-group v-if="analysis != null" label="analysis">
-                <b-form-input
-                  v-model="formHighlightEdit.analysis"
-                  type="text"
-                  disabled
-                ></b-form-input>
+                <b-form-input v-model="formHighlightEdit.analysis" type="text" disabled></b-form-input>
               </b-form-group>
 
               <div v-if="editting">
-                <div
-                  class="spinner-border text-secondary float-right"
-                  role="status"
-                >
+                <div class="spinner-border text-secondary float-right" role="status">
                   <span class="sr-only">Loading...</span>
                 </div>
               </div>
               <div v-else>
-                <button type="submit" class="btn btn-primary float-right">
-                  修改
-                </button>
+                <button type="submit" class="btn btn-primary float-right">修改</button>
               </div>
             </b-form>
           </b-card>
         </b-tab>
         <b-tab title="精華評價" @click="highlightAppraise">
           <b-card style="max-height: 20rem; overflow-y: auto">
-            <div
-              v-if="appraiseList === 'Loading'"
-              class="d-flex justify-content-center my-5"
-            >
+            <div v-if="appraiseList === 'Loading'" class="d-flex justify-content-center my-5">
               <div class="spinner-grow text-secondary" role="status">
                 <span class="sr-only">Loading...</span>
               </div>
             </div>
             <div v-else-if="appraiseList === 'Finish'">
-              <b-table
-                striped
-                hover
-                :items="appraises"
-                :fields="fields"
-                responsive="sm"
-              ></b-table>
+              <b-table striped hover :items="appraises" :fields="fields" responsive="sm"></b-table>
             </div>
             <div v-else class="alert alert-danger" role="alert">
               <p class="text-center my-2 py-2">
-                <span
-                  >系統連線發生錯誤 請等待問題排除或重新整理頁面嘗試
-                  感謝！</span
-                >
+                <span>
+                  系統連線發生錯誤 請等待問題排除或重新整理頁面嘗試
+                  感謝！
+                </span>
               </p>
             </div>
           </b-card>
