@@ -47,7 +47,7 @@
                   <b-dropdown-item @click="videoSearchType = 'vod_id'">VOD</b-dropdown-item>
                   <b-dropdown-item @click="videoSearchType = 'highlight_id'">Highlight</b-dropdown-item>
                   <b-dropdown-item @click="videoSearchType = 'game'">Game</b-dropdown-item>
-                  <b-dropdown-item @click="videoSearchType = 'channel_id'">Channel</b-dropdown-item>
+                  <b-dropdown-item @click="videoSearchType = 'streamerName'">Streamer</b-dropdown-item>
                 </b-dropdown>
               </template>
               <input
@@ -172,17 +172,85 @@
               <div class="form-row">
                 <div class="col-6 col-md-5">
                   <label for="startTime">開始時間：</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="startTime"
-                    v-model="startTime"
-                    required
-                  />
+                  <div class="form-row">
+                    <div class="col-3">
+                      <input
+                        type="number"
+                        min="00"
+                        max="999"
+                        class="form-control"
+                        id="startTime"
+                        v-model="startTime.hour"
+                        placeholder="HH"
+                        required
+                      />
+                    </div>
+                    <span class="col-1">:</span>
+                    <div class="col-3">
+                      <input
+                        type="number"
+                        min="00"
+                        max="60"
+                        class="form-control"
+                        v-model="startTime.minute"
+                        placeholder="MM"
+                        required
+                      />
+                    </div>
+                    <span class="col-1">:</span>
+                    <div class="col-3">
+                      <input
+                        type="number"
+                        min="00"
+                        max="60"
+                        class="form-control"
+                        v-model="startTime.second"
+                        placeholder="SS"
+                        required
+                      />
+                    </div>
+                  </div>
                 </div>
                 <div class="col-6 col-md-5">
                   <label for="endTime">結束時間：</label>
-                  <input type="text" class="form-control" id="endTime" v-model="endTime" required />
+                  <div class="form-row">
+                    <div class="col-3">
+                      <input
+                        type="number"
+                        min="00"
+                        max="999"
+                        class="form-control"
+                        id="endTime"
+                        v-model="endTime.hour"
+                        placeholder="HH"
+                        required
+                      />
+                    </div>
+                    <span class="col-1">:</span>
+                    <div class="col-3">
+                      <input
+                        type="number"
+                        min="00"
+                        max="60"
+                        class="form-control"
+                        v-model="endTime.minute"
+                        placeholder="MM"
+                        required
+                      />
+                    </div>
+                    <span class="col-1">:</span>
+                    <div class="col-3">
+                      <input
+                        type="number"
+                        min="00"
+                        max="60"
+                        class="form-control"
+                        v-model="endTime.second"
+                        placeholder="SS"
+                        required
+                      />
+                    </div>
+                  </div>
                 </div>
                 <div class="col-12 col-md-2">
                   <button
@@ -232,9 +300,13 @@
             <button
               type="button"
               class="btn btn-danger btn-lg btn-block my-2"
-              @click="cancelManualEditor"
+              @click="cancelManualEditor()"
             >取消</button>
-            <button type="button" class="btn btn-success btn-lg btn-block my-2">完成剪輯</button>
+            <button
+              type="button"
+              class="btn btn-success btn-lg btn-block my-2"
+              @click="manualAnalysis()"
+            >完成剪輯</button>
           </div>
         </div>
       </div>
@@ -409,8 +481,16 @@ export default {
       highlightTitle: "",
       // manual editor
       clip_time: [],
-      startTime: "",
-      endTime: "",
+      startTime: {
+        hour: "",
+        minute: "",
+        second: "",
+      },
+      endTime: {
+        hour: "",
+        minute: "",
+        second: "",
+      },
 
       api: null,
     };
@@ -453,6 +533,7 @@ export default {
       this.vodShow = false;
       this.vodAnalysisBtnShow = false;
       this.vodAnalysisSendStatusShow = false;
+      this.manualEditorShow = false;
       this.vodErrorData = "";
       let vm = this;
       let vodData = this.vodData;
@@ -520,6 +601,7 @@ export default {
               vm.vodAnalysisSendStatus = "Loading";
               vm.axios
                 .post(process.env.VUE_APP_ROOT_API + "/api/vod", {
+                  token: this.$store.state.auth.token,
                   vod_id: vm.vod_id,
                   memo: vm.highlightTitle,
                 })
@@ -565,6 +647,7 @@ export default {
             highlight_id: vm.videoSearchType == "highlight_id" ? vid : null,
             game: vm.videoSearchType == "game" ? vid : null,
             channel_id: vm.videoSearchType == "channel_id" ? vid : null,
+            streamerName: vm.videoSearchType == "streamerName" ? vid : null,
           },
         })
         .then((response) => {
@@ -587,6 +670,17 @@ export default {
     },
     manualEditor: function () {
       this.checkHighlightTitle();
+      this.clip_time = [];
+      this.startTime = {
+        hour: "",
+        minute: "",
+        second: "",
+      };
+      this.endTime = {
+        hour: "",
+        minute: "",
+        second: "",
+      };
       if (this.titleValid) {
         this.axios
           .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
@@ -610,17 +704,57 @@ export default {
           });
       }
     },
+    checkTime(time) {
+      if (parseInt(time) < 10) time = "0" + time;
+    },
     cancelManualEditor: function () {
       this.manualEditorShow = false;
       this.vodAnalysisBtnShow = true;
       this.vodShow = true;
     },
+    manualAnalysis() {
+      console.log({
+        token: this.$store.state.auth.token,
+        vod_id: this.vod_id,
+        memo: this.highlightTitle,
+        start_at: this.clip_startTime,
+        duration: this.clip_duration,
+      });
+      this.axios
+        .post(process.env.VUE_APP_ROOT_API + "/api/vod/manualEditor", {
+          token: this.$store.state.auth.token,
+          vod_id: this.vod_id,
+          memo: this.highlightTitle,
+          start_at: this.clip_startTime,
+          duration: this.clip_duration,
+        })
+        .then((response) => {
+          console.log(response);
+          window.alert("送出成功!");
+        })
+        .catch(function (error) {
+          console.log(error);
+          window.alert("送出失敗!");
+        });
+    },
     addClipTime: function () {
       let reg = /[0-9]{2,3}:[0-5][0-9]:[0-5][0-9]/;
-      if (reg.test(this.startTime) && reg.test(this.endTime)) {
+      let startTime =
+        this.startTime.hour +
+        ":" +
+        this.startTime.minute +
+        ":" +
+        this.startTime.second;
+      let endTime =
+        this.endTime.hour +
+        ":" +
+        this.endTime.minute +
+        ":" +
+        this.endTime.second;
+      if (reg.test(startTime) && reg.test(endTime)) {
         let time = {
-          start: this.startTime,
-          end: this.endTime,
+          start: startTime,
+          end: endTime,
         };
         this.clip_time.push(time);
       } else {
@@ -675,6 +809,37 @@ export default {
         total += diff / 60;
       });
       return total.toFixed(2);
+    },
+    clip_startTime() {
+      let arr = this.clip_timeSort;
+      let startTime = [];
+      arr.forEach((element) => {
+        startTime.push(element.start);
+      });
+      return startTime;
+    },
+    clip_duration() {
+      let arr = this.clip_timeSort;
+      let duration = [];
+      arr.forEach((element) => {
+        let start = element.start.split(":");
+        let end = element.end.split(":");
+        let startSec =
+          parseInt(start[0] * 60 * 60) +
+          parseInt(start[1] * 60) +
+          parseInt(start[2]);
+        let endSec =
+          parseInt(end[0] * 60 * 60) + parseInt(end[1] * 60) + parseInt(end[2]);
+        let diff = Math.abs(endSec - startSec);
+        let hour = Math.floor(diff / 60 / 60);
+        hour = hour >= 10 ? hour : "0" + hour;
+        let minute = Math.floor(diff / 60) % 60;
+        minute = minute >= 10 ? minute : "0" + minute;
+        let second = diff % 60;
+        second = second >= 10 ? second : "0" + second;
+        duration.push(hour + ":" + minute + ":" + second);
+      });
+      return duration;
     },
   },
 };
