@@ -15,6 +15,10 @@ Vue.use(VueAxios, axios)
 Vue.config.productionTip = false
 
 new Vue({
+  created() {
+    const html = document.documentElement // returns the html tag
+    html.setAttribute('lang', 'zh-Hant')
+  },
   router,
   store,
   render: h => h(App)
