@@ -1,13 +1,22 @@
 <template>
   <div>
     <br />
-    <div v-if="appraiseList === 'Loading'" class="d-flex justify-content-center my-5">
+    <div
+      v-if="appraiseList === 'Loading'"
+      class="d-flex justify-content-center my-5"
+    >
       <div class="spinner-grow text-secondary" role="status">
         <span class="sr-only">Loading...</span>
       </div>
     </div>
     <div v-else-if="appraiseList === 'Finish'">
-      <b-table striped hover :items="appraises" :fields="fields" responsive="sm">
+      <b-table
+        striped
+        hover
+        :items="appraises"
+        :fields="fields"
+        responsive="sm"
+      >
         <template v-slot:cell(manage)>
           <b-button size="sm" class="mr-2">
             <i class="fas fa-mail-bulk"></i> 聯繫用戶
@@ -28,7 +37,11 @@ export default {
   name: "appraise",
   data() {
     return {
-      fields: ["mail", "content", "manage"],
+      fields: [
+        { key: "mail", label: "電子信箱" },
+        { key: "content", label: "回饋內容" },
+        { key: "manage", label: "回饋管理" },
+      ],
       appraiseList: "Loading",
       appraises: null,
     };
