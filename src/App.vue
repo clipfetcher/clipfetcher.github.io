@@ -93,6 +93,7 @@
                 placeholder="想要給本系統改善的建議"
                 id="content"
                 v-model="content"
+                maxlength="50"
               />
               <div class="invalid-feedback">建議內容不得為空</div>
             </div>

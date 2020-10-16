@@ -112,6 +112,7 @@
                 id="validationText"
                 @change="checkText"
                 @keyup="checkText"
+                maxlength="50"
                 v-model="text"
               />
               <div class="invalid-feedback">評論不得為空</div>
