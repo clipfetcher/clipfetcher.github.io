@@ -342,54 +342,66 @@
 
           <!--修改密碼-->
           <div v-else-if="accountModalTitle === '修改密碼'">
-            <b-form @submit.prevent="updatePassword()">
-              <b-form-group>
+            <form @submit.prevent="updatePassword()">
+              <div class="form-group">
                 <span>
                   <b-link @click="accountModalTitle = '設定'"
                     ><i class="fas fa-chevron-left mr-2"></i>返回</b-link
                   >
                 </span>
-              </b-form-group>
-              <b-form-group label="舊密碼">
-                <b-form-input
+              </div>
+
+              <div class="form-group">
+                <label for="updatePasswordFormOldPassword">舊密碼</label>
+                <input
                   v-model="updatePasswordForm.oldPassword"
-                  type="text"
+                  type="password"
+                  id="updatePasswordFormOldPassword"
+                  class="form-control"
                   :class="
                     updatePasswordForm.oldPasswordError ? 'is-invalid' : ''
                   "
-                ></b-form-input>
+                />
                 <div class="invalid-feedback">
                   {{ updatePasswordForm.oldPasswordErrorText }}
                 </div>
-              </b-form-group>
+              </div>
 
-              <b-form-group label="設定新密碼">
-                <b-form-input
+              <div class="form-group">
+                <label for="updatePasswordFormNewPassword">設定新密碼</label>
+                <input
                   v-model="updatePasswordForm.newPassword"
-                  type="text"
+                  type="password"
+                  id="updatePasswordFormNewPassword"
+                  class="form-control"
                   :class="
                     updatePasswordForm.newPasswordError ? 'is-invalid' : ''
                   "
                   @keyup="updatePasswordNewPasswordLengthCheck()"
-                ></b-form-input>
+                />
                 <div class="invalid-feedback">
                   {{ updatePasswordForm.newPasswordErrorText }}
                 </div>
-              </b-form-group>
+              </div>
 
-              <b-form-group label="確認新密碼">
-                <b-form-input
+              <div class="form-group">
+                <label for="updatePasswordFormCheckNewPassword"
+                  >確認新密碼</label
+                >
+                <input
                   v-model="updatePasswordForm.checkNewPassword"
-                  type="text"
+                  type="password"
+                  id="updatePasswordFormCheckNewPassword"
+                  class="form-control"
                   :class="
                     updatePasswordForm.checkNewPasswordError ? 'is-invalid' : ''
                   "
                   @keyup="updatePasswordCheckNewPasswordSameCheck()"
-                ></b-form-input>
+                />
                 <div class="invalid-feedback">
                   {{ updatePasswordForm.checkNewPasswordErrorText }}
                 </div>
-              </b-form-group>
+              </div>
 
               <div v-if="updatePasswordLoading">
                 <div
@@ -400,15 +412,11 @@
                 </div>
               </div>
               <div v-else>
-                <b-button
-                  type="submit"
-                  variant="primary"
-                  class="float-right"
-                  @click="modalUpdatePassword()"
+                <b-button type="submit" variant="primary" class="float-right"
                   >修改密碼</b-button
                 >
               </div>
-            </b-form>
+            </form>
           </div>
         </b-modal>
       </div>
@@ -859,6 +867,15 @@ export default {
         this.updatePasswordForm.oldPasswordErrorText = "舊密碼輸入為空";
         isValid = false;
       }
+      if (
+        this.updatePasswordForm.newPassword ==
+        this.updatePasswordForm.oldPassword
+      ) {
+        this.updatePasswordForm.newPasswordError = true;
+        this.updatePasswordForm.checkNewPasswordError = true;
+        this.updatePasswordForm.newPasswordErrorText = "新密碼與舊密碼相同";
+        isValid = false;
+      }
       if (this.updatePasswordForm.newPassword.length == 0) {
         this.updatePasswordForm.newPasswordError = true;
         this.updatePasswordForm.newPasswordErrorText = "新密碼輸入為空";
@@ -889,18 +906,28 @@ export default {
           .post(process.env.VUE_APP_ROOT_API + "/api/user/updatePassword ", {
             token: this.$store.state.auth.token,
             account: this.accountSettingForm.account,
-            oldPassword: this.updatePasswordForm.oldPassword,
-            newPassword: this.updatePasswordForm.newPassword,
+            old_password: this.updatePasswordForm.oldPassword,
+            new_password: this.updatePasswordForm.newPassword,
           })
-          .then(() => {})
+          .then(() => {
+            window.alert("修改成功");
+            this.accountModalTitle = "設定";
+          })
           .catch(function (error) {
             if (error.response) {
-              this.updatePasswordLoading = false;
+              vm.updatePasswordLoading = false;
               if (
                 error.response.status === 401 ||
                 error.response.status === 400
               ) {
-                vm.accountSettingForm.account = error.response.data;
+                if (error.response.data == "更新失敗 密碼錯誤") {
+                  vm.updatePasswordForm.oldPasswordError = true;
+                  vm.updatePasswordForm.oldPasswordErrorText = "舊密碼輸入錯誤";
+                } else if (error.response.data == "更新失敗 密碼重複") {
+                  vm.updatePasswordForm.newPasswordError = true;
+                  vm.updatePasswordForm.newPasswordErrorText = "密碼重複";
+                  vm.updatePasswordForm.checkNewPasswordError = true;
+                }
               } else {
                 vm.accountSettingForm.account = "獲取資料發生錯誤";
               }
@@ -918,6 +945,9 @@ export default {
         this.updatePasswordForm.newPasswordError = true;
         this.updatePasswordForm.newPasswordErrorText =
           "新密碼過短。密碼長度請 >= 8";
+      } else {
+        this.updatePasswordForm.newPasswordError = false;
+        this.updatePasswordForm.newPasswordErrorText = "";
       }
     },
     updatePasswordCheckNewPasswordSameCheck() {
@@ -928,6 +958,9 @@ export default {
         this.updatePasswordForm.checkNewPasswordError = true;
         this.updatePasswordForm.checkNewPasswordErrorText =
           "密碼不相符。請再試一次";
+      } else {
+        this.updatePasswordForm.checkNewPasswordError = false;
+        this.updatePasswordForm.checkNewPasswordErrorText = "";
       }
     },
   },
