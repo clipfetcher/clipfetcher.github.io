@@ -4,14 +4,16 @@
       <nav class="nav nav-pills nav-fill">
         <a
           class="nav-item nav-link border rounded"
-          :class="{active:inputBar}"
+          :class="{ active: inputBar }"
           @click="inputBar = !inputBar"
-        >Highlight Generate</a>
+          >Highlight Generate</a
+        >
         <a
           class="nav-item nav-link border rounded"
-          :class="{active:!inputBar}"
+          :class="{ active: !inputBar }"
           @click="inputBar = !inputBar"
-        >Highlight Search</a>
+          >Highlight Search</a
+        >
       </nav>
 
       <transition name="fade" mode="out-in">
@@ -30,9 +32,13 @@
                 :class="vodValid ? 'is-Valid' : 'is-invalid'"
               />
               <div class="input-group-append">
-                <button id="vodLoadBtn" type="submit" class="btn btn-primary">{{vodLoadBtn}}</button>
+                <button id="vodLoadBtn" type="submit" class="btn btn-primary">
+                  {{ vodLoadBtn }}
+                </button>
               </div>
-              <div v-if="!vodValid" class="invalid-feedback">{{ vodErrorData }}</div>
+              <div v-if="!vodValid" class="invalid-feedback">
+                {{ vodErrorData }}
+              </div>
             </div>
           </form>
         </section>
@@ -44,10 +50,18 @@
             <b-input-group>
               <template v-slot:prepend>
                 <b-dropdown :text="videoSearchType" variant="primary">
-                  <b-dropdown-item @click="videoSearchType = 'vod_id'">VOD</b-dropdown-item>
-                  <b-dropdown-item @click="videoSearchType = 'highlight_id'">Highlight</b-dropdown-item>
-                  <b-dropdown-item @click="videoSearchType = 'game'">Game</b-dropdown-item>
-                  <b-dropdown-item @click="videoSearchType = 'streamerName'">Streamer</b-dropdown-item>
+                  <b-dropdown-item @click="videoSearchType = 'vod_id'"
+                    >VOD</b-dropdown-item
+                  >
+                  <b-dropdown-item @click="videoSearchType = 'highlight_id'"
+                    >Highlight</b-dropdown-item
+                  >
+                  <b-dropdown-item @click="videoSearchType = 'game'"
+                    >Game</b-dropdown-item
+                  >
+                  <b-dropdown-item @click="videoSearchType = 'streamerName'"
+                    >Streamer</b-dropdown-item
+                  >
                 </b-dropdown>
               </template>
               <input
@@ -60,7 +74,9 @@
               />
 
               <div class="input-group-append">
-                <button id="vodSearchBtn" type="submit" class="btn btn-primary">{{ vodSearchBtn }}</button>
+                <button id="vodSearchBtn" type="submit" class="btn btn-primary">
+                  {{ vodSearchBtn }}
+                </button>
               </div>
             </b-input-group>
           </form>
@@ -93,7 +109,10 @@
       <!-- 影片紀錄檔顯示 -->
       <div class="row justify-content-center" v-show="vodShow">
         <div class="col-12 col-md-8">
-          <div id="videoShow" class="embed-responsive embed-responsive-16by9 my-2">
+          <div
+            id="videoShow"
+            class="embed-responsive embed-responsive-16by9 my-2"
+          >
             <iframe
               id="videoAnalysis"
               class="embed-responsive-item"
@@ -120,7 +139,9 @@
               v-model="highlightTitle"
               maxlength="20"
             />
-            <div v-if="!titleValid" class="invalid-feedback">{{ titleErrorFeedback }}</div>
+            <div v-if="!titleValid" class="invalid-feedback">
+              {{ titleErrorFeedback }}
+            </div>
           </div>
           <div class="row justify-content-center my-4">
             <div class="col-10 col-md-6">
@@ -129,14 +150,18 @@
                 type="button"
                 class="btn btn-success btn-lg btn-block my-2"
                 @click="analysisVideo"
-              >自動分析</button>
+              >
+                自動分析
+              </button>
             </div>
             <div class="col-10 col-md-6">
               <button
                 type="button"
                 class="btn btn-success btn-lg btn-block my-2"
                 @click="manualEditor"
-              >手動剪輯</button>
+              >
+                手動剪輯
+              </button>
             </div>
           </div>
         </form>
@@ -155,7 +180,9 @@
               v-model="highlightTitle"
               maxlength="20"
             />
-            <div v-if="!titleValid" class="invalid-feedback">{{ titleErrorFeedback }}</div>
+            <div v-if="!titleValid" class="invalid-feedback">
+              {{ titleErrorFeedback }}
+            </div>
           </div>
         </div>
         <div class="row">
@@ -269,13 +296,17 @@
             <div class="card">
               <div class="card-header">
                 目前片段
-                <span
-                  v-if="clip_totalTime <= 20"
-                  style="float:right"
-                >累積時間 {{ clip_totalTime }} 分鐘</span>
-                <span v-else style="float:right;color:red">累積時間 {{ clip_totalTime }} 分鐘</span>
+                <span v-if="clip_totalTime <= 20" style="float: right"
+                  >累積時間 {{ clip_totalTime }} 分鐘</span
+                >
+                <span v-else style="float: right; color: red"
+                  >累積時間 {{ clip_totalTime }} 分鐘</span
+                >
               </div>
-              <div class="card-body overflow-auto" style="height: 340px; max-height: 340px;">
+              <div
+                class="card-body overflow-auto"
+                style="height: 340px; max-height: 340px"
+              >
                 <ul>
                   <li v-for="time in clip_timeSort" :key="time.index">
                     {{ time.start }} ~ {{ time.end }}
@@ -301,32 +332,49 @@
               type="button"
               class="btn btn-danger btn-lg btn-block my-2"
               @click="cancelManualEditor()"
-            >取消</button>
+            >
+              取消
+            </button>
             <button
               type="button"
               class="btn btn-success btn-lg btn-block my-2"
               @click="manualAnalysis()"
-            >完成剪輯</button>
+            >
+              完成剪輯
+            </button>
           </div>
         </div>
       </div>
 
-      <div v-show="vodAnalysisSendStatusShow" class="row justify-content-center m-2">
+      <div
+        v-show="vodAnalysisSendStatusShow"
+        class="row justify-content-center m-2"
+      >
         <div v-if="vodAnalysisSendStatus === 'Loading'">
           <div class="spinner-border text-secondary" role="status">
             <span class="sr-only">Loading...</span>
           </div>
         </div>
-        <div v-else-if="vodAnalysisSendStatus === 'Success'" class="alert alert-info" role="alert">
+        <div
+          v-else-if="vodAnalysisSendStatus === 'Success'"
+          class="alert alert-info"
+          role="alert"
+        >
           <p class="text-center my-2 py-2">
             <span>我們已收到您的分析請求！將會在分析完成後通知您！</span>
             <br />
             <span>你的ID：{{ videoHighlightId }}</span>
             <br />
-            <b-link :to="'/highlight/' + videoHighlightId" target="_blank">精華連結</b-link>
+            <b-link :to="'/highlight/' + videoHighlightId" target="_blank"
+              >精華連結</b-link
+            >
           </p>
         </div>
-        <div v-else-if="vodAnalysisSendStatus === 'Error'" class="alert alert-danger" role="alert">
+        <div
+          v-else-if="vodAnalysisSendStatus === 'Error'"
+          class="alert alert-danger"
+          role="alert"
+        >
           <p class="text-center my-2 py-2">
             <span>很抱歉！分析影片失敗 請重新嘗試！</span>
           </p>
@@ -355,7 +403,10 @@
     <div v-else-if="!inputBar">
       <!-- 精華影片搜尋顯示 -->
       <div v-show="highlightShow">
-        <div v-if="highlightSearch === 'Loading'" class="d-flex justify-content-center my-2">
+        <div
+          v-if="highlightSearch === 'Loading'"
+          class="d-flex justify-content-center my-2"
+        >
           <div class="spinner-border text-secondary" role="status">
             <span class="sr-only">Loading...</span>
           </div>
@@ -391,7 +442,10 @@
     <div id="videoList my-2">
       <!-- 精華影片顯示 -->
       <h2>最新精華影片</h2>
-      <div v-if="videoList === 'Loading'" class="d-flex justify-content-center my-5">
+      <div
+        v-if="videoList === 'Loading'"
+        class="d-flex justify-content-center my-5"
+      >
         <div class="spinner-grow text-secondary" role="status">
           <span class="sr-only">Loading...</span>
         </div>
@@ -413,7 +467,11 @@
           :analysis="highlight.analysis"
         ></HighlightList>
       </div>
-      <div v-else-if="videoList === 'Empty'" class="alert alert-info" role="alert">
+      <div
+        v-else-if="videoList === 'Empty'"
+        class="alert alert-info"
+        role="alert"
+      >
         <p class="text-center my-2 py-2">
           <span>目前還沒有精華影片！！</span>
         </p>
