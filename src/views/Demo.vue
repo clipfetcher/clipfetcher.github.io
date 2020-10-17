@@ -167,8 +167,8 @@
         </form>
       </div>
 
-      <div v-show="manualEditorShow">
-        <div class="manualEditor">
+      <div id="editorPage">
+        <div v-show="manualEditorShow">
           <div class="form-group my-4">
             <label for="highlightTitle">標題：</label>
             <input
@@ -184,164 +184,164 @@
               {{ titleErrorFeedback }}
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-12 col-md-8">
-            <div class="embed-responsive embed-responsive-16by9 my-1">
-              <iframe
-                class="embed-responsive-item"
-                :src="vidAnalysis"
-                scrolling="yes"
-                allowfullscreen="true"
-              ></iframe>
+          <div class="row">
+            <div class="col-12 col-md-7">
+              <div class="embed-responsive embed-responsive-16by9 my-1">
+                <iframe
+                  class="embed-responsive-item"
+                  :src="vidAnalysis"
+                  scrolling="yes"
+                  allowfullscreen="true"
+                ></iframe>
+              </div>
+              <div class="justify-content-center">
+                <div class="form-row">
+                  <div class="col-6 col-md-5">
+                    <label for="startTime">開始時間：</label>
+                    <div class="form-row">
+                      <div class="col-3">
+                        <input
+                          type="number"
+                          min="00"
+                          max="999"
+                          class="form-control"
+                          id="startTime"
+                          v-model="startTime.hour"
+                          placeholder="HH"
+                          required
+                        />
+                      </div>
+                      <span class="col-1">:</span>
+                      <div class="col-3">
+                        <input
+                          type="number"
+                          min="00"
+                          max="60"
+                          class="form-control"
+                          v-model="startTime.minute"
+                          placeholder="MM"
+                          required
+                        />
+                      </div>
+                      <span class="col-1">:</span>
+                      <div class="col-3">
+                        <input
+                          type="number"
+                          min="00"
+                          max="60"
+                          class="form-control"
+                          v-model="startTime.second"
+                          placeholder="SS"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-6 col-md-5">
+                    <label for="endTime">結束時間：</label>
+                    <div class="form-row">
+                      <div class="col-3">
+                        <input
+                          type="number"
+                          min="00"
+                          max="999"
+                          class="form-control"
+                          id="endTime"
+                          v-model="endTime.hour"
+                          placeholder="HH"
+                          required
+                        />
+                      </div>
+                      <span class="col-1">:</span>
+                      <div class="col-3">
+                        <input
+                          type="number"
+                          min="00"
+                          max="60"
+                          class="form-control"
+                          v-model="endTime.minute"
+                          placeholder="MM"
+                          required
+                        />
+                      </div>
+                      <span class="col-1">:</span>
+                      <div class="col-3">
+                        <input
+                          type="number"
+                          min="00"
+                          max="60"
+                          class="form-control"
+                          v-model="endTime.second"
+                          placeholder="SS"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-2">
+                    <button
+                      id="videoStartAnalysisBtn"
+                      type="button"
+                      class="btn btn-success btn-lg btn-block my-2"
+                      @click="addClipTime"
+                    >
+                      <i class="far fa-plus-square"></i> 加入
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="justify-content-center">
-              <div class="form-row">
-                <div class="col-6 col-md-5">
-                  <label for="startTime">開始時間：</label>
-                  <div class="form-row">
-                    <div class="col-3">
-                      <input
-                        type="number"
-                        min="00"
-                        max="999"
-                        class="form-control"
-                        id="startTime"
-                        v-model="startTime.hour"
-                        placeholder="HH"
-                        required
-                      />
-                    </div>
-                    <span class="col-1">:</span>
-                    <div class="col-3">
-                      <input
-                        type="number"
-                        min="00"
-                        max="60"
-                        class="form-control"
-                        v-model="startTime.minute"
-                        placeholder="MM"
-                        required
-                      />
-                    </div>
-                    <span class="col-1">:</span>
-                    <div class="col-3">
-                      <input
-                        type="number"
-                        min="00"
-                        max="60"
-                        class="form-control"
-                        v-model="startTime.second"
-                        placeholder="SS"
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div class="col-6 col-md-5">
-                  <label for="endTime">結束時間：</label>
-                  <div class="form-row">
-                    <div class="col-3">
-                      <input
-                        type="number"
-                        min="00"
-                        max="999"
-                        class="form-control"
-                        id="endTime"
-                        v-model="endTime.hour"
-                        placeholder="HH"
-                        required
-                      />
-                    </div>
-                    <span class="col-1">:</span>
-                    <div class="col-3">
-                      <input
-                        type="number"
-                        min="00"
-                        max="60"
-                        class="form-control"
-                        v-model="endTime.minute"
-                        placeholder="MM"
-                        required
-                      />
-                    </div>
-                    <span class="col-1">:</span>
-                    <div class="col-3">
-                      <input
-                        type="number"
-                        min="00"
-                        max="60"
-                        class="form-control"
-                        v-model="endTime.second"
-                        placeholder="SS"
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div class="col-12 col-md-2">
-                  <button
-                    id="videoStartAnalysisBtn"
-                    type="button"
-                    class="btn btn-success btn-lg btn-block my-2"
-                    @click="addClipTime"
+            <div class="col-12 col-md-5">
+              <div class="card">
+                <div class="card-header">
+                  目前片段
+                  <span v-if="clip_totalTime <= 20" style="float: right"
+                    >累積時間 {{ clip_totalTime }} 分鐘</span
                   >
-                    <i class="far fa-plus-square"></i> 加入
-                  </button>
+                  <span v-else style="float: right; color: red"
+                    >累積時間 {{ clip_totalTime }} 分鐘</span
+                  >
+                </div>
+                <div
+                  class="card-body overflow-auto"
+                  style="height: 340px; max-height: 340px"
+                >
+                  <ul>
+                    <li v-for="time in clip_timeSort" :key="time.index">
+                      {{ time.start }} ~ {{ time.end }}
+                      <button
+                        type="button"
+                        class="btn btn-outline-info m-1"
+                        @click="editClipTime(time)"
+                      >
+                        <i class="far fa-edit"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-outline-danger m-1"
+                        @click="removeClipTime(time)"
+                      >
+                        <i class="far fa-trash-alt"></i>
+                      </button>
+                    </li>
+                  </ul>
                 </div>
               </div>
-            </div>
-          </div>
-          <div class="col-12 col-md-4">
-            <div class="card">
-              <div class="card-header">
-                目前片段
-                <span v-if="clip_totalTime <= 20" style="float: right"
-                  >累積時間 {{ clip_totalTime }} 分鐘</span
-                >
-                <span v-else style="float: right; color: red"
-                  >累積時間 {{ clip_totalTime }} 分鐘</span
-                >
-              </div>
-              <div
-                class="card-body overflow-auto"
-                style="height: 340px; max-height: 340px"
+              <button
+                type="button"
+                class="btn btn-danger btn-lg btn-block my-2"
+                @click="cancelManualEditor()"
               >
-                <ul>
-                  <li v-for="time in clip_timeSort" :key="time.index">
-                    {{ time.start }} ~ {{ time.end }}
-                    <button
-                      type="button"
-                      class="btn btn-outline-info m-1"
-                      @click="editClipTime(time)"
-                    >
-                      <i class="far fa-edit"></i>
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-outline-danger m-1"
-                      @click="removeClipTime(time)"
-                    >
-                      <i class="far fa-trash-alt"></i>
-                    </button>
-                  </li>
-                </ul>
-              </div>
+                取消
+              </button>
+              <button
+                type="button"
+                class="btn btn-success btn-lg btn-block my-2"
+                @click="manualAnalysis()"
+              >
+                完成剪輯
+              </button>
             </div>
-            <button
-              type="button"
-              class="btn btn-danger btn-lg btn-block my-2"
-              @click="cancelManualEditor()"
-            >
-              取消
-            </button>
-            <button
-              type="button"
-              class="btn btn-success btn-lg btn-block my-2"
-              @click="manualAnalysis()"
-            >
-              完成剪輯
-            </button>
           </div>
         </div>
       </div>
@@ -766,7 +766,7 @@ export default {
           parseInt(durationTime[0] * 60 * 60) +
           parseInt(durationTime[1] * 60) +
           parseInt(durationTime[2]);
-        let end = Math.abs(startSec + durationSec);
+        let end = Number(startSec) + Number(durationSec);
         let hour = Math.floor(end / 60 / 60);
         hour = hour >= 10 ? hour : "0" + hour;
         let minute = Math.floor(end / 60) % 60;
@@ -778,7 +778,6 @@ export default {
           start: start_at[i],
           end: hour + ":" + minute + ":" + second,
         };
-        console.log(time);
         this.clip_time.push(time);
       }
       this.startTime = {
@@ -794,9 +793,6 @@ export default {
       this.vodShow = false;
       this.vodAnalysisBtnShow = false;
       this.manualEditorShow = true;
-
-      let el = this.$el.getElementsByClassName("manualEditor")[0];
-      el.scrollIntoView();
     },
     addClipTime: function () {
       let reg = /[0-9]{2,3}:[0-5][0-9]:[0-5][0-9]/;
