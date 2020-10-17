@@ -34,7 +34,7 @@ export default {
       fields: [
         { key: "account", label: "帳號名稱", sortable: true },
         { key: "email", label: "電子信箱" },
-        { key: "certification", label: "帳號驗證" },
+        { key: "verification", label: "帳號驗證" },
         { key: "role", label: "帳號等級" },
         { key: "manage", label: "帳號管理" },
       ],

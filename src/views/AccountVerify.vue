@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div
-      v-if="certificateState === 'initialize'"
+      v-if="verifyState === 'initialize'"
       class="alert alert-primary"
       role="alert"
     >
@@ -10,7 +10,7 @@
       </p>
     </div>
     <div
-      v-else-if="certificateState === 'error'"
+      v-else-if="verifyState === 'error'"
       class="alert alert-danger"
       role="alert"
     >
@@ -28,34 +28,31 @@
 
 <script>
 export default {
-  name: "Certificate",
-  props: ["certificate_token"],
+  name: "AccountVerify",
+  props: ["verify_token"],
   data() {
     return {
-      certificateState: "initialize",
+      verifyState: "initialize",
     };
   },
   mounted() {
-    this.certificate();
+    this.verify();
   },
   methods: {
-    certificate() {
+    verify() {
       let vm = this;
       this.axios
         .get(
-          process.env.VUE_APP_ROOT_API +
-            "/api/user/certificate/" +
-            this.certificate_token
+          process.env.VUE_APP_ROOT_API + "/api/user/verify/" + this.verify_token
         )
         .then(() => {
-          this.certificateState = "success";
+          this.verifyState = "success";
           setTimeout(() => {
             this.$router.push({ path: "/" });
           }, 5000);
         })
-        .catch(function (error) {
-          console.log(error);
-          vm.certificateState = "error";
+        .catch(() => {
+          vm.verifyState = "error";
         });
     },
   },
