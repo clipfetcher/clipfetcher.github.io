@@ -168,7 +168,7 @@
       </div>
 
       <div v-show="manualEditorShow">
-        <div>
+        <div class="manualEditor">
           <div class="form-group my-4">
             <label for="highlightTitle">標題：</label>
             <input
@@ -380,24 +380,6 @@
           </p>
         </div>
       </div>
-
-      <!-- 分析結果顯示 -->
-      <div id="videoResult" class="card my-2" v-if="videoResult">
-        <h5 class="card-header">分析結果精華影片</h5>
-        <HighlightList
-          :vod_id="analyseVideos.vod_id"
-          :highlight_id="analyseVideos.highlight_id"
-          :channel_id="analyseVideos.channel_id"
-          :streamerName="analyseVideos.streamerName"
-          :game="analyseVideos.game"
-          :youtube_url="analyseVideos.youtube_url"
-          :avg_score="analyseVideos.avg_score"
-          :memo="analyseVideos.memo"
-          :author="analyseVideos.author"
-          :status="analyseVideos.status"
-          :analysis="analyseVideos.analysis"
-        ></HighlightList>
-      </div>
     </div>
 
     <div v-else-if="!inputBar">
@@ -422,11 +404,14 @@
             :streamerName="searchVideo.streamerName"
             :game="searchVideo.game"
             :youtube_url="searchVideo.youtube_url"
+            :start_at="highlight.start_at"
+            :duration="highlight.duration"
             :avg_score="searchVideo.avg_score"
             :memo="searchVideo.memo"
             :author="searchVideo.author"
             :status="searchVideo.status"
             :analysis="searchVideo.analysis"
+            v-on:manual="setManualEditor"
           ></HighlightList>
         </div>
         <div v-else class="alert alert-danger" role="alert">
@@ -460,11 +445,14 @@
           :streamerName="highlight.streamerName"
           :game="highlight.game"
           :youtube_url="highlight.youtube_url"
+          :start_at="highlight.start_at"
+          :duration="highlight.duration"
           :avg_score="highlight.avg_score"
           :memo="highlight.memo"
           :author="highlight.author"
           :status="highlight.status"
           :analysis="highlight.analysis"
+          v-on:manual="setManualEditor"
         ></HighlightList>
       </div>
       <div
@@ -514,7 +502,6 @@ export default {
       vodAnalysisBtnShow: false,
       vodAnalysisSendStatusShow: false,
       vodAnalysisSendStatus: "Loading",
-      videoResult: false,
       inputBar: true,
       active: true,
       highlightShow: false,
@@ -569,24 +556,6 @@ export default {
       });
   },
   methods: {
-    showAnalyseVideo: function () {
-      this.videoResult = false;
-      let vm = this;
-      this.axios
-        .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
-          params: {
-            highlight_id: this.vod_id,
-          },
-        })
-        .then((response) => {
-          this.analyseVideos = response.data;
-          vm.videoResult = true;
-        })
-        .catch(function (error) {
-          console.log(error);
-          vm.videoResult = false;
-        });
-    },
     loadVideo: function () {
       this.vodShow = false;
       this.vodAnalysisBtnShow = false;
@@ -616,7 +585,6 @@ export default {
           vm.vod_id = vid;
           vm.vodValid = true;
           vm.vodLoadBtn = "reload";
-          vm.videoResult = false;
           vm.vodShow = true;
           vm.vodAnalysisBtnShow = true;
         })
@@ -740,26 +708,9 @@ export default {
         second: "",
       };
       if (this.titleValid) {
-        this.axios
-          .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
-            params: {
-              vod_id: this.vod_id,
-              highlight_id: null,
-              game: null,
-              channel_id: null,
-            },
-          })
-          .then((response) => {
-            if (response.data != "") {
-              window.confirm("發現已分析過資料 是否載入時間軸");
-            }
-            this.vodShow = false;
-            this.vodAnalysisBtnShow = false;
-            this.manualEditorShow = true;
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+        this.vodShow = false;
+        this.vodAnalysisBtnShow = false;
+        this.manualEditorShow = true;
       }
     },
     checkTime(time) {
@@ -771,29 +722,81 @@ export default {
       this.vodShow = true;
     },
     manualAnalysis() {
-      console.log({
-        token: this.$store.state.auth.token,
-        vod_id: this.vod_id,
-        memo: this.highlightTitle,
-        start_at: this.clip_startTime,
-        duration: this.clip_duration,
-      });
-      this.axios
-        .post(process.env.VUE_APP_ROOT_API + "/api/vod/manualEditor", {
-          token: this.$store.state.auth.token,
-          vod_id: this.vod_id,
-          memo: this.highlightTitle,
-          start_at: this.clip_startTime,
-          duration: this.clip_duration,
-        })
-        .then((response) => {
-          console.log(response);
-          window.alert("送出成功!");
-        })
-        .catch(function (error) {
-          console.log(error);
-          window.alert("送出失敗!");
-        });
+      this.checkHighlightTitle();
+      if (this.titleValid) {
+        this.axios
+          .post(process.env.VUE_APP_ROOT_API + "/api/vod/manualEditor", {
+            token: this.$store.state.auth.token,
+            vod_id: this.vod_id,
+            memo: this.highlightTitle,
+            start_at: this.clip_startTime,
+            duration: this.clip_duration,
+          })
+          .then((response) => {
+            console.log(response);
+            window.alert("送出成功!");
+          })
+          .catch(function (error) {
+            console.log(error);
+            window.alert("送出失敗!");
+          });
+      }
+    },
+    setManualEditor(vod_id, start_at, duration) {
+      this.vidAnalysis =
+        "https://player.twitch.tv/?video=v" +
+        vod_id +
+        "&autoplay=false&parent=" +
+        window.location.hostname;
+      this.vod_id = vod_id;
+      this.vodValid = true;
+      this.vodLoadBtn = "reload";
+      this.vodShow = true;
+      this.vodAnalysisBtnShow = true;
+
+      this.clip_time = [];
+      for (let i = 0; i < start_at.length; i++) {
+        let start = start_at[i].split(":");
+        let durationTime = duration[i].split(":");
+        let startSec =
+          parseInt(start[0] * 60 * 60) +
+          parseInt(start[1] * 60) +
+          parseInt(start[2]);
+        let durationSec =
+          parseInt(durationTime[0] * 60 * 60) +
+          parseInt(durationTime[1] * 60) +
+          parseInt(durationTime[2]);
+        let end = Math.abs(startSec + durationSec);
+        let hour = Math.floor(end / 60 / 60);
+        hour = hour >= 10 ? hour : "0" + hour;
+        let minute = Math.floor(end / 60) % 60;
+        minute = minute >= 10 ? minute : "0" + minute;
+        let second = end % 60;
+        second = second >= 10 ? second : "0" + second;
+
+        let time = {
+          start: start_at[i],
+          end: hour + ":" + minute + ":" + second,
+        };
+        console.log(time);
+        this.clip_time.push(time);
+      }
+      this.startTime = {
+        hour: "",
+        minute: "",
+        second: "",
+      };
+      this.endTime = {
+        hour: "",
+        minute: "",
+        second: "",
+      };
+      this.vodShow = false;
+      this.vodAnalysisBtnShow = false;
+      this.manualEditorShow = true;
+
+      let el = this.$el.getElementsByClassName("manualEditor")[0];
+      el.scrollIntoView();
     },
     addClipTime: function () {
       let reg = /[0-9]{2,3}:[0-5][0-9]:[0-5][0-9]/;

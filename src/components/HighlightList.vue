@@ -35,7 +35,7 @@
             <i
               class="fas fa-link fa-lg m-1"
               data-toggle="tooltip"
-              title="VOD網址"
+              title="原始鏈結"
             ></i>
             原始鏈結
           </b-dropdown-item>
@@ -43,9 +43,17 @@
             <i
               class="fas fa-share-square fa-lg m-1"
               data-toggle="tooltip"
-              title="精華連結"
+              title="精華頁面"
             ></i>
             精華頁面
+          </b-dropdown-item>
+          <b-dropdown-item @click="manualEditor">
+            <i
+              class="fas fa-user-edit fa-lg m-1"
+              data-toggle="tooltip"
+              title="手動剪輯"
+            ></i>
+            手動剪輯
           </b-dropdown-item>
         </b-dropdown>
         <p class="text-left m-0">標題：{{ memo }}</p>
@@ -165,6 +173,8 @@ export default {
     "streamerName",
     "game",
     "youtube_url",
+    "start_at",
+    "duration",
     "avg_score",
     "memo",
     "author",
@@ -265,6 +275,9 @@ export default {
       if (this.$router.currentRoute.name === "HighlightSearch") {
         this.$router.go(0);
       }
+    },
+    manualEditor() {
+      this.$emit("manual", this.vod_id, this.start_at, this.duration);
     },
   },
   computed: {
