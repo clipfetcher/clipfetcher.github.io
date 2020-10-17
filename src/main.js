@@ -15,12 +15,8 @@ Vue.use(VueAxios, axios)
 Vue.config.productionTip = false
 
 router.beforeEach((to, from, next) => {
-  // console.log('to', to);
-  // console.log('from', from);
-  // console.log('next', next);
   if (to.meta.requiresAuth) {
     // 要到的頁面 (to)，它的 meta 如果有 requiresAuth 的話，就"不會"直接放行
-    console.log('這裡需要驗證');
     const api = `${process.env.VUE_APP_ROOT_API}/api/admin/users`;
     axios.get(api, {
       params: {
@@ -31,7 +27,6 @@ router.beforeEach((to, from, next) => {
         next();
       })
       .catch(function () {
-        console.log("驗證失敗")
         next({
           path: '/',
         })
