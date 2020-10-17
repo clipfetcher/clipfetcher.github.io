@@ -60,21 +60,7 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
-          if (error.response) {
-            if (
-              error.response.status === 402 ||
-              error.response.status === 401 ||
-              error.response.status === 400
-            ) {
-              setTimeout(() => {
-                vm.$router.push({ path: "/" });
-              }, 1000);
-            } else {
-              vm.accountList = "Error";
-            }
-          } else {
-            vm.accountList = "Error";
-          }
+          vm.accountList = "Error";
         });
     },
   },
