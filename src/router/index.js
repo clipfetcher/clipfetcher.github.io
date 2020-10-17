@@ -94,7 +94,7 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "news" */ '../views/TestComponent.vue')
+    component: () => import(/* webpackChunkName: "news" */ '../views/TestComponent.vue'),
   },
   {
     path: '/terms-of-service',
@@ -160,9 +160,11 @@ const routes = [
           account: () => import(/* webpackChunkName: "account" */ '../views/AdminComponents/Account.vue'),
           analysis: () => import(/* webpackChunkName: "analysis" */ '../views/AdminComponents/Analysis.vue'),
           appraise: () => import(/* webpackChunkName: "appraise" */ '../views/AdminComponents/Appraise.vue'),
-        }
+        },
+        // 判斷是否為管理員
+        meta: { requiresAuth: true },
       }
-    ]
+    ],
   },
   { path: '/404', component: () => import(/* webpackChunkName: "user" */ '../views/NotFoundComponent.vue'), },
   { path: '*', redirect: '/404' }
