@@ -1,51 +1,122 @@
 <template>
   <div class="container">
-    <h4>{{ highlight_id }}</h4>
-    <!--<p>{{ highlightVideo }}</p>-->
-    <br />
-    <br />
-    <div class="m-2">
-      <div v-if="highlightPage === 'Loading'" class="d-flex justify-content-center my-2">
+    <div class="my-2">
+      <div v-if="highlightPage === 'Loading'" class="d-flex justify-content-center my-4">
         <div class="spinner-border text-secondary" role="status">
           <span class="sr-only">Loading...</span>
         </div>
       </div>
-      <div v-else-if="highlightPage === 'Find'" class="card m-2">
-        <div class="m-4">
-          <div class="row">
-            <div class="col-12 col-md-4 my-2">
-              <div v-if="analysisComplete" class="embed-responsive embed-responsive-16by9">
-                <iframe class="embed-responsive-item" :src="youtube_embed" allowfullscreen></iframe>
-              </div>
-              <div v-else class="alert alert-info" role="alert">
-                <p class="text-center my-4 py-4">
-                  <span>分析中</span>
-                </p>
-              </div>
+      <div v-else-if="highlightPage === 'Find'">
+        <div class="row">
+          <div class="col-12">
+            <div v-if="analysisComplete" class="embed-responsive embed-responsive-16by9 mb-4">
+              <iframe class="embed-responsive-item" :src="youtube_embed" allowfullscreen></iframe>
             </div>
-            <div class="col-12 col-md-8">
-              <a
-                :href="'https://www.twitch.tv/videos/' + highlightVideo.vod_id"
-                target="_blank"
-                class="card-link float-right"
-              >
-                <i class="fas fa-link fa-lg" data-toggle="tooltip" title="VOD網址"></i>
-              </a>
-              <p class="text-left m-0">ID：{{ highlightVideo.vod_id }}</p>
-              <p class="text-left m-0">Highlight：{{ highlightVideo.highlight_id }}</p>
-              <p class="text-left m-0">
-                實況主：
-                <b-link
-                  :to="'/results?channel_id=' + highlightVideo.channel_id"
-                >{{ highlightVideo.streamerName }}</b-link>
+            <div v-else class="alert alert-info" role="alert">
+              <p class="text-center my-4 py-4">
+                <span>{{ highlightStatusText }}</span>
               </p>
-              <p class="text-left m-0">
-                遊戲分類：
-                <b-link :to="'/results?game=' + highlightVideo.game">{{ highlightVideo.game }}</b-link>
-              </p>
-              <p class="text-left m-0">目前分數：{{ highlightVideo.avg_score }}</p>
-              <p class="text-left m-0">備註：{{ highlightVideo.memo }}</p>
             </div>
+          </div>
+          <div class="col-12">
+            <h4>
+              <p class="text-left m-0">標題：{{ highlightVideo.memo }}</p>
+            </h4>
+          </div>
+          <div class="col-12">
+            <a
+              :href="'https://www.twitch.tv/videos/' + highlightVideo.vod_id"
+              target="_blank"
+              class="card-link float-right"
+            >
+              <i class="fas fa-link fa-lg" data-toggle="tooltip" title="VOD網址"></i>
+            </a>
+            <p class="text-left m-0">
+              實況主：
+              <b-link
+                :to="'/results?channel_id=' + highlightVideo.channel_id"
+              >{{ highlightVideo.streamerName }}</b-link>
+            </p>
+            <p class="text-left m-0">
+              遊戲分類：
+              <b-link :to="'/results?game=' + highlightVideo.game">{{ highlightVideo.game }}</b-link>
+            </p>
+            <p class="text-left m-0">目前分數：{{ highlightVideo.avg_score }}</p>
+            <p class="text-left m-0">建立者：{{ highlightVideo.author }}</p>
+            <b-button
+              @click="appraiseModalShow = !appraiseModalShow"
+              variant="outline-info"
+              class="float-right m-1"
+            >我要評價</b-button>
+
+            <b-modal v-model="appraiseModalShow" title="精華評價" hide-footer>
+              <form @submit.prevent="appraise">
+                <div class="form-group">
+                  <label for="validationText">評論：</label>
+                  <br />
+                  <button
+                    type="button"
+                    class="btn m-1"
+                    :class="notAccurate ? 'btn-secondary' : 'btn-outline-secondary'"
+                    @click="textButton('notAccurate')"
+                  >影片不精準</button>
+                  <button
+                    type="button"
+                    class="btn m-1"
+                    :class="videoLong ? 'btn-secondary' : 'btn-outline-secondary'"
+                    @click="textButton('videoLong')"
+                  >影片長度過長</button>
+                  <button
+                    type="button"
+                    class="btn m-1"
+                    :class="
+                  analysisLong ? 'btn-secondary' : 'btn-outline-secondary'
+                "
+                    @click="textButton('analysisLong')"
+                  >影片分析太久</button>
+                  <br />
+                  <input
+                    type="text"
+                    class="form-control"
+                    :class="validationText ? 'is-invalid' : ''"
+                    id="validationText"
+                    @change="checkText"
+                    @keyup="checkText"
+                    maxlength="50"
+                    v-model="text"
+                  />
+                  <div class="invalid-feedback">評論不得為空</div>
+                </div>
+                <div class="form-group">
+                  <label for="starRating">分數：</label>
+                  <br />
+                  <template v-for="index in 5">
+                    <i
+                      v-if="index <= starRating"
+                      :key="index.id"
+                      class="text-warning fas fa-star"
+                      @click="clickRating(index)"
+                      @mouseover="mouseOverRrating(index)"
+                      @touchstart="mouseOverRrating(index)"
+                      @mouseout="mouseOutRrating"
+                      @touchend="mouseOutRrating"
+                    ></i>
+                    <i
+                      v-else
+                      :key="index.id"
+                      class="text-warning far fa-star"
+                      @click="clickRating(index)"
+                      @mouseover="mouseOverRrating(index)"
+                      @touchstart="mouseOverRrating(index)"
+                      @mouseout="mouseOutRrating"
+                      @touchend="mouseOutRrating"
+                    ></i>
+                  </template>
+                  {{ starRating }}
+                </div>
+                <button type="submit" class="btn btn-primary float-right">送出</button>
+              </form>
+            </b-modal>
           </div>
         </div>
       </div>
@@ -69,6 +140,16 @@ export default {
       highlightPage: "Loading",
       highlightVideo: null,
       analysisComplete: false,
+
+      temp_starRating: 4,
+      starRating: 4,
+      text: "",
+      appraiseModalShow: false,
+
+      notAccurate: false,
+      videoLong: false,
+      analysisLong: false,
+      validationText: false,
     };
   },
   mounted() {
@@ -93,27 +174,71 @@ export default {
               this.analysisComplete = false;
             else this.analysisComplete = true;
           }
-          /*
-        this.axios
-          .post("https://clip-fetcher.herokuapp.com/api/vod/status", {
-            vod_id: this.highlight_id
-          })
-          .then(response => {
-            if (this.highlightVideo == "" || this.highlightVideo == null)
-              this.highlightPage = "Error";
-            else {
-              this.highlightPage = "Find";
-              if (response.data.status != 2) this.analysisComplete = true;
-            }
-          })
-          .catch(function(error) {
-            console.log(error.response);
-          });
-          */
         })
         .catch(function (error) {
           console.log(error.response);
         });
+    },
+    mouseOverRrating: function (val) {
+      this.temp_starRating = this.starRating;
+      this.starRating = val;
+    },
+    mouseOutRrating: function () {
+      if (!this.isRating) this.starRating = 4;
+      else this.starRating = this.temp_starRating;
+      this.temp_starRating = 0;
+    },
+    clickRating: function (val) {
+      this.starRating = this.temp_starRating = val;
+      this.isRating = true;
+    },
+    textButton: function (button) {
+      let output = "";
+      if (button == "notAccurate") {
+        this.notAccurate = !this.notAccurate;
+      } else if (button == "videoLong") {
+        this.videoLong = !this.videoLong;
+      } else if (button == "analysisLong") {
+        this.analysisLong = !this.analysisLong;
+      }
+      if (this.notAccurate) {
+        output += " 影片不精準 ";
+      }
+      if (this.videoLong) {
+        output += " 影片長度過長 ";
+      }
+      if (this.analysisLong) {
+        output += " 影片分析太久 ";
+      }
+      this.text = output;
+    },
+    checkText: function () {
+      if (this.text == "" || this.text == null) {
+        this.validationText = true;
+      } else {
+        this.validationText = false;
+      }
+    },
+    appraise: function () {
+      let vm = this;
+      if (this.text == "" || this.text == null) {
+        this.validationText = true;
+      } else {
+        this.validationText = false;
+        this.axios
+          .post(process.env.VUE_APP_ROOT_API + "/api/vod/appraise", {
+            highlight_id: this.highlight_id,
+            text: this.text,
+            score: this.starRating,
+          })
+          .then((response) => {
+            vm.response = response;
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+        this.appraiseModalShow = !this.appraiseModalShow;
+      }
     },
   },
   watch: {
@@ -127,6 +252,50 @@ export default {
       vodData = vodData.split("=");
       let url = vodData[1];
       return "https://www.youtube.com/embed/" + url + "?rel=0";
+    },
+    highlightStatusText() {
+      let text;
+      switch (this.highlightVideo.status) {
+        case "GETINFO":
+          text = "獲取資訊中";
+          break;
+        case "RUNALGO":
+          text = "影片分析中";
+          break;
+        case "FMVODDL":
+          text = "影片下載中";
+          break;
+        case "FMVODCB":
+          text = "影片合併中";
+          break;
+        case "YTVODUL":
+          text = "YT上傳中";
+          break;
+        case "FINISHED":
+          text = "已完成";
+          break;
+        case "NEWANALF":
+          text = "建立分析失敗";
+          break;
+        case "GETINFOF":
+          text = "獲取資訊失敗";
+          break;
+        case "RUNALGOF":
+          text = "影片分析失敗";
+          break;
+        case "FMVODDLF":
+          text = "影片下載失敗";
+          break;
+        case "FMVODCBF":
+          text = "影片合併失敗";
+          break;
+        case "YTVODULF":
+          text = "YT上傳失敗";
+          break;
+        default:
+          text = "Empty";
+      }
+      return text;
     },
   },
 };
