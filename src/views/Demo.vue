@@ -40,7 +40,6 @@
         <!-- 精華搜尋輸入列 -->
         <section class="my-3" v-else-if="!inputBar" key="search">
           <form @submit.prevent="searchVideo">
-            <!-- <label for="videoSearch">請輸入你想要尋找的精華 Vod ID 或其他關鍵字</label> -->
             <b-input-group>
               <template v-slot:prepend>
                 <b-dropdown :text="videoSearchType" variant="primary">
@@ -48,6 +47,7 @@
                   <b-dropdown-item @click="videoSearchType = 'highlight_id'">Highlight</b-dropdown-item>
                   <b-dropdown-item @click="videoSearchType = 'game'">Game</b-dropdown-item>
                   <b-dropdown-item @click="videoSearchType = 'streamerName'">Streamer</b-dropdown-item>
+                  <b-dropdown-item @click="videoSearchType = 'author'">Author</b-dropdown-item>
                 </b-dropdown>
               </template>
               <input
@@ -362,8 +362,8 @@
             :streamerName="searchVideo.streamerName"
             :game="searchVideo.game"
             :youtube_url="searchVideo.youtube_url"
-            :start_at="highlight.start_at"
-            :duration="highlight.duration"
+            :start_at="searchVideo.start_at"
+            :duration="searchVideo.duration"
             :avg_score="searchVideo.avg_score"
             :memo="searchVideo.memo"
             :author="searchVideo.author"
@@ -625,6 +625,7 @@ export default {
             game: vm.videoSearchType == "game" ? vid : null,
             channel_id: vm.videoSearchType == "channel_id" ? vid : null,
             streamerName: vm.videoSearchType == "streamerName" ? vid : null,
+            author: vm.videoSearchType == "author" ? vid : null,
           },
         })
         .then((response) => {

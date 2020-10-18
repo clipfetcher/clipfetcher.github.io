@@ -40,7 +40,7 @@
             <i class="fas fa-share-square fa-lg m-1" data-toggle="tooltip" title="精華頁面"></i>
             精華頁面
           </b-dropdown-item>
-          <b-dropdown-item @click="manualEditor">
+          <b-dropdown-item v-if="$router.currentRoute.name === 'Demo'" @click="manualEditor">
             <i class="fas fa-user-edit fa-lg m-1" data-toggle="tooltip" title="手動剪輯"></i>
             手動剪輯
           </b-dropdown-item>
@@ -62,7 +62,10 @@
           </b-link>
         </p>
         <p class="text-left m-0">目前分數：{{ avg_score }}</p>
-        <p class="text-left m-0">建立者：{{ author }}</p>
+        <p class="text-left m-0">
+          建立者：
+          <b-link :to="'/results?author=' + author" @click.prevent="authorSearch">{{ author }}</b-link>
+        </p>
         <b-button
           @click="appraiseModalShow = !appraiseModalShow"
           variant="outline-info"
@@ -249,6 +252,15 @@ export default {
       this.$router.push({
         name: "HighlightSearch",
         query: { game: this.game },
+      });
+      if (this.$router.currentRoute.name === "HighlightSearch") {
+        this.$router.go(0);
+      }
+    },
+    authorSearch() {
+      this.$router.push({
+        name: "HighlightSearch",
+        query: { author: this.author },
       });
       if (this.$router.currentRoute.name === "HighlightSearch") {
         this.$router.go(0);

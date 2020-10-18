@@ -18,6 +18,9 @@
         :youtube_url="searchVideo.youtube_url"
         :avg_score="searchVideo.avg_score"
         :memo="searchVideo.memo"
+        :author="searchVideo.author"
+        :status="searchVideo.status"
+        :analysis="searchVideo.analysis"
       ></HighlightList>
     </div>
     <div v-else class="alert alert-danger" role="alert">
@@ -37,7 +40,7 @@ export default {
     return {
       query: this.$route.query,
       highlightSearch: "Loading",
-      searchVideos: null
+      searchVideos: null,
     };
   },
   components: { HighlightList },
@@ -56,26 +59,28 @@ export default {
             vod_id: query.vod_id,
             highlight_id: query.highlight_id,
             game: query.game,
-            channel_id: query.channel_id
-          }
+            channel_id: query.channel_id,
+            streamerName: query.streamerName,
+            author: query.author,
+          },
         })
-        .then(response => {
+        .then((response) => {
           vm.searchVideos = response.data;
           if (vm.searchVideos == "") vm.highlightSearch = "Error";
           else vm.highlightSearch = "Find";
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
           vm.highlightSearch = "Error";
         });
-    }
+    },
   },
   watch: {
     $route() {
       this.query = this.$route.query;
       this.getContent();
-    }
-  }
+    },
+  },
 };
 </script>
 
