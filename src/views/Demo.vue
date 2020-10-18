@@ -592,9 +592,9 @@ export default {
           console.log(error);
           vm.vodValid = false;
           if (vm.vodData == "") {
-            vm.vodErrorData = "Input cannot be empty.";
+            vm.vodErrorData = "請輸入您想分析的直播影片網址";
           } else {
-            vm.vodErrorData = "Please check Vod's Id or VOD's URL is valid.";
+            vm.vodErrorData = "請輸入正確的直播影片網址";
           }
         });
     },
@@ -620,7 +620,7 @@ export default {
               vm.vodAnalysisSendStatusShow = false;
               vm.titleValid = false;
               vm.titleErrorFeedback =
-                "Vod's Id or VOD's URL is duplicate! You can search the highlight on our website.";
+                "這部影片已經有人分析過囉 您可以在精華搜尋找到這部影片的分析結果";
             } else {
               vm.vodAnalysisBtnShow = false;
               vm.vodAnalysisSendStatusShow = true;
