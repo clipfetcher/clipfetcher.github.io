@@ -16,7 +16,7 @@
 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="ml-auto">
-          <b-nav-item-dropdown class="mx-1" right>
+          <!-- <b-nav-item-dropdown class="mx-1" right>
             <template v-slot:button-content>
               <em>其他頁面</em>
             </template>
@@ -25,24 +25,24 @@
             <b-dropdown-item to="/test">TestComponent</b-dropdown-item>
             <b-dropdown-item to="/admin">Admin</b-dropdown-item>
             <b-dropdown-item to="/user">User</b-dropdown-item>
-          </b-nav-item-dropdown>
+          </b-nav-item-dropdown>-->
 
-          <b-nav-form v-if="!isLogin"
-            ><b-button @click="modalLogin()" variant="info"
-              ><i class="fas fa-sign-in-alt mr-2"></i>登入</b-button
-            ></b-nav-form
-          >
+          <b-nav-form v-if="!isLogin">
+            <b-button @click="modalLogin()" variant="info">
+              <i class="fas fa-sign-in-alt mr-2"></i>登入
+            </b-button>
+          </b-nav-form>
 
           <b-nav-item-dropdown class="mx-1" right v-if="isLogin">
             <template v-slot:button-content>
               <em>會員</em>
             </template>
-            <b-dropdown-item @click="modalSetting()"
-              ><i class="fas fa-cog mr-1"></i>設定</b-dropdown-item
-            >
-            <b-dropdown-item @click="logout()"
-              ><i class="fas fa-sign-out-alt mr-1"></i>登出</b-dropdown-item
-            >
+            <b-dropdown-item @click="modalSetting()">
+              <i class="fas fa-cog mr-1"></i>設定
+            </b-dropdown-item>
+            <b-dropdown-item @click="logout()">
+              <i class="fas fa-sign-out-alt mr-1"></i>登出
+            </b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-collapse>
@@ -80,9 +80,7 @@
                 aria-describedby="emailHelp"
               />
               <div class="invalid-feedback">{{ emailErrorText }}</div>
-              <small id="emailHelp" class="form-text text-muted"
-                >我們將會使用這個信箱作為聯絡您的方式</small
-              >
+              <small id="emailHelp" class="form-text text-muted">我們將會使用這個信箱作為聯絡您的方式</small>
             </div>
             <div class="form-group">
               <label for="content">建議內容：</label>
@@ -97,17 +95,11 @@
               />
               <div class="invalid-feedback">建議內容不得為空</div>
             </div>
-            <button type="submit" class="btn btn-primary float-right">
-              送出
-            </button>
+            <button type="submit" class="btn btn-primary float-right">送出</button>
           </form>
         </b-modal>
 
-        <b-modal
-          v-model="accountModalShow"
-          :title="accountModalTitle"
-          hide-footer
-        >
+        <b-modal v-model="accountModalShow" :title="accountModalTitle" hide-footer>
           <!--登入-->
           <div v-if="accountModalTitle === '登入'">
             <form @submit.prevent="login">
@@ -143,17 +135,12 @@
                   <b-link @click="modalSignup">註冊帳號</b-link>
                 </span>
                 <div v-if="logging">
-                  <div
-                    class="spinner-border text-secondary float-right"
-                    role="status"
-                  >
+                  <div class="spinner-border text-secondary float-right" role="status">
                     <span class="sr-only">Loading...</span>
                   </div>
                 </div>
                 <div v-else>
-                  <button type="submit" class="btn btn-primary float-right">
-                    登入
-                  </button>
+                  <button type="submit" class="btn btn-primary float-right">登入</button>
                 </div>
               </div>
             </form>
@@ -171,9 +158,7 @@
                 <div class="form-group">
                   <span>
                     已經有帳號了嗎？
-                    <b-link @click="accountModalTitle = '登入'"
-                      >登入帳號</b-link
-                    >
+                    <b-link @click="accountModalTitle = '登入'">登入帳號</b-link>
                   </span>
                 </div>
                 <div v-if="signupFail" class="alert alert-danger" role="alert">
@@ -191,9 +176,7 @@
                     v-model="signupAccount"
                     @keyup="signupAccountLengthCheck"
                   />
-                  <div class="invalid-feedback">
-                    {{ signupAccountErrorText }}
-                  </div>
+                  <div class="invalid-feedback">{{ signupAccountErrorText }}</div>
                 </div>
                 <div class="form-group">
                   <label for="signupMail">電子信箱：</label>
@@ -216,9 +199,7 @@
                     v-model="signupPassword"
                     @keyup="signupPasswordLengthCheck"
                   />
-                  <div class="invalid-feedback">
-                    {{ signupPasswordErrorText }}
-                  </div>
+                  <div class="invalid-feedback">{{ signupPasswordErrorText }}</div>
                 </div>
                 <div class="form-group">
                   <label for="signupCheckPassword">確認密碼</label>
@@ -230,19 +211,13 @@
                     v-model="signupCheckPassword"
                     @keyup="signupCheckPasswordSameCheck"
                   />
-                  <div class="invalid-feedback">
-                    {{ signupCheckPasswordErrorText }}
-                  </div>
+                  <div class="invalid-feedback">{{ signupCheckPasswordErrorText }}</div>
                 </div>
                 <div class="form-group">
                   <p class="text-center">
                     點擊註冊及代表您已閱讀並了解
-                    <b-link to="/terms-of-service" target="_blank"
-                      >服務條款</b-link
-                    >及
-                    <b-link to="/privacy-notice" target="_blank"
-                      >隱私權聲明</b-link
-                    >
+                    <b-link to="/terms-of-service" target="_blank">服務條款</b-link>及
+                    <b-link to="/privacy-notice" target="_blank">隱私權聲明</b-link>
                   </p>
                   <div class="text-center">
                     <div v-if="signupping">
@@ -251,9 +226,7 @@
                       </div>
                     </div>
                     <div v-else>
-                      <button type="submit" class="btn btn-primary">
-                        註冊
-                      </button>
+                      <button type="submit" class="btn btn-primary">註冊</button>
                     </div>
                   </div>
                 </div>
@@ -263,11 +236,7 @@
 
           <!--忘記密碼-->
           <div v-else-if="accountModalTitle === '忘記密碼'">
-            <div
-              v-if="forgotPasswordSuccess"
-              class="alert alert-success"
-              role="alert"
-            >
+            <div v-if="forgotPasswordSuccess" class="alert alert-success" role="alert">
               <p class="text-center my-2 py-2">
                 <span>驗證信已寄出 請至註冊時填寫的信箱查看!</span>
               </p>
@@ -283,23 +252,16 @@
                     id="forgotPasswordId"
                     v-model="forgotPasswordId"
                   />
-                  <div class="invalid-feedback">
-                    {{ forgotPasswordIdErrorText }}
-                  </div>
+                  <div class="invalid-feedback">{{ forgotPasswordIdErrorText }}</div>
                 </div>
                 <div class="form-group">
                   <div v-if="forgotPasswordLoading">
-                    <div
-                      class="spinner-border text-secondary float-right"
-                      role="status"
-                    >
+                    <div class="spinner-border text-secondary float-right" role="status">
                       <span class="sr-only">Loading...</span>
                     </div>
                   </div>
                   <div v-else>
-                    <button type="submit" class="btn btn-primary float-right">
-                      傳送驗證信件
-                    </button>
+                    <button type="submit" class="btn btn-primary float-right">傳送驗證信件</button>
                   </div>
                 </div>
               </form>
@@ -309,34 +271,21 @@
           <!--設定-->
           <div v-else-if="accountModalTitle === '設定'">
             <div v-if="accountSettingLoading">
-              <div
-                class="spinner-border text-secondary float-right"
-                role="status"
-              >
+              <div class="spinner-border text-secondary float-right" role="status">
                 <span class="sr-only">Loading...</span>
               </div>
             </div>
             <div v-else>
               <b-form>
                 <b-form-group label="帳號">
-                  <b-form-input
-                    v-model="accountSettingForm.account"
-                    type="text"
-                    disabled
-                  ></b-form-input>
+                  <b-form-input v-model="accountSettingForm.account" type="text" disabled></b-form-input>
                 </b-form-group>
 
                 <b-form-group label="電子信箱">
-                  <b-form-input
-                    v-model="accountSettingForm.email"
-                    type="text"
-                    disabled
-                  ></b-form-input>
+                  <b-form-input v-model="accountSettingForm.email" type="text" disabled></b-form-input>
                 </b-form-group>
 
-                <b-button variant="primary" @click="modalUpdatePassword()"
-                  >修改密碼</b-button
-                >
+                <b-button variant="primary" @click="modalUpdatePassword()">修改密碼</b-button>
               </b-form>
             </div>
           </div>
@@ -346,9 +295,9 @@
             <form @submit.prevent="updatePassword()">
               <div class="form-group">
                 <span>
-                  <b-link @click="accountModalTitle = '設定'"
-                    ><i class="fas fa-chevron-left mr-2"></i>返回</b-link
-                  >
+                  <b-link @click="accountModalTitle = '設定'">
+                    <i class="fas fa-chevron-left mr-2"></i>返回
+                  </b-link>
                 </span>
               </div>
 
@@ -363,9 +312,7 @@
                     updatePasswordForm.oldPasswordError ? 'is-invalid' : ''
                   "
                 />
-                <div class="invalid-feedback">
-                  {{ updatePasswordForm.oldPasswordErrorText }}
-                </div>
+                <div class="invalid-feedback">{{ updatePasswordForm.oldPasswordErrorText }}</div>
               </div>
 
               <div class="form-group">
@@ -380,15 +327,11 @@
                   "
                   @keyup="updatePasswordNewPasswordLengthCheck()"
                 />
-                <div class="invalid-feedback">
-                  {{ updatePasswordForm.newPasswordErrorText }}
-                </div>
+                <div class="invalid-feedback">{{ updatePasswordForm.newPasswordErrorText }}</div>
               </div>
 
               <div class="form-group">
-                <label for="updatePasswordFormCheckNewPassword"
-                  >確認新密碼</label
-                >
+                <label for="updatePasswordFormCheckNewPassword">確認新密碼</label>
                 <input
                   v-model="updatePasswordForm.checkNewPassword"
                   type="password"
@@ -399,23 +342,16 @@
                   "
                   @keyup="updatePasswordCheckNewPasswordSameCheck()"
                 />
-                <div class="invalid-feedback">
-                  {{ updatePasswordForm.checkNewPasswordErrorText }}
-                </div>
+                <div class="invalid-feedback">{{ updatePasswordForm.checkNewPasswordErrorText }}</div>
               </div>
 
               <div v-if="updatePasswordLoading">
-                <div
-                  class="spinner-border text-secondary float-right"
-                  role="status"
-                >
+                <div class="spinner-border text-secondary float-right" role="status">
                   <span class="sr-only">Loading...</span>
                 </div>
               </div>
               <div v-else>
-                <b-button type="submit" variant="primary" class="float-right"
-                  >修改密碼</b-button
-                >
+                <b-button type="submit" variant="primary" class="float-right">修改密碼</b-button>
               </div>
             </form>
           </div>
