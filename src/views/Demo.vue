@@ -70,24 +70,33 @@
 
     <div v-if="inputBar">
       <!--使用教學-->
-      <div class="my-2">
-        <b-card-group deck>
-          <b-card title="Step 1">
-            <b-card-text>輸入您想分析的 Twitch 直播影片網址</b-card-text>
-          </b-card>
+      <div class="accordion" role="tablist">
+        <b-card no-body class="mb-1">
+          <b-card-header header-tag="header" class="p-1" role="tab">
+            <b-button block v-b-toggle.tutorial variant="light">查看使用教學</b-button>
+          </b-card-header>
+          <b-collapse id="tutorial" accordion="my-accordion" role="tabpanel">
+            <b-card-body>
+              <b-card-group deck>
+                <b-card title="Step 1">
+                  <b-card-text>輸入您想分析的 Twitch 直播影片網址</b-card-text>
+                </b-card>
 
-          <b-card title="Step 2">
-            <b-card-text>確認影片正確後點擊自動分析/手動剪輯</b-card-text>
-          </b-card>
+                <b-card title="Step 2">
+                  <b-card-text>確認影片正確後點擊自動分析/手動剪輯</b-card-text>
+                </b-card>
 
-          <b-card title="Step 3">
-            <b-card-text>等待本系統處理您的精華影片</b-card-text>
-          </b-card>
+                <b-card title="Step 3">
+                  <b-card-text>等待本系統處理您的精華影片</b-card-text>
+                </b-card>
 
-          <b-card title="Step 4">
-            <b-card-text>分析完成後即可觀看您的精華影片</b-card-text>
-          </b-card>
-        </b-card-group>
+                <b-card title="Step 4">
+                  <b-card-text>分析完成後即可觀看您的精華影片</b-card-text>
+                </b-card>
+              </b-card-group>
+            </b-card-body>
+          </b-collapse>
+        </b-card>
       </div>
 
       <!-- 影片紀錄檔顯示 -->
@@ -169,7 +178,7 @@
               </div>
               <div class="justify-content-center">
                 <div class="form-row">
-                  <div class="col-6 col-md-5">
+                  <div class="col-12 col-md-6">
                     <label for="startTime">開始時間：</label>
                     <div class="form-row">
                       <div class="col-3">
@@ -180,7 +189,7 @@
                           class="form-control"
                           id="startTime"
                           v-model="startTime.hour"
-                          placeholder="HH"
+                          placeholder="00"
                           required
                         />
                       </div>
@@ -192,7 +201,7 @@
                           max="60"
                           class="form-control"
                           v-model="startTime.minute"
-                          placeholder="MM"
+                          placeholder="00"
                           required
                         />
                       </div>
@@ -204,13 +213,13 @@
                           max="60"
                           class="form-control"
                           v-model="startTime.second"
-                          placeholder="SS"
+                          placeholder="00"
                           required
                         />
                       </div>
                     </div>
                   </div>
-                  <div class="col-6 col-md-5">
+                  <div class="col-12 col-md-6">
                     <label for="endTime">結束時間：</label>
                     <div class="form-row">
                       <div class="col-3">
@@ -221,7 +230,7 @@
                           class="form-control"
                           id="endTime"
                           v-model="endTime.hour"
-                          placeholder="HH"
+                          placeholder="00"
                           required
                         />
                       </div>
@@ -233,7 +242,7 @@
                           max="60"
                           class="form-control"
                           v-model="endTime.minute"
-                          placeholder="MM"
+                          placeholder="00"
                           required
                         />
                       </div>
@@ -245,20 +254,20 @@
                           max="60"
                           class="form-control"
                           v-model="endTime.second"
-                          placeholder="SS"
+                          placeholder="00"
                           required
                         />
                       </div>
                     </div>
                   </div>
-                  <div class="col-12 col-md-2">
+                  <div class="col-12">
                     <button
                       id="videoStartAnalysisBtn"
                       type="button"
-                      class="btn btn-success btn-lg btn-block my-2"
+                      class="btn btn-success btn-lg btn-block my-4"
                       @click="addClipTime"
                     >
-                      <i class="far fa-plus-square"></i> 加入
+                      <i class="fas fa-plus mr-2"></i> 加入片段
                     </button>
                   </div>
                 </div>
