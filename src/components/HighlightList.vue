@@ -3,16 +3,20 @@
   <div class="m-4">
     <div class="row">
       <div class="col-12 col-md-4 my-2">
-        <div v-if="youtube_url" class="embed-responsive embed-responsive-16by9">
-          <iframe
-            class="embed-responsive-item"
-            :src="youtube_embed"
-            allowfullscreen
-          ></iframe>
+        <div
+          v-if="status === 'FINISHED' || highlightStatusText === 'Empty'"
+          class="embed-responsive embed-responsive-16by9"
+        >
+          <iframe class="embed-responsive-item" :src="youtube_embed" allowfullscreen></iframe>
         </div>
-        <div v-else class="alert alert-info" role="alert">
+        <div
+          v-else
+          class="alert alert-info"
+          :class="[isFailed ? 'alert-danger' : 'alert-info']"
+          role="alert"
+        >
           <p class="text-center my-4 py-4">
-            <span>分析中</span>
+            <span>{{ highlightStatusText }}</span>
           </p>
         </div>
       </div>
@@ -28,31 +32,16 @@
           <template v-slot:button-content>
             <i class="fas fa-chevron-circle-down"></i>
           </template>
-          <b-dropdown-item
-            :href="'https://www.twitch.tv/videos/' + vod_id"
-            target="_blank"
-          >
-            <i
-              class="fas fa-link fa-lg m-1"
-              data-toggle="tooltip"
-              title="原始鏈結"
-            ></i>
+          <b-dropdown-item :href="'https://www.twitch.tv/videos/' + vod_id" target="_blank">
+            <i class="fas fa-link fa-lg m-1" data-toggle="tooltip" title="原始鏈結"></i>
             原始鏈結
           </b-dropdown-item>
           <b-dropdown-item :to="'/highlight/' + highlight_id" target="_blank">
-            <i
-              class="fas fa-share-square fa-lg m-1"
-              data-toggle="tooltip"
-              title="精華頁面"
-            ></i>
+            <i class="fas fa-share-square fa-lg m-1" data-toggle="tooltip" title="精華頁面"></i>
             精華頁面
           </b-dropdown-item>
           <b-dropdown-item @click="manualEditor">
-            <i
-              class="fas fa-user-edit fa-lg m-1"
-              data-toggle="tooltip"
-              title="手動剪輯"
-            ></i>
+            <i class="fas fa-user-edit fa-lg m-1" data-toggle="tooltip" title="手動剪輯"></i>
             手動剪輯
           </b-dropdown-item>
         </b-dropdown>
@@ -62,24 +51,23 @@
           <b-link
             :to="'/results?channel_id=' + channel_id"
             @click.prevent="channelSearch"
-            >{{ streamerName }}</b-link
-          >
+          >{{ streamerName }}</b-link>
         </p>
         <p class="text-left m-0">
           遊戲分類：
-          <b-link :to="'/results?game=' + game" @click.prevent="gameSearch">{{
+          <b-link :to="'/results?game=' + game" @click.prevent="gameSearch">
+            {{
             game
-          }}</b-link>
+            }}
+          </b-link>
         </p>
         <p class="text-left m-0">目前分數：{{ avg_score }}</p>
         <p class="text-left m-0">建立者：{{ author }}</p>
         <b-button
-          v-show="!haveAppraise"
           @click="appraiseModalShow = !appraiseModalShow"
           variant="outline-info"
           class="float-right m-1"
-          >我要評價</b-button
-        >
+        >我要評價</b-button>
 
         <b-modal v-model="appraiseModalShow" title="精華評價" hide-footer>
           <form @submit.prevent="appraise">
@@ -91,17 +79,13 @@
                 class="btn m-1"
                 :class="notAccurate ? 'btn-secondary' : 'btn-outline-secondary'"
                 @click="textButton('notAccurate')"
-              >
-                影片不精準
-              </button>
+              >影片不精準</button>
               <button
                 type="button"
                 class="btn m-1"
                 :class="videoLong ? 'btn-secondary' : 'btn-outline-secondary'"
                 @click="textButton('videoLong')"
-              >
-                影片長度過長
-              </button>
+              >影片長度過長</button>
               <button
                 type="button"
                 class="btn m-1"
@@ -109,9 +93,7 @@
                   analysisLong ? 'btn-secondary' : 'btn-outline-secondary'
                 "
                 @click="textButton('analysisLong')"
-              >
-                影片分析太久
-              </button>
+              >影片分析太久</button>
               <br />
               <input
                 type="text"
@@ -152,9 +134,7 @@
               </template>
               {{ starRating }}
             </div>
-            <button type="submit" class="btn btn-primary float-right">
-              送出
-            </button>
+            <button type="submit" class="btn btn-primary float-right">送出</button>
           </form>
         </b-modal>
       </div>
@@ -192,7 +172,6 @@ export default {
       videoLong: false,
       analysisLong: false,
       validationText: false,
-      haveAppraise: false,
     };
   },
   methods: {
@@ -250,7 +229,6 @@ export default {
           })
           .then((response) => {
             vm.response = response;
-            vm.haveAppraise = true;
           })
           .catch(function (error) {
             console.log(error);
@@ -286,6 +264,94 @@ export default {
       vodData = vodData.split("=");
       let url = vodData[1];
       return "https://www.youtube.com/embed/" + url + "?rel=0";
+    },
+    highlightStatusText() {
+      let text;
+      switch (this.status) {
+        case "GETINFO":
+          text = "獲取資訊中";
+          break;
+        case "RUNALGO":
+          text = "影片分析中";
+          break;
+        case "FMVODDL":
+          text = "影片下載中";
+          break;
+        case "FMVODCB":
+          text = "影片合併中";
+          break;
+        case "YTVODUL":
+          text = "YT上傳中";
+          break;
+        case "FINISHED":
+          text = "已完成";
+          break;
+        case "NEWANALF":
+          text = "建立分析失敗";
+          break;
+        case "GETINFOF":
+          text = "獲取資訊失敗";
+          break;
+        case "RUNALGOF":
+          text = "影片分析失敗";
+          break;
+        case "FMVODDLF":
+          text = "影片下載失敗";
+          break;
+        case "FMVODCBF":
+          text = "影片合併失敗";
+          break;
+        case "YTVODULF":
+          text = "YT上傳失敗";
+          break;
+        default:
+          text = "Empty";
+      }
+      return text;
+    },
+    isFailed() {
+      let bool = false;
+      switch (this.status) {
+        case "GETINFO":
+          bool = false;
+          break;
+        case "RUNALGO":
+          bool = false;
+          break;
+        case "FMVODDL":
+          bool = false;
+          break;
+        case "FMVODCB":
+          bool = false;
+          break;
+        case "YTVODUL":
+          bool = false;
+          break;
+        case "FINISHED":
+          bool = false;
+          break;
+        case "NEWANALF":
+          bool = true;
+          break;
+        case "GETINFOF":
+          bool = true;
+          break;
+        case "RUNALGOF":
+          bool = true;
+          break;
+        case "FMVODDLF":
+          bool = true;
+          break;
+        case "FMVODCBF":
+          bool = true;
+          break;
+        case "YTVODULF":
+          bool = true;
+          break;
+        default:
+          bool = false;
+      }
+      return bool;
     },
   },
 };
