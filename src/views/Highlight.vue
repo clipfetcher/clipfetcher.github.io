@@ -1,7 +1,10 @@
 <template>
   <div class="container">
     <div class="my-2">
-      <div v-if="highlightPage === 'Loading'" class="d-flex justify-content-center my-4">
+      <div
+        v-if="highlightPage === 'Loading'"
+        class="d-flex justify-content-center my-4"
+      >
         <div class="spinner-border text-secondary" role="status">
           <span class="sr-only">Loading...</span>
         </div>
@@ -9,10 +12,25 @@
       <div v-else-if="highlightPage === 'Find'">
         <div class="row">
           <div class="col-12">
-            <div v-if="analysisComplete" class="embed-responsive embed-responsive-16by9 mb-4">
-              <iframe class="embed-responsive-item" :src="youtube_embed" allowfullscreen></iframe>
+            <div
+              v-if="
+                highlightVideo.status === 'FINISHED' ||
+                highlightStatusText === 'Empty'
+              "
+              class="embed-responsive embed-responsive-16by9 mb-4"
+            >
+              <iframe
+                class="embed-responsive-item"
+                :src="youtube_embed"
+                allowfullscreen
+              ></iframe>
             </div>
-            <div v-else class="alert alert-info" role="alert">
+            <div
+              v-else
+              class="alert alert-info"
+              :class="[isFailed ? 'alert-danger' : 'alert-info']"
+              role="alert"
+            >
               <p class="text-center my-4 py-4">
                 <span>{{ highlightStatusText }}</span>
               </p>
@@ -29,25 +47,40 @@
               target="_blank"
               class="card-link float-right"
             >
-              <i class="fas fa-link fa-lg" data-toggle="tooltip" title="VOD網址"></i>
+              <i
+                class="fas fa-link fa-lg"
+                data-toggle="tooltip"
+                title="VOD網址"
+              ></i>
             </a>
             <p class="text-left m-0">
               實況主：
               <b-link
                 :to="'/results?channel_id=' + highlightVideo.channel_id"
-              >{{ highlightVideo.streamerName }}</b-link>
+                >{{ highlightVideo.streamerName }}</b-link
+              >
             </p>
             <p class="text-left m-0">
               遊戲分類：
-              <b-link :to="'/results?game=' + highlightVideo.game">{{ highlightVideo.game }}</b-link>
+              <b-link :to="'/results?game=' + highlightVideo.game">{{
+                highlightVideo.game
+              }}</b-link>
             </p>
-            <p class="text-left m-0">目前分數：{{ highlightVideo.avg_score }}</p>
-            <p class="text-left m-0">建立者：{{ highlightVideo.author }}</p>
+            <p class="text-left m-0">
+              目前分數：{{ highlightVideo.avg_score }}
+            </p>
+            <p class="text-left m-0">
+              建立者：<b-link
+                :to="'/results?author=' + highlightVideo.author"
+                >{{ highlightVideo.author }}</b-link
+              >
+            </p>
             <b-button
               @click="appraiseModalShow = !appraiseModalShow"
               variant="outline-info"
               class="float-right m-1"
-            >我要評價</b-button>
+              >我要評價</b-button
+            >
 
             <b-modal v-model="appraiseModalShow" title="精華評價" hide-footer>
               <form @submit.prevent="appraise">
@@ -57,23 +90,33 @@
                   <button
                     type="button"
                     class="btn m-1"
-                    :class="notAccurate ? 'btn-secondary' : 'btn-outline-secondary'"
+                    :class="
+                      notAccurate ? 'btn-secondary' : 'btn-outline-secondary'
+                    "
                     @click="textButton('notAccurate')"
-                  >影片不精準</button>
-                  <button
-                    type="button"
-                    class="btn m-1"
-                    :class="videoLong ? 'btn-secondary' : 'btn-outline-secondary'"
-                    @click="textButton('videoLong')"
-                  >影片長度過長</button>
+                  >
+                    影片不精準
+                  </button>
                   <button
                     type="button"
                     class="btn m-1"
                     :class="
-                  analysisLong ? 'btn-secondary' : 'btn-outline-secondary'
-                "
+                      videoLong ? 'btn-secondary' : 'btn-outline-secondary'
+                    "
+                    @click="textButton('videoLong')"
+                  >
+                    影片長度過長
+                  </button>
+                  <button
+                    type="button"
+                    class="btn m-1"
+                    :class="
+                      analysisLong ? 'btn-secondary' : 'btn-outline-secondary'
+                    "
                     @click="textButton('analysisLong')"
-                  >影片分析太久</button>
+                  >
+                    影片分析太久
+                  </button>
                   <br />
                   <input
                     type="text"
@@ -114,7 +157,9 @@
                   </template>
                   {{ starRating }}
                 </div>
-                <button type="submit" class="btn btn-primary float-right">送出</button>
+                <button type="submit" class="btn btn-primary float-right">
+                  送出
+                </button>
               </form>
             </b-modal>
           </div>
@@ -170,9 +215,6 @@ export default {
             this.highlightPage = "Error";
           else {
             this.highlightPage = "Find";
-            if (this.highlightVideo.channel_id == "")
-              this.analysisComplete = false;
-            else this.analysisComplete = true;
           }
         })
         .catch(function (error) {
@@ -296,6 +338,50 @@ export default {
           text = "Empty";
       }
       return text;
+    },
+    isFailed() {
+      let bool = false;
+      switch (this.highlightVideo.status) {
+        case "GETINFO":
+          bool = false;
+          break;
+        case "RUNALGO":
+          bool = false;
+          break;
+        case "FMVODDL":
+          bool = false;
+          break;
+        case "FMVODCB":
+          bool = false;
+          break;
+        case "YTVODUL":
+          bool = false;
+          break;
+        case "FINISHED":
+          bool = false;
+          break;
+        case "NEWANALF":
+          bool = true;
+          break;
+        case "GETINFOF":
+          bool = true;
+          break;
+        case "RUNALGOF":
+          bool = true;
+          break;
+        case "FMVODDLF":
+          bool = true;
+          break;
+        case "FMVODCBF":
+          bool = true;
+          break;
+        case "YTVODULF":
+          bool = true;
+          break;
+        default:
+          bool = false;
+      }
+      return bool;
     },
   },
 };
