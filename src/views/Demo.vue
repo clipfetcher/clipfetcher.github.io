@@ -20,7 +20,6 @@
         <!-- 精華生成輸入列 -->
         <section class="my-3" v-if="inputBar" key="create">
           <form @submit.prevent="loadVideo">
-            <!-- <label for="vodData">請輸入你想要分析的 Vod ID 或 Vod 網址</label> -->
             <div class="input-group">
               <input
                 id="vodData"
@@ -28,7 +27,7 @@
                 class="form-control"
                 aria-describedby="videoData"
                 placeholder="Twitch Vod Id or URL"
-                v-model="vodData"
+                v-model="inputBarText"
                 :class="vodValid ? 'is-Valid' : 'is-invalid'"
               />
               <div class="input-group-append">
@@ -72,7 +71,7 @@
                 class="form-control"
                 aria-describedby="videoSearchText"
                 placeholder="..."
-                v-model="videoSearch"
+                v-model="inputBarText"
               />
 
               <div class="input-group-append">
@@ -397,13 +396,16 @@
           role="alert"
         >
           <p class="text-center my-2 py-2">
-            <span>我們已收到您的分析請求！將會在分析完成後通知您！</span>
+            <span>影片處理中</span>
             <br />
-            <span>你的ID：{{ videoHighlightId }}</span>
+            <span>處理完畢後您可透過下方連結觀看精華影片</span>
             <br />
             <b-link :to="'/highlight/' + videoHighlightId" target="_blank"
               >精華連結</b-link
             >
+            <!-- <br />
+            <span>你的ID：{{ videoHighlightId }}</span>
+            <br /> -->
           </p>
         </div>
         <div
@@ -521,9 +523,8 @@ export default {
       vodLoadBtn: "Load",
       vodAnalysisBtn: "Analysis",
       vodSearchBtn: "Search",
-      vodData: "",
+      inputBarText: "",
       vidId: "",
-      videoSearch: "",
       videoSearchType: "Type",
 
       vidAnalysis: "",
@@ -599,7 +600,7 @@ export default {
       this.manualEditorShow = false;
       this.vodErrorData = "";
       let vm = this;
-      let vodData = this.vodData;
+      let vodData = this.inputBarText;
       vodData = vodData.split("?");
       let vid = vodData[0];
       vid = vid.substring(vid.length - 9);
@@ -627,7 +628,7 @@ export default {
         .catch(function (error) {
           console.log(error);
           vm.vodValid = false;
-          if (vm.vodData == "") {
+          if (vm.inputBarText == "") {
             vm.vodErrorData = "請輸入您想分析的直播影片網址";
           } else {
             vm.vodErrorData = "請輸入正確的直播影片網址";
@@ -691,10 +692,10 @@ export default {
         this.videoSearchType == "搜尋項目" ||
         this.videoSearchType == "vod_id"
       ) {
-        let video = this.videoSearch.split("?");
+        let video = this.inputBarText.split("?");
         vid = video[0];
         vid = vid.substring(vid.length - 9);
-      } else vid = this.videoSearch;
+      } else vid = this.inputBarText;
 
       this.highlightSearch = "Loading";
       this.highlightShow = true;
@@ -810,7 +811,7 @@ export default {
         vod_id +
         "&autoplay=false&parent=" +
         window.location.hostname;
-      this.vodData = vod_id;
+      this.inputBarText = vod_id;
       this.vod_id = vod_id;
       this.vodValid = true;
       this.vodLoadBtn = "reload";
