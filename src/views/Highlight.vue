@@ -204,7 +204,7 @@ export default {
     this.fetchContent = setInterval(() => {
       console.log("fetch");
       this.getContent();
-    }, 20000);
+    }, 60000);
   },
   methods: {
     getContent() {
