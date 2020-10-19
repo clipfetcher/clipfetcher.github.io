@@ -1,7 +1,10 @@
 <template>
   <div class="container">
     <h1>搜尋結果</h1>
-    <div v-if="highlightSearch === 'Loading'" class="d-flex justify-content-center my-2">
+    <div
+      v-if="highlightSearch === 'Loading'"
+      class="d-flex justify-content-center my-2"
+    >
       <div class="spinner-border text-secondary" role="status">
         <span class="sr-only">Loading...</span>
       </div>
@@ -65,7 +68,7 @@ export default {
           },
         })
         .then((response) => {
-          vm.searchVideos = response.data;
+          vm.searchVideos = response.data.reverse();
           if (vm.searchVideos == "") vm.highlightSearch = "Error";
           else vm.highlightSearch = "Find";
         })
