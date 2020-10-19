@@ -75,7 +75,7 @@
           <b-card-header header-tag="header" class="p-1" role="tab">
             <b-button block v-b-toggle.tutorial variant="light">查看使用教學</b-button>
           </b-card-header>
-          <b-collapse id="tutorial" accordion="my-accordion" role="tabpanel">
+          <b-collapse id="tutorial" visible accordion="my-accordion" role="tabpanel">
             <b-card-body>
               <b-card-group deck>
                 <b-card title="Step 1">
@@ -674,8 +674,13 @@ export default {
       this.vodShow = true;
     },
     manualAnalysis() {
+      let vm = this;
       this.checkHighlightTitle();
       if (this.titleValid) {
+        this.vodAnalysisBtnShow = false;
+        this.manualEditorShow = false;
+        this.vodAnalysisSendStatusShow = true;
+        this.vodAnalysisSendStatus = "Loading";
         this.axios
           .post(process.env.VUE_APP_ROOT_API + "/api/vod/manualEditor", {
             token: this.$store.state.auth.token,
@@ -686,10 +691,17 @@ export default {
           })
           .then((response) => {
             console.log(response);
+            this.vodAnalysisSendStatus = "Success";
+            this.highlightTitle = "";
+            this.videoHighlightId = response.data.highlight_id;
             window.alert("送出成功!");
           })
           .catch(function (error) {
             console.log(error);
+            vm.manualEditorShow = true;
+            vm.vodAnalysisBtnShow = false;
+            vm.vodShow = false;
+            vm.vodAnalysisSendStatus = "Error";
             if (error.response) {
               if (error.response.status === 400) {
                 window.alert("尚未登入 此功能僅供會員使用!");
@@ -789,7 +801,7 @@ export default {
       }
     },
     removeClipTime: function (time) {
-      this.clip_time.pop(time);
+      this.clip_time.splice(this.clip_time.indexOf(time), 1);
     },
     editClipTime: function (time) {
       this.startTime = time.start;
