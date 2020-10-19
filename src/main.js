@@ -26,14 +26,37 @@ router.beforeEach((to, from, next) => {
       .then(() => {
         next();
       })
-      .catch(function () {
+      .catch(() => {
+        store.dispatch("auth/setAuth", {
+          token: "",
+          isLogin: false,
+        });
         next({
           path: '/',
         })
       });
   } else {
     // 反之，若沒有 requiresAuth 的話，就會直接放行
-    next();
+    const api2 = `${process.env.VUE_APP_ROOT_API}/api/user`;
+    axios.get(api2, {
+      params: {
+        token: store.state.auth.token,
+      },
+    })
+      .then(() => {
+        next();
+      })
+      .catch((error) => {
+        if (error.response) {
+          if (error.response.status === 400 || error.response.status === 400) {
+            store.dispatch("auth/setAuth", {
+              token: "",
+              isLogin: false,
+            });
+          }
+        }
+        next();
+      });
   }
 })
 
