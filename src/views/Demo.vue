@@ -6,12 +6,14 @@
           class="nav-item nav-link border rounded"
           :class="{ active: inputBar }"
           @click="inputBar = !inputBar"
-        >Highlight Generate</a>
+          >Highlight Generate</a
+        >
         <a
           class="nav-item nav-link border rounded"
           :class="{ active: !inputBar }"
           @click="inputBar = !inputBar"
-        >Highlight Search</a>
+          >Highlight Search</a
+        >
       </nav>
 
       <transition name="fade" mode="out-in">
@@ -30,9 +32,13 @@
                 :class="vodValid ? 'is-Valid' : 'is-invalid'"
               />
               <div class="input-group-append">
-                <button id="vodLoadBtn" type="submit" class="btn btn-primary">{{ vodLoadBtn }}</button>
+                <button id="vodLoadBtn" type="submit" class="btn btn-primary">
+                  {{ vodLoadBtn }}
+                </button>
               </div>
-              <div v-if="!vodValid" class="invalid-feedback">{{ vodErrorData }}</div>
+              <div v-if="!vodValid" class="invalid-feedback">
+                {{ vodErrorData }}
+              </div>
             </div>
           </form>
         </section>
@@ -43,11 +49,21 @@
             <b-input-group>
               <template v-slot:prepend>
                 <b-dropdown :text="videoSearchType" variant="primary">
-                  <b-dropdown-item @click="videoSearchType = 'vod_id'">VOD</b-dropdown-item>
-                  <b-dropdown-item @click="videoSearchType = 'highlight_id'">Highlight</b-dropdown-item>
-                  <b-dropdown-item @click="videoSearchType = 'game'">Game</b-dropdown-item>
-                  <b-dropdown-item @click="videoSearchType = 'streamerName'">Streamer</b-dropdown-item>
-                  <b-dropdown-item @click="videoSearchType = 'author'">Author</b-dropdown-item>
+                  <b-dropdown-item @click="videoSearchType = 'vod_id'"
+                    >VOD</b-dropdown-item
+                  >
+                  <b-dropdown-item @click="videoSearchType = 'highlight_id'"
+                    >Highlight</b-dropdown-item
+                  >
+                  <b-dropdown-item @click="videoSearchType = 'game'"
+                    >Game</b-dropdown-item
+                  >
+                  <b-dropdown-item @click="videoSearchType = 'streamerName'"
+                    >Streamer</b-dropdown-item
+                  >
+                  <b-dropdown-item @click="videoSearchType = 'author'"
+                    >Author</b-dropdown-item
+                  >
                 </b-dropdown>
               </template>
               <input
@@ -60,7 +76,9 @@
               />
 
               <div class="input-group-append">
-                <button id="vodSearchBtn" type="submit" class="btn btn-primary">{{ vodSearchBtn }}</button>
+                <button id="vodSearchBtn" type="submit" class="btn btn-primary">
+                  {{ vodSearchBtn }}
+                </button>
               </div>
             </b-input-group>
           </form>
@@ -73,9 +91,16 @@
       <div class="accordion" role="tablist">
         <b-card no-body class="mb-1">
           <b-card-header header-tag="header" class="p-1" role="tab">
-            <b-button block v-b-toggle.tutorial variant="light">查看使用教學</b-button>
+            <b-button block v-b-toggle.tutorial variant="light"
+              >查看使用教學</b-button
+            >
           </b-card-header>
-          <b-collapse id="tutorial" visible accordion="my-accordion" role="tabpanel">
+          <b-collapse
+            id="tutorial"
+            visible
+            accordion="my-accordion"
+            role="tabpanel"
+          >
             <b-card-body>
               <b-card-group deck>
                 <b-card title="Step 1">
@@ -102,7 +127,10 @@
       <!-- 影片紀錄檔顯示 -->
       <div class="row justify-content-center" v-show="vodShow">
         <div class="col-12 col-md-8">
-          <div id="videoShow" class="embed-responsive embed-responsive-16by9 my-2">
+          <div
+            id="videoShow"
+            class="embed-responsive embed-responsive-16by9 my-2"
+          >
             <iframe
               id="videoAnalysis"
               class="embed-responsive-item"
@@ -129,7 +157,9 @@
               v-model="highlightTitle"
               maxlength="20"
             />
-            <div v-if="!titleValid" class="invalid-feedback">{{ titleErrorFeedback }}</div>
+            <div v-if="!titleValid" class="invalid-feedback">
+              {{ titleErrorFeedback }}
+            </div>
           </div>
           <div class="row justify-content-center my-4">
             <div class="col-10 col-md-6">
@@ -138,14 +168,18 @@
                 type="button"
                 class="btn btn-success btn-lg btn-block my-2"
                 @click="analysisVideo"
-              >自動分析</button>
+              >
+                自動分析
+              </button>
             </div>
             <div class="col-10 col-md-6">
               <button
                 type="button"
                 class="btn btn-success btn-lg btn-block my-2"
                 @click="manualEditor"
-              >手動剪輯</button>
+              >
+                手動剪輯
+              </button>
             </div>
           </div>
         </form>
@@ -164,10 +198,12 @@
               v-model="highlightTitle"
               maxlength="20"
             />
-            <div v-if="!titleValid" class="invalid-feedback">{{ titleErrorFeedback }}</div>
+            <div v-if="!titleValid" class="invalid-feedback">
+              {{ titleErrorFeedback }}
+            </div>
           </div>
           <div class="row">
-            <div class="col-12 col-md-7">
+            <div class="col-12 col-lg-8">
               <div class="embed-responsive embed-responsive-16by9 my-1">
                 <iframe
                   class="embed-responsive-item"
@@ -273,69 +309,108 @@
                 </div>
               </div>
             </div>
-            <div class="col-12 col-md-5">
+            <div class="col-12 col-lg-4">
               <div class="card">
                 <div class="card-header">
-                  目前片段
                   <span
-                    v-if="clip_totalTime <= 20"
+                    :class="[clip_totalTime <= 20 ? '' : 'text-danger']"
                     style="float: right"
-                  >累積時間 {{ clip_totalTime }} 分鐘</span>
-                  <span v-else style="float: right; color: red">累積時間 {{ clip_totalTime }} 分鐘</span>
+                    >累積時間 {{ clip_totalTime }} 分鐘</span
+                  >
                 </div>
-                <div class="card-body overflow-auto" style="height: 340px; max-height: 340px">
-                  <ul>
-                    <li v-for="time in clip_timeSort" :key="time.index">
-                      {{ time.start }} ~ {{ time.end }}
-                      <button
-                        type="button"
-                        class="btn btn-outline-info m-1"
-                        @click="editClipTime(time)"
-                      >
-                        <i class="far fa-edit"></i>
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-outline-danger m-1"
-                        @click="removeClipTime(time)"
-                      >
-                        <i class="far fa-trash-alt"></i>
-                      </button>
-                    </li>
-                  </ul>
+                <div
+                  class="card-body overflow-auto"
+                  style="height: 340px; max-height: 340px"
+                >
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col" colspan="3" class="text-center">
+                          目前片段
+                        </th>
+                        <th scope="col" class="text-center">刪除</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="time in clip_timeSort" :key="time.index">
+                        <td
+                          scope="row"
+                          class="align-middle text-center"
+                          colspan="3"
+                        >
+                          {{ time.start }} ~ {{ time.end }}
+                        </td>
+                        <td>
+                          <p class="text-center my-0 py-0">
+                            <button
+                              type="button"
+                              class="btn btn-outline-info mx-2 my-1 py-1"
+                              @click="editClipTime(time)"
+                            >
+                              <i class="far fa-edit"></i>
+                            </button>
+                            <button
+                              type="button"
+                              class="btn btn-outline-danger mx-2 my-1 py-1"
+                              @click="removeClipTime(time)"
+                            >
+                              <i class="far fa-trash-alt"></i>
+                            </button>
+                          </p>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
               <button
                 type="button"
                 class="btn btn-danger btn-lg btn-block my-2"
                 @click="cancelManualEditor()"
-              >取消</button>
+              >
+                取消
+              </button>
               <button
                 type="button"
                 class="btn btn-success btn-lg btn-block my-2"
                 @click="manualAnalysis()"
-              >完成剪輯</button>
+              >
+                完成剪輯
+              </button>
             </div>
           </div>
         </div>
       </div>
 
-      <div v-show="vodAnalysisSendStatusShow" class="row justify-content-center m-2">
+      <div
+        v-show="vodAnalysisSendStatusShow"
+        class="row justify-content-center m-2"
+      >
         <div v-if="vodAnalysisSendStatus === 'Loading'">
           <div class="spinner-border text-secondary" role="status">
             <span class="sr-only">Loading...</span>
           </div>
         </div>
-        <div v-else-if="vodAnalysisSendStatus === 'Success'" class="alert alert-info" role="alert">
+        <div
+          v-else-if="vodAnalysisSendStatus === 'Success'"
+          class="alert alert-info"
+          role="alert"
+        >
           <p class="text-center my-2 py-2">
             <span>我們已收到您的分析請求！將會在分析完成後通知您！</span>
             <br />
             <span>你的ID：{{ videoHighlightId }}</span>
             <br />
-            <b-link :to="'/highlight/' + videoHighlightId" target="_blank">精華連結</b-link>
+            <b-link :to="'/highlight/' + videoHighlightId" target="_blank"
+              >精華連結</b-link
+            >
           </p>
         </div>
-        <div v-else-if="vodAnalysisSendStatus === 'Error'" class="alert alert-danger" role="alert">
+        <div
+          v-else-if="vodAnalysisSendStatus === 'Error'"
+          class="alert alert-danger"
+          role="alert"
+        >
           <p class="text-center my-2 py-2">
             <span>很抱歉！分析影片失敗 請重新嘗試！</span>
           </p>
@@ -346,7 +421,10 @@
     <div v-else-if="!inputBar">
       <!-- 精華影片搜尋顯示 -->
       <div v-show="highlightShow">
-        <div v-if="highlightSearch === 'Loading'" class="d-flex justify-content-center my-2">
+        <div
+          v-if="highlightSearch === 'Loading'"
+          class="d-flex justify-content-center my-2"
+        >
           <div class="spinner-border text-secondary" role="status">
             <span class="sr-only">Loading...</span>
           </div>
@@ -385,7 +463,10 @@
     <div id="videoList my-2">
       <!-- 精華影片顯示 -->
       <h2>最新精華影片</h2>
-      <div v-if="videoList === 'Loading'" class="d-flex justify-content-center my-5">
+      <div
+        v-if="videoList === 'Loading'"
+        class="d-flex justify-content-center my-5"
+      >
         <div class="spinner-grow text-secondary" role="status">
           <span class="sr-only">Loading...</span>
         </div>
@@ -410,7 +491,11 @@
           v-on:manual="setManualEditor"
         ></HighlightList>
       </div>
-      <div v-else-if="videoList === 'Empty'" class="alert alert-info" role="alert">
+      <div
+        v-else-if="videoList === 'Empty'"
+        class="alert alert-info"
+        role="alert"
+      >
         <p class="text-center my-2 py-2">
           <span>目前還沒有精華影片！！</span>
         </p>
@@ -675,43 +760,48 @@ export default {
     },
     manualAnalysis() {
       let vm = this;
+      let totalTimeLessThan20 = false;
       this.checkHighlightTitle();
+      if (this.clip_totalTime <= 20) totalTimeLessThan20 = true;
       if (this.titleValid) {
-        this.vodAnalysisBtnShow = false;
-        this.manualEditorShow = false;
-        this.vodAnalysisSendStatusShow = true;
-        this.vodAnalysisSendStatus = "Loading";
-        this.axios
-          .post(process.env.VUE_APP_ROOT_API + "/api/vod/manualEditor", {
-            token: this.$store.state.auth.token,
-            vod_id: this.vod_id,
-            memo: this.highlightTitle,
-            start_at: this.clip_startTime,
-            duration: this.clip_duration,
-          })
-          .then((response) => {
-            console.log(response);
-            this.vodAnalysisSendStatus = "Success";
-            this.highlightTitle = "";
-            this.videoHighlightId = response.data.highlight_id;
-            window.alert("送出成功!");
-          })
-          .catch(function (error) {
-            console.log(error);
-            vm.manualEditorShow = true;
-            vm.vodAnalysisBtnShow = false;
-            vm.vodShow = false;
-            vm.vodAnalysisSendStatus = "Error";
-            if (error.response) {
-              if (error.response.status === 400) {
-                window.alert("尚未登入 此功能僅供會員使用!");
+        if (!totalTimeLessThan20) {
+          window.alert("剪輯片段時間總和超過20分鐘 請減少片段！");
+        } else {
+          this.vodAnalysisBtnShow = false;
+          this.manualEditorShow = false;
+          this.vodAnalysisSendStatusShow = true;
+          this.vodAnalysisSendStatus = "Loading";
+          this.axios
+            .post(process.env.VUE_APP_ROOT_API + "/api/vod/manualEditor", {
+              token: this.$store.state.auth.token,
+              vod_id: this.vod_id,
+              memo: this.highlightTitle,
+              start_at: this.clip_startTime,
+              duration: this.clip_duration,
+            })
+            .then((response) => {
+              console.log(response);
+              this.vodAnalysisSendStatus = "Success";
+              this.highlightTitle = "";
+              this.videoHighlightId = response.data.highlight_id;
+            })
+            .catch(function (error) {
+              console.log(error);
+              vm.manualEditorShow = true;
+              vm.vodAnalysisBtnShow = false;
+              vm.vodShow = false;
+              vm.vodAnalysisSendStatus = "Error";
+              if (error.response) {
+                if (error.response.status === 400) {
+                  window.alert("尚未登入 此功能僅供會員使用!");
+                } else {
+                  window.alert("送出失敗!");
+                }
               } else {
                 window.alert("送出失敗!");
               }
-            } else {
-              window.alert("送出失敗!");
-            }
-          });
+            });
+        }
       }
     },
     setManualEditor(vod_id, start_at, duration) {
@@ -804,8 +894,15 @@ export default {
       this.clip_time.splice(this.clip_time.indexOf(time), 1);
     },
     editClipTime: function (time) {
-      this.startTime = time.start;
-      this.endTime = time.end;
+      let start = time.start.split(":");
+      let end = time.end.split(":");
+      this.startTime.hour = start[0];
+      this.startTime.minute = start[1];
+      this.startTime.second = start[2];
+      this.endTime.hour = end[0];
+      this.endTime.minute = end[1];
+      this.endTime.second = end[2];
+      this.removeClipTime(time);
     },
   },
   computed: {
