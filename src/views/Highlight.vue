@@ -195,14 +195,19 @@ export default {
       videoLong: false,
       analysisLong: false,
       validationText: false,
+      fetchContent: "",
     };
   },
   mounted() {
+    this.highlightPage = "Loading";
     this.getContent();
+    this.fetchContent = setInterval(() => {
+      console.log("fetch");
+      this.getContent();
+    }, 20000);
   },
   methods: {
     getContent() {
-      this.highlightPage = "Loading";
       this.axios
         .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
           params: {
@@ -211,6 +216,10 @@ export default {
         })
         .then((response) => {
           this.highlightVideo = response.data[0];
+          if (this.isFailed || this.highlightVideo.status === "FINISHED") {
+            console.log("stop fetch");
+            clearInterval(this.fetchContent);
+          }
           if (this.highlightVideo == "" || this.highlightVideo == null)
             this.highlightPage = "Error";
           else {
