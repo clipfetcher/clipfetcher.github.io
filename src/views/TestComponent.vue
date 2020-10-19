@@ -13,8 +13,18 @@
         memo="highlight.memo"
       ></HighlightList>
     </div>
+    <button @click="getTime">Time</button>
+    <p>{{ time }}</p>
+    <div class="embed-responsive embed-responsive-16by9 my-1">
+      <div ref="twitchVideo" class=""></div>
+    </div>
+    <br />
   </div>
 </template>
+
+<!-- Load the Twitch embed script -->
+<script src="https://embed.twitch.tv/embed/v1.js"></script>
+<script src= "https://player.twitch.tv/js/embed/v1.js"></script>
 
 <script>
 import HighlightList from "@/components/HighlightList.vue";
@@ -22,7 +32,34 @@ import HighlightList from "@/components/HighlightList.vue";
 export default {
   name: "test",
   data() {
-    return {};
+    return {
+      options: {
+        width: 856,
+        height: 480,
+        video: "767275669",
+        // only needed if your site is also embedded on embed.example.com and othersite.example.com
+        parent: [window.location.hostname],
+        autoplay: false,
+      },
+      player: null,
+      time: "",
+    };
+  },
+  mounted() {
+    this.player = new Twitch.Player(this.$refs.twitchVideo, this.options);
+  },
+  methods: {
+    getTime() {
+      let diff = this.player.getCurrentTime();
+      diff = diff.toFixed();
+      let hour = Math.floor(diff / 60 / 60);
+      hour = hour >= 10 ? hour : "0" + hour;
+      let minute = Math.floor(diff / 60) % 60;
+      minute = minute >= 10 ? minute : "0" + minute;
+      let second = diff % 60;
+      second = second >= 10 ? second : "0" + second;
+      this.time = hour + ":" + minute + ":" + second;
+    },
   },
   components: { HighlightList },
 };
