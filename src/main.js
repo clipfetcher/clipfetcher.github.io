@@ -46,15 +46,11 @@ router.beforeEach((to, from, next) => {
       .then(() => {
         next();
       })
-      .catch((error) => {
-        if (error.response) {
-          if (error.response.status === 400 || error.response.status === 400) {
-            store.dispatch("auth/setAuth", {
-              token: "",
-              isLogin: false,
-            });
-          }
-        }
+      .catch(() => {
+        store.dispatch("auth/setAuth", {
+          token: "",
+          isLogin: false,
+        });
         next();
       });
   }
