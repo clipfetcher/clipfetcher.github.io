@@ -7,7 +7,11 @@
           v-if="status === 'FINISHED' || highlightStatusText === 'Empty'"
           class="embed-responsive embed-responsive-16by9"
         >
-          <iframe class="embed-responsive-item" :src="youtube_embed" allowfullscreen></iframe>
+          <iframe
+            class="embed-responsive-item"
+            :src="youtube_embed"
+            allowfullscreen
+          ></iframe>
         </div>
         <div
           v-else
@@ -32,16 +36,31 @@
           <template v-slot:button-content>
             <i class="fas fa-chevron-circle-down"></i>
           </template>
-          <b-dropdown-item :href="'https://www.twitch.tv/videos/' + vod_id" target="_blank">
-            <i class="fas fa-link fa-lg m-1" data-toggle="tooltip" title="原始鏈結"></i>
+          <b-dropdown-item
+            :href="'https://www.twitch.tv/videos/' + vod_id"
+            target="_blank"
+          >
+            <i
+              class="fas fa-link fa-lg m-1"
+              data-toggle="tooltip"
+              title="原始鏈結"
+            ></i>
             原始鏈結
           </b-dropdown-item>
           <b-dropdown-item :to="'/highlight/' + highlight_id" target="_blank">
-            <i class="fas fa-share-square fa-lg m-1" data-toggle="tooltip" title="精華頁面"></i>
+            <i
+              class="fas fa-share-square fa-lg m-1"
+              data-toggle="tooltip"
+              title="精華頁面"
+            ></i>
             精華頁面
           </b-dropdown-item>
-          <b-dropdown-item v-if="$router.currentRoute.name === 'Demo'" @click="manualEditor">
-            <i class="fas fa-user-edit fa-lg m-1" data-toggle="tooltip" title="手動剪輯"></i>
+          <b-dropdown-item v-if="showManualEdit" @click="manualEditor">
+            <i
+              class="fas fa-user-edit fa-lg m-1"
+              data-toggle="tooltip"
+              title="手動剪輯"
+            ></i>
             手動剪輯
           </b-dropdown-item>
         </b-dropdown>
@@ -51,26 +70,30 @@
           <b-link
             :to="'/results?channel_id=' + channel_id"
             @click.prevent="channelSearch"
-          >{{ streamerName }}</b-link>
+            >{{ streamerName }}</b-link
+          >
         </p>
         <p class="text-left m-0">
           遊戲分類：
           <b-link :to="'/results?game=' + game" @click.prevent="gameSearch">
-            {{
-            game
-            }}
+            {{ game }}
           </b-link>
         </p>
         <p class="text-left m-0">目前分數：{{ avg_score }}</p>
         <p class="text-left m-0">
           建立者：
-          <b-link :to="'/results?author=' + author" @click.prevent="authorSearch">{{ author }}</b-link>
+          <b-link
+            :to="'/results?author=' + author"
+            @click.prevent="authorSearch"
+            >{{ author }}</b-link
+          >
         </p>
         <b-button
           @click="appraiseModalShow = !appraiseModalShow"
           variant="outline-info"
           class="float-right m-1"
-        >我要評價</b-button>
+          >我要評價</b-button
+        >
 
         <b-modal v-model="appraiseModalShow" title="精華評價" hide-footer>
           <form @submit.prevent="appraise">
@@ -82,13 +105,17 @@
                 class="btn m-1"
                 :class="notAccurate ? 'btn-secondary' : 'btn-outline-secondary'"
                 @click="textButton('notAccurate')"
-              >影片不精準</button>
+              >
+                影片不精準
+              </button>
               <button
                 type="button"
                 class="btn m-1"
                 :class="videoLong ? 'btn-secondary' : 'btn-outline-secondary'"
                 @click="textButton('videoLong')"
-              >影片長度過長</button>
+              >
+                影片長度過長
+              </button>
               <button
                 type="button"
                 class="btn m-1"
@@ -96,7 +123,9 @@
                   analysisLong ? 'btn-secondary' : 'btn-outline-secondary'
                 "
                 @click="textButton('analysisLong')"
-              >影片分析太久</button>
+              >
+                影片分析太久
+              </button>
               <br />
               <input
                 type="text"
@@ -137,7 +166,9 @@
               </template>
               {{ starRating }}
             </div>
-            <button type="submit" class="btn btn-primary float-right">送出</button>
+            <button type="submit" class="btn btn-primary float-right">
+              送出
+            </button>
           </form>
         </b-modal>
       </div>
@@ -364,6 +395,12 @@ export default {
           bool = false;
       }
       return bool;
+    },
+    showManualEdit() {
+      if (this.$router.currentRoute.name === "Demo") {
+        return true;
+      }
+      return false;
     },
   },
 };
