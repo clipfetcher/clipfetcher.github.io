@@ -63,6 +63,9 @@
                   <b-dropdown-item @click="videoSearchType = 'author'"
                     >Author</b-dropdown-item
                   >
+                  <b-dropdown-item @click="videoSearchType = 'title'"
+                    >Title</b-dropdown-item
+                  >
                 </b-dropdown>
               </template>
               <input
@@ -184,7 +187,7 @@
         </form>
       </div>
 
-      <div id="editorPage">
+      <div ref="editorPage">
         <div v-show="manualEditorShow">
           <div class="form-group my-4">
             <label for="highlightTitle">標題：</label>
@@ -325,7 +328,7 @@
                     <thead>
                       <tr>
                         <th colspan="4" class="text-center">目前片段</th>
-                        <th class="text-center">刪除</th>
+                        <th class="text-center">編輯</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -585,8 +588,7 @@ export default {
         if (this.highlightVideos.length == 0) this.videoList = "Empty";
         else this.videoList = "Finish";
       })
-      .catch(function (error) {
-        console.log(error.response);
+      .catch(() => {
         vm.videoList = "Error";
       });
   },
@@ -597,6 +599,7 @@ export default {
       this.vodAnalysisSendStatusShow = false;
       this.manualEditorShow = false;
       this.vodErrorData = "";
+      this.highlightTitle = "";
       let vm = this;
       let vodData = this.inputBarText;
       vodData = vodData.split("?");
@@ -635,20 +638,15 @@ export default {
     },
     analysisVideo: function () {
       let vm = this;
+      this.titleValid = true;
+      this.titleErrorFeedback = "";
       this.checkHighlightTitle();
       if (this.titleValid) {
         this.vodAnalysisBtnShow = false;
         this.vodAnalysisSendStatusShow = true;
         this.vodAnalysisSendStatus = "Loading";
         this.axios
-          .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
-            params: {
-              vod_id: vm.vod_id,
-              highlight_id: null,
-              game: null,
-              channel_id: null,
-            },
-          })
+          .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight")
           .then((response) => {
             if (response.data != "") {
               vm.vodAnalysisBtnShow = true;
@@ -711,6 +709,7 @@ export default {
             channel_id: this.videoSearchType == "channel_id" ? vid : null,
             streamerName: this.videoSearchType == "streamerName" ? vid : null,
             author: this.videoSearchType == "author" ? vid : null,
+            memo: this.videoSearchType == "title" ? vid : null,
           },
         })
         .then((response) => {
@@ -719,12 +718,12 @@ export default {
           else this.highlightSearch = "Find";
           this.videoSearchType = "搜尋項目";
         })
-        .catch(function (error) {
-          console.log(error);
+        .catch(() => {
           vm.highlightSearch = "Error";
         });
     },
     checkHighlightTitle: function () {
+      this.titleValid = true;
       this.titleErrorFeedback = "";
       if (this.highlightTitle == "") {
         this.titleValid = false;
@@ -733,21 +732,26 @@ export default {
     },
     manualEditor: function () {
       this.checkHighlightTitle();
-      this.clip_time = [];
-      this.startTime = {
-        hour: "",
-        minute: "",
-        second: "",
-      };
-      this.endTime = {
-        hour: "",
-        minute: "",
-        second: "",
-      };
-      if (this.titleValid) {
+      let isValid = this.titleValid;
+      if (this.$store.state.auth.isLogin == false) {
+        isValid = false;
+        window.alert("尚未登入 此功能僅供會員使用!");
+      }
+      if (isValid) {
         this.vodShow = false;
         this.vodAnalysisBtnShow = false;
         this.manualEditorShow = true;
+        this.clip_time = [];
+        this.startTime = {
+          hour: "",
+          minute: "",
+          second: "",
+        };
+        this.endTime = {
+          hour: "",
+          minute: "",
+          second: "",
+        };
       }
     },
     checkTime(time) {
@@ -760,112 +764,133 @@ export default {
     },
     manualAnalysis() {
       let vm = this;
-      let totalTimeLessThan20 = false;
       this.checkHighlightTitle();
-      if (this.clip_totalTime <= 20) totalTimeLessThan20 = true;
-      if (this.titleValid) {
-        if (!totalTimeLessThan20) {
-          window.alert("剪輯片段時間總和超過20分鐘 請減少片段！");
-        } else {
-          this.vodAnalysisBtnShow = false;
-          this.manualEditorShow = false;
-          this.vodAnalysisSendStatusShow = true;
-          this.vodAnalysisSendStatus = "Loading";
-          this.axios
-            .post(process.env.VUE_APP_ROOT_API + "/api/vod/manualEditor", {
-              token: this.$store.state.auth.token,
-              vod_id: this.vod_id,
-              memo: this.highlightTitle,
-              start_at: this.clip_startTime,
-              duration: this.clip_duration,
-            })
-            .then((response) => {
-              console.log(response);
-              this.vodAnalysisSendStatus = "Success";
-              this.highlightTitle = "";
-              this.videoHighlightId = response.data.highlight_id;
-            })
-            .catch(function (error) {
-              console.log(error);
-              vm.manualEditorShow = true;
-              vm.vodAnalysisBtnShow = false;
-              vm.vodShow = false;
-              vm.vodAnalysisSendStatus = "Error";
-              if (error.response) {
-                if (error.response.status === 400) {
-                  window.alert("尚未登入 此功能僅供會員使用!");
-                } else {
-                  window.alert("送出失敗!");
-                }
+      let isValid = this.titleValid;
+      if (this.clip_totalTime > 20) {
+        isValid = false;
+        window.alert("剪輯片段時間總和超過20分鐘 請減少片段！");
+      }
+      if (this.$store.state.auth.isLogin == false) {
+        isValid = false;
+        window.alert("尚未登入 此功能僅供會員使用!");
+      }
+      if (isValid) {
+        this.vodAnalysisBtnShow = false;
+        this.manualEditorShow = false;
+        this.vodAnalysisSendStatusShow = true;
+        this.vodAnalysisSendStatus = "Loading";
+        this.axios
+          .post(process.env.VUE_APP_ROOT_API + "/api/vod/manualEditor", {
+            token: this.$store.state.auth.token,
+            vod_id: this.vod_id,
+            memo: this.highlightTitle,
+            start_at: this.clip_startTime,
+            duration: this.clip_duration,
+          })
+          .then((response) => {
+            console.log(response);
+            this.vodAnalysisSendStatus = "Success";
+            this.highlightTitle = "";
+            this.videoHighlightId = response.data.highlight_id;
+          })
+          .catch(function (error) {
+            vm.manualEditorShow = true;
+            vm.vodAnalysisBtnShow = false;
+            vm.vodShow = false;
+            vm.vodAnalysisSendStatus = "Error";
+            if (error.response) {
+              if (error.response.status === 400) {
+                window.alert("尚未登入 此功能僅供會員使用!");
               } else {
                 window.alert("送出失敗!");
               }
-            });
-        }
+            } else {
+              window.alert("送出失敗!");
+            }
+          });
       }
     },
     setManualEditor(vod_id, start_at, duration) {
-      this.inputBar = true;
-      this.vidAnalysis =
-        "https://player.twitch.tv/?video=v" +
-        vod_id +
-        "&autoplay=false&parent=" +
-        window.location.hostname;
-      this.inputBarText = vod_id;
-      this.vod_id = vod_id;
-      this.vodValid = true;
-      this.vodLoadBtn = "reload";
-      this.vodShow = true;
-      this.vodAnalysisBtnShow = true;
+      let vm = this;
+      if (this.$store.state.auth.isLogin == false) {
+        window.alert("尚未登入 此功能僅供會員使用!");
+      } else {
+        this.axios
+          .create({
+            baseURL: "https://api.twitch.tv/kraken/",
+            headers: {
+              Accept: "application/vnd.twitchtv.v5+json",
+              "Client-ID": "ildytfqanhzvdaprp96m5rkylap16k",
+            },
+          })
+          .get("videos/" + vod_id)
+          .then(() => {
+            this.inputBar = true;
+            this.vidAnalysis =
+              "https://player.twitch.tv/?video=v" +
+              vod_id +
+              "&autoplay=false&parent=" +
+              window.location.hostname;
+            this.inputBarText = vod_id;
+            this.vod_id = vod_id;
+            this.vodValid = true;
+            this.vodLoadBtn = "reload";
+            this.vodShow = true;
+            this.vodAnalysisBtnShow = true;
+            this.titleValid = true;
+            this.highlightTitle = "";
+            this.titleErrorFeedback = "";
 
-      this.clip_time = [];
-      for (let i = 0; i < start_at.length; i++) {
-        let start = start_at[i].split(":");
-        let durationTime = duration[i].split(":");
-        let startSec =
-          parseInt(start[0] * 60 * 60) +
-          parseInt(start[1] * 60) +
-          parseInt(start[2]);
-        let durationSec =
-          parseInt(durationTime[0] * 60 * 60) +
-          parseInt(durationTime[1] * 60) +
-          parseInt(durationTime[2]);
-        let end = Number(startSec) + Number(durationSec);
-        let hour = Math.floor(end / 60 / 60);
-        hour = hour >= 10 ? hour : "0" + hour;
-        let minute = Math.floor(end / 60) % 60;
-        minute = minute >= 10 ? minute : "0" + minute;
-        let second = end % 60;
-        second = second >= 10 ? second : "0" + second;
+            this.clip_time = [];
+            for (let i = 0; i < start_at.length; i++) {
+              let start = start_at[i].split(":");
+              let durationTime = duration[i].split(":");
+              let startSec =
+                parseInt(start[0] * 60 * 60) +
+                parseInt(start[1] * 60) +
+                parseInt(start[2]);
+              let durationSec =
+                parseInt(durationTime[0] * 60 * 60) +
+                parseInt(durationTime[1] * 60) +
+                parseInt(durationTime[2]);
+              let end = Number(startSec) + Number(durationSec);
+              let hour = Math.floor(end / 60 / 60);
+              hour = hour >= 10 ? hour : "0" + hour;
+              let minute = Math.floor(end / 60) % 60;
+              minute = minute >= 10 ? minute : "0" + minute;
+              let second = end % 60;
+              second = second >= 10 ? second : "0" + second;
 
-        let time = {
-          start: start_at[i],
-          end: hour + ":" + minute + ":" + second,
-        };
-        this.clip_time.push(time);
+              let time = {
+                start: start_at[i],
+                end: hour + ":" + minute + ":" + second,
+              };
+              this.clip_time.push(time);
+            }
+            this.startTime = {
+              hour: "",
+              minute: "",
+              second: "",
+            };
+            this.endTime = {
+              hour: "",
+              minute: "",
+              second: "",
+            };
+            this.vodShow = false;
+            this.vodAnalysisBtnShow = false;
+            this.manualEditorShow = true;
+
+            this.$nextTick(function () {
+              vm.$refs.editorPage.scrollIntoView({ behavior: "smooth" });
+            });
+          })
+          .catch(() => {
+            window.alert(
+              "存取原始Vod時發生問題! 可能為Vod不存在或網路發生問題"
+            );
+          });
       }
-      this.startTime = {
-        hour: "",
-        minute: "",
-        second: "",
-      };
-      this.endTime = {
-        hour: "",
-        minute: "",
-        second: "",
-      };
-      this.vodShow = false;
-      this.vodAnalysisBtnShow = false;
-      this.manualEditorShow = true;
-
-      // this.$nextTick(function () {
-      //   this.gotoEditorPage();
-      // });
-    },
-    gotoEditorPage() {
-      document
-        .getElementById("editorPage")
-        .scrollIntoView({ behavior: "smooth" });
     },
     addClipTime: function () {
       let reg = /[0-9]{2,3}:[0-5][0-9]:[0-5][0-9]/;
