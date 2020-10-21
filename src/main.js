@@ -16,43 +16,45 @@ Vue.config.productionTip = false
 
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth) {
-    // 要到的頁面 (to)，它的 meta 如果有 requiresAuth 的話，就"不會"直接放行
-    const api = `${process.env.VUE_APP_ROOT_API}/api/admin/users`;
-    axios.get(api, {
-      params: {
-        token: store.state.auth.token,
-      },
-    })
-      .then(() => {
-        next();
+    if (store.state.auth.isLogin) {
+      const api = `${process.env.VUE_APP_ROOT_API}/api/admin/users`;
+      axios.get(api, {
+        params: {
+          token: store.state.auth.token,
+        },
       })
-      .catch(() => {
-        store.dispatch("auth/setAuth", {
-          token: "",
-          isLogin: false,
-        });
-        next({
-          path: '/',
+        .then(() => {
+          next();
         })
-      });
-  } else {
-    // 反之，若沒有 requiresAuth 的話，就會直接放行
-    const api2 = `${process.env.VUE_APP_ROOT_API}/api/user`;
-    axios.get(api2, {
-      params: {
-        token: store.state.auth.token,
-      },
-    })
-      .then(() => {
-        next();
-      })
-      .catch(() => {
-        store.dispatch("auth/setAuth", {
-          token: "",
-          isLogin: false,
+        .catch(() => {
+          store.dispatch("auth/setAuth", {
+            token: "",
+            isLogin: false,
+          });
+          next({
+            path: '/',
+          })
         });
-        next();
-      });
+    }
+    next({
+      path: '/',
+    })
+  } else {
+    if (store.state.auth.isLogin) {
+      const api2 = `${process.env.VUE_APP_ROOT_API}/api/user`;
+      axios.get(api2, {
+        params: {
+          token: store.state.auth.token,
+        },
+      })
+        .catch(() => {
+          store.dispatch("auth/setAuth", {
+            token: "",
+            isLogin: false,
+          });
+        });
+    }
+    next();
   }
 })
 
