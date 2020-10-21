@@ -16,14 +16,13 @@
     <button @click="getTime">Time</button>
     <p>{{ time }}</p>
     <div class="embed-responsive embed-responsive-16by9 my-1">
-      <div ref="twitchVideo" class=""></div>
+      <div ref="twitchVideo"></div>
     </div>
     <br />
   </div>
 </template>
 
 <!-- Load the Twitch embed script -->
-<script src="https://embed.twitch.tv/embed/v1.js"></script>
 <script src= "https://player.twitch.tv/js/embed/v1.js"></script>
 
 <script>
@@ -34,12 +33,12 @@ export default {
   data() {
     return {
       options: {
-        width: 856,
-        height: 480,
+        width: 1260,
+        height: 720,
         video: "767275669",
-        // only needed if your site is also embedded on embed.example.com and othersite.example.com
-        parent: [window.location.hostname],
+        parent: ["clipfetcher.com", "127.0.0.1"],
         autoplay: false,
+        allowfullscreen: true,
       },
       player: null,
       time: "",
