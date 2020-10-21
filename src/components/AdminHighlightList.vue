@@ -314,12 +314,10 @@ export default {
           vod_id: this.vod_id,
           highlight_id: this.highlight_id,
         })
-        .then((response) => {
-          console.log(response);
+        .then(() => {
           window.alert("送出成功!");
         })
-        .catch(function (error) {
-          console.log(error);
+        .catch(() => {
           window.alert("送出失敗!");
         });
     },
@@ -345,13 +343,11 @@ export default {
           status: this.formHighlightEdit.status,
           analysis: this.formHighlightEdit.analysis,
         })
-        .then((response) => {
-          console.log(response);
+        .then(() => {
           this.editting = false;
           window.alert("修改成功!");
         })
-        .catch(function (error) {
-          console.log(error);
+        .catch(() => {
           vm.editting = false;
           window.alert("修改發生錯誤!");
         });
@@ -369,8 +365,7 @@ export default {
           this.appraiseList = "Finish";
           this.appraises = response.data;
         })
-        .catch(function (error) {
-          console.log(error);
+        .catch(() => {
           this.appraiseList = "Error";
         });
     },
@@ -381,12 +376,10 @@ export default {
             token: this.$store.state.auth.token,
             highlight_id: this.highlight_id,
           })
-          .then((response) => {
-            console.log(response);
+          .then(() => {
             window.alert("刪除成功!");
           })
-          .catch(function (error) {
-            console.log(error);
+          .catch(() => {
             window.alert("刪除失敗!");
           });
         this.isDelete = true;
