@@ -643,7 +643,11 @@ export default {
         this.vodAnalysisSendStatusShow = true;
         this.vodAnalysisSendStatus = "Loading";
         this.axios
-          .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight")
+          .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
+            params: {
+              vod_id: vm.vod_id,
+            },
+          })
           .then((response) => {
             if (response.data != "") {
               vm.vodAnalysisBtnShow = true;
