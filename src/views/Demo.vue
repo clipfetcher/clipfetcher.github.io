@@ -26,7 +26,7 @@
                 type="text"
                 class="form-control"
                 aria-describedby="videoData"
-                placeholder="Twitch Vod Id or URL"
+                placeholder="您想要分析的 Twitch 網址"
                 v-model="inputBarText"
                 :class="vodValid ? 'is-Valid' : 'is-invalid'"
               />
@@ -133,13 +133,7 @@
             id="videoShow"
             class="embed-responsive embed-responsive-16by9 my-2"
           >
-            <iframe
-              id="videoAnalysis"
-              class="embed-responsive-item"
-              :src="vidAnalysis"
-              scrolling="no"
-              allowfullscreen="true"
-            ></iframe>
+            <div ref="twitchVideo"></div>
           </div>
         </div>
       </div>
@@ -207,53 +201,67 @@
           <div class="row">
             <div class="col-12 col-lg-8">
               <div class="embed-responsive embed-responsive-16by9 my-1">
-                <iframe
-                  class="embed-responsive-item"
-                  :src="vidAnalysis"
-                  scrolling="yes"
-                  allowfullscreen="true"
-                ></iframe>
+                <div ref="twitchVideoManualEdit"></div>
               </div>
               <div class="justify-content-center">
                 <div class="form-row">
+                  <div class="col-6">
+                    <b-button
+                      variant="outline-primary"
+                      @click="setClipTime('start')"
+                      ><i class="fas fa-file-import mr-2"></i>
+                      片段開始時間</b-button
+                    >
+                  </div>
+                  <div class="col-6">
+                    <b-button
+                      variant="outline-primary"
+                      @click="setClipTime('end')"
+                      ><i class="fas fa-file-import mr-2"></i>
+                      片段結束時間</b-button
+                    >
+                  </div>
                   <div class="col-12 col-md-6">
                     <label for="startTime">開始時間：</label>
                     <div class="form-row">
                       <div class="col-3">
-                        <input
-                          type="number"
-                          min="00"
-                          max="999"
-                          class="form-control"
-                          id="startTime"
+                        <select
                           v-model="startTime.hour"
-                          placeholder="00"
-                          required
-                        />
-                      </div>
-                      <span class="col-1">:</span>
-                      <div class="col-3">
-                        <input
-                          type="number"
-                          min="00"
-                          max="60"
                           class="form-control"
-                          v-model="startTime.minute"
-                          placeholder="00"
                           required
-                        />
+                        >
+                          <option v-for="time in timecodeHour" :key="time.key">
+                            {{ time }}
+                          </option>
+                        </select>
                       </div>
-                      <span class="col-1">:</span>
+                      <span class="col-1 px-0 align-middle text-center">:</span>
                       <div class="col-3">
-                        <input
-                          type="number"
-                          min="00"
-                          max="60"
-                          class="form-control"
-                          v-model="startTime.second"
-                          placeholder="00"
-                          required
-                        />
+                        <div class="form-group">
+                          <select
+                            v-model="startTime.minute"
+                            class="form-control"
+                            required
+                          >
+                            <option v-for="time in timecode" :key="time.key">
+                              {{ time }}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                      <span class="col-1 px-0 align-middle text-center">:</span>
+                      <div class="col-3">
+                        <div class="form-group">
+                          <select
+                            v-model="startTime.second"
+                            class="form-control"
+                            required
+                          >
+                            <option v-for="time in timecode" :key="time.key">
+                              {{ time }}
+                            </option>
+                          </select>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -261,40 +269,43 @@
                     <label for="endTime">結束時間：</label>
                     <div class="form-row">
                       <div class="col-3">
-                        <input
-                          type="number"
-                          min="00"
-                          max="999"
-                          class="form-control"
-                          id="endTime"
+                        <select
                           v-model="endTime.hour"
-                          placeholder="00"
-                          required
-                        />
-                      </div>
-                      <span class="col-1">:</span>
-                      <div class="col-3">
-                        <input
-                          type="number"
-                          min="00"
-                          max="60"
                           class="form-control"
-                          v-model="endTime.minute"
-                          placeholder="00"
                           required
-                        />
+                        >
+                          <option v-for="time in timecodeHour" :key="time.key">
+                            {{ time }}
+                          </option>
+                        </select>
                       </div>
-                      <span class="col-1">:</span>
+                      <span class="col-1 px-0 align-middle text-center">:</span>
                       <div class="col-3">
-                        <input
-                          type="number"
-                          min="00"
-                          max="60"
-                          class="form-control"
-                          v-model="endTime.second"
-                          placeholder="00"
-                          required
-                        />
+                        <div class="form-group">
+                          <select
+                            v-model="endTime.minute"
+                            class="form-control"
+                            required
+                          >
+                            <option v-for="time in timecode" :key="time.key">
+                              {{ time }}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                      <span class="col-1 px-0 align-middle text-center">:</span>
+                      <div class="col-3">
+                        <div class="form-group">
+                          <select
+                            v-model="endTime.second"
+                            class="form-control"
+                            required
+                          >
+                            <option v-for="time in timecode" :key="time.key">
+                              {{ time }}
+                            </option>
+                          </select>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -313,31 +324,18 @@
             </div>
             <div class="col-12 col-lg-4">
               <div class="card">
-                <div class="card-header">
-                  <span
-                    :class="[clip_totalTime <= 20 ? '' : 'text-danger']"
-                    style="float: right"
-                    >累積時間 {{ clip_totalTime }} 分鐘</span
-                  >
-                </div>
                 <div
-                  class="card-body overflow-auto"
+                  class="card-body overflow-auto px-0"
                   style="height: 340px; max-height: 340px"
                 >
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <th colspan="4" class="text-center">目前片段</th>
-                        <th class="text-center">編輯</th>
-                      </tr>
-                    </thead>
+                  <table class="table table-borderless">
                     <tbody>
-                      <tr v-for="time in clip_timeSort" :key="time.index">
-                        <td
-                          scope="row"
-                          class="px-0 align-middle text-center"
-                          colspan="4"
-                        >
+                      <tr
+                        v-for="time in clip_timeSort"
+                        :key="time.index"
+                        @click="editClipTime(time)"
+                      >
+                        <td class="px-0 align-middle text-center" colspan="4">
                           {{ time.start }} ~ {{ time.end }}
                         </td>
                         <td>
@@ -362,13 +360,20 @@
                     </tbody>
                   </table>
                 </div>
+                <div class="card-footer">
+                  <span
+                    :class="[clip_totalTime <= 20 ? '' : 'text-danger']"
+                    style="float: right"
+                    >累積時間 {{ clip_totalTime }} 分鐘</span
+                  >
+                </div>
               </div>
               <button
                 type="button"
                 class="btn btn-danger btn-lg btn-block my-2"
                 @click="cancelManualEditor()"
               >
-                取消
+                取消剪輯
               </button>
               <button
                 type="button"
@@ -404,9 +409,6 @@
             <b-link :to="'/highlight/' + videoHighlightId" target="_blank"
               >精華連結</b-link
             >
-            <!-- <br />
-            <span>你的ID：{{ videoHighlightId }}</span>
-            <br />-->
           </p>
         </div>
         <div
@@ -512,6 +514,8 @@
   </div>
 </template>
 
+<!-- Load the Twitch embed script -->
+<script src= "https://player.twitch.tv/js/embed/v1.js"></script>
 <script>
 import HighlightList from "@/components/HighlightList.vue";
 
@@ -528,13 +532,21 @@ export default {
       vidId: "",
       videoSearchType: "搜尋項目",
 
-      vidAnalysis: "",
       vidSearch: "",
       vidSearchShow: "",
 
       starRating: 0,
       temp_starRating: 0,
       isRating: false,
+      //Twitch
+      twitchOptions: {
+        width: 1280,
+        height: 720,
+        video: "",
+        parent: ["clipfetcher.com", "127.0.0.1"],
+        autoplay: false,
+      },
+      twitchPlayer: null,
       //顯示控制
       vodShow: false,
       vodAnalysisBtnShow: false,
@@ -565,14 +577,14 @@ export default {
       // manual editor
       clip_time: [],
       startTime: {
-        hour: "",
-        minute: "",
-        second: "",
+        hour: "00",
+        minute: "00",
+        second: "00",
       },
       endTime: {
-        hour: "",
-        minute: "",
-        second: "",
+        hour: "00",
+        minute: "00",
+        second: "00",
       },
 
       api: null,
@@ -615,16 +627,16 @@ export default {
         })
         .get("videos/" + vid)
         .then(() => {
-          vm.vidAnalysis =
-            "https://player.twitch.tv/?video=v" +
-            vid +
-            "&autoplay=false&parent=" +
-            window.location.hostname;
-          vm.vod_id = vid;
-          vm.vodValid = true;
-          vm.vodLoadBtn = "reload";
-          vm.vodShow = true;
-          vm.vodAnalysisBtnShow = true;
+          this.twitchOptions.video = vid;
+          this.twitchPlayer = new Twitch.Player(
+            this.$refs.twitchVideo,
+            this.twitchOptions
+          );
+          this.vod_id = vid;
+          this.vodValid = true;
+          this.vodLoadBtn = "reload";
+          this.vodShow = true;
+          this.vodAnalysisBtnShow = true;
         })
         .catch(function (error) {
           console.log(error);
@@ -738,19 +750,24 @@ export default {
         window.alert("尚未登入 此功能僅供會員使用!");
       }
       if (isValid) {
+        this.twitchOptions.video = this.vod_id;
+        this.twitchPlayer = new Twitch.Player(
+          this.$refs.twitchVideoManualEdit,
+          this.twitchOptions
+        );
         this.vodShow = false;
         this.vodAnalysisBtnShow = false;
         this.manualEditorShow = true;
         this.clip_time = [];
         this.startTime = {
-          hour: "",
-          minute: "",
-          second: "",
+          hour: "00",
+          minute: "00",
+          second: "00",
         };
         this.endTime = {
-          hour: "",
-          minute: "",
-          second: "",
+          hour: "00",
+          minute: "00",
+          second: "00",
         };
       }
     },
@@ -758,6 +775,11 @@ export default {
       if (parseInt(time) < 10) time = "0" + time;
     },
     cancelManualEditor: function () {
+      this.twitchOptions.video = this.vod_id;
+      this.twitchPlayer = new Twitch.Player(
+        this.$refs.twitchVideo,
+        this.twitchOptions
+      );
       this.manualEditorShow = false;
       this.vodAnalysisBtnShow = true;
       this.vodShow = true;
@@ -826,11 +848,11 @@ export default {
           .get("videos/" + vod_id)
           .then(() => {
             this.inputBar = true;
-            this.vidAnalysis =
-              "https://player.twitch.tv/?video=v" +
-              vod_id +
-              "&autoplay=false&parent=" +
-              window.location.hostname;
+            this.twitchOptions.video = vod_id;
+            this.twitchPlayer = new Twitch.Player(
+              this.$refs.twitchVideoManualEdit,
+              this.twitchOptions
+            );
             this.inputBarText = vod_id;
             this.vod_id = vod_id;
             this.vodValid = true;
@@ -842,40 +864,50 @@ export default {
             this.titleErrorFeedback = "";
 
             this.clip_time = [];
-            for (let i = 0; i < start_at.length; i++) {
-              let start = start_at[i].split(":");
-              let durationTime = duration[i].split(":");
-              let startSec =
+
+            let start,
+              durationTime,
+              startSec,
+              durationSec,
+              end,
+              hour,
+              minute,
+              second,
+              time;
+            for (let i = 0; i < start_at.length && i < duration.length; i++) {
+              start = start_at[i].split(":");
+              durationTime = duration[i].split(":");
+              startSec =
                 parseInt(start[0] * 60 * 60) +
                 parseInt(start[1] * 60) +
                 parseInt(start[2]);
-              let durationSec =
+              durationSec =
                 parseInt(durationTime[0] * 60 * 60) +
                 parseInt(durationTime[1] * 60) +
                 parseInt(durationTime[2]);
-              let end = Number(startSec) + Number(durationSec);
-              let hour = Math.floor(end / 60 / 60);
+              end = Number(startSec) + Number(durationSec);
+              hour = Math.floor(end / 60 / 60);
               hour = hour >= 10 ? hour : "0" + hour;
-              let minute = Math.floor(end / 60) % 60;
+              minute = Math.floor(end / 60) % 60;
               minute = minute >= 10 ? minute : "0" + minute;
-              let second = end % 60;
+              second = end % 60;
               second = second >= 10 ? second : "0" + second;
 
-              let time = {
+              time = {
                 start: start_at[i],
                 end: hour + ":" + minute + ":" + second,
               };
               this.clip_time.push(time);
             }
             this.startTime = {
-              hour: "",
-              minute: "",
-              second: "",
+              hour: "00",
+              minute: "00",
+              second: "00",
             };
             this.endTime = {
-              hour: "",
-              minute: "",
-              second: "",
+              hour: "00",
+              minute: "00",
+              second: "00",
             };
             this.vodShow = false;
             this.vodAnalysisBtnShow = false;
@@ -893,7 +925,7 @@ export default {
       }
     },
     addClipTime: function () {
-      let reg = /[0-9]{2,3}:[0-5][0-9]:[0-5][0-9]/;
+      let reg = /[0-4][0-9]:[0-5][0-9]:[0-5][0-9]/;
       let startTime =
         this.startTime.hour +
         ":" +
@@ -906,14 +938,45 @@ export default {
         this.endTime.minute +
         ":" +
         this.endTime.second;
-      if (reg.test(startTime) && reg.test(endTime)) {
+      let startSec =
+        parseInt(this.startTime.hour * 60 * 60) +
+        parseInt(this.startTime.minute * 60) +
+        parseInt(this.startTime.second);
+      let endSec =
+        parseInt(this.endTime.hour * 60 * 60) +
+        parseInt(this.endTime.minute * 60) +
+        parseInt(this.endTime.second);
+      if (reg.test(startTime) && reg.test(endTime) && startSec < endSec) {
         let time = {
           start: startTime,
           end: endTime,
         };
         this.clip_time.push(time);
       } else {
-        window.alert("時間格式錯誤 應為HH:MM:SS");
+        window.alert("片段時間輸入不正確!");
+      }
+    },
+    setClipTime(point) {
+      let time = this.twitchPlayer.getCurrentTime();
+      time = time.toFixed();
+      let hour = Math.floor(time / 60 / 60);
+      hour = hour >= 10 ? hour : "0" + hour;
+      let minute = Math.floor(time / 60) % 60;
+      minute = minute >= 10 ? minute : "0" + minute;
+      let second = time % 60;
+      second = second >= 10 ? second : "0" + second;
+      if (point === "start") {
+        this.startTime = {
+          hour: hour,
+          minute: minute,
+          second: second,
+        };
+      } else if (point === "end") {
+        this.endTime = {
+          hour: hour,
+          minute: minute,
+          second: second,
+        };
       }
     },
     removeClipTime: function (time) {
@@ -928,7 +991,7 @@ export default {
       this.endTime.hour = end[0];
       this.endTime.minute = end[1];
       this.endTime.second = end[2];
-      this.removeClipTime(time);
+      // this.removeClipTime(time);
     },
   },
   computed: {
@@ -1002,6 +1065,22 @@ export default {
         duration.push(hour + ":" + minute + ":" + second);
       });
       return duration;
+    },
+    timecode() {
+      let tc = [];
+      for (let i = 0; i < 61; i++) {
+        if (i < 10) tc.push("0" + i);
+        else tc.push(i);
+      }
+      return tc;
+    },
+    timecodeHour() {
+      let tc = [];
+      for (let i = 0; i < 49; i++) {
+        if (i < 10) tc.push("0" + i);
+        else tc.push(i);
+      }
+      return tc;
     },
   },
 };
