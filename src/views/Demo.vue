@@ -324,33 +324,31 @@
                   <table class="table">
                     <thead>
                       <tr>
-                        <th scope="col" colspan="3" class="text-center">
-                          目前片段
-                        </th>
-                        <th scope="col" class="text-center">刪除</th>
+                        <th colspan="4" class="text-center">目前片段</th>
+                        <th class="text-center">刪除</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr v-for="time in clip_timeSort" :key="time.index">
                         <td
                           scope="row"
-                          class="align-middle text-center"
-                          colspan="3"
+                          class="px-0 align-middle text-center"
+                          colspan="4"
                         >
                           {{ time.start }} ~ {{ time.end }}
                         </td>
                         <td>
-                          <p class="text-center my-0 py-0">
+                          <p class="text-center my-0 p-0">
                             <button
                               type="button"
-                              class="btn btn-outline-info mx-2 my-1 py-1"
+                              class="btn btn-outline-info ml-1 my-1 py-1"
                               @click="editClipTime(time)"
                             >
                               <i class="far fa-edit"></i>
                             </button>
                             <button
                               type="button"
-                              class="btn btn-outline-danger mx-2 my-1 py-1"
+                              class="btn btn-outline-danger ml-1 my-1 py-1"
                               @click="removeClipTime(time)"
                             >
                               <i class="far fa-trash-alt"></i>
@@ -405,7 +403,7 @@
             >
             <!-- <br />
             <span>你的ID：{{ videoHighlightId }}</span>
-            <br /> -->
+            <br />-->
           </p>
         </div>
         <div
@@ -525,7 +523,7 @@ export default {
       vodSearchBtn: "Search",
       inputBarText: "",
       vidId: "",
-      videoSearchType: "Type",
+      videoSearchType: "搜尋項目",
 
       vidAnalysis: "",
       vidSearch: "",
@@ -704,21 +702,22 @@ export default {
         .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
           params: {
             vod_id:
-              vm.videoSearchType == "搜尋項目" || vm.videoSearchType == "vod_id"
+              this.videoSearchType == "搜尋項目" ||
+              this.videoSearchType == "vod_id"
                 ? vid
                 : null,
-            highlight_id: vm.videoSearchType == "highlight_id" ? vid : null,
-            game: vm.videoSearchType == "game" ? vid : null,
-            channel_id: vm.videoSearchType == "channel_id" ? vid : null,
-            streamerName: vm.videoSearchType == "streamerName" ? vid : null,
-            author: vm.videoSearchType == "author" ? vid : null,
+            highlight_id: this.videoSearchType == "highlight_id" ? vid : null,
+            game: this.videoSearchType == "game" ? vid : null,
+            channel_id: this.videoSearchType == "channel_id" ? vid : null,
+            streamerName: this.videoSearchType == "streamerName" ? vid : null,
+            author: this.videoSearchType == "author" ? vid : null,
           },
         })
         .then((response) => {
-          vm.searchVideos = response.data;
-          if (vm.searchVideos == "") vm.highlightSearch = "Error";
-          else vm.highlightSearch = "Find";
-          vm.videoSearchType = "搜尋項目";
+          this.searchVideos = response.data;
+          if (this.searchVideos == "") this.highlightSearch = "Error";
+          else this.highlightSearch = "Find";
+          this.videoSearchType = "搜尋項目";
         })
         .catch(function (error) {
           console.log(error);
@@ -806,6 +805,7 @@ export default {
       }
     },
     setManualEditor(vod_id, start_at, duration) {
+      this.inputBar = true;
       this.vidAnalysis =
         "https://player.twitch.tv/?video=v" +
         vod_id +
