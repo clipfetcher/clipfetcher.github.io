@@ -15,7 +15,7 @@
             <div
               v-if="
                 highlightVideo.status === 'FINISHED' ||
-                highlightStatusText === 'Empty'
+                highlightStatusText === ''
               "
               class="embed-responsive embed-responsive-16by9 mb-4"
             >
@@ -38,21 +38,22 @@
           </div>
           <div class="col-12">
             <h4>
-              <p class="text-left m-0">標題：{{ highlightVideo.memo }}</p>
+              {{ highlightVideo.memo }}
             </h4>
-          </div>
-          <div class="col-12">
+            <small>分析狀態：{{ highlightStatusText }}</small>
             <a
               :href="'https://www.twitch.tv/videos/' + highlightVideo.vod_id"
               target="_blank"
               class="card-link float-right"
             >
               <i
-                class="fas fa-link fa-lg"
+                class="fas fa-link fa-lg my-3"
                 data-toggle="tooltip"
                 title="VOD網址"
               ></i>
             </a>
+          </div>
+          <div class="col-12">
             <p class="text-left m-0">
               實況主：
               <b-link
@@ -202,12 +203,12 @@ export default {
     this.highlightPage = "Loading";
     this.getContent();
     this.fetchContent = setInterval(() => {
-      console.log("fetch");
       this.getContent();
     }, 60000);
   },
   methods: {
     getContent() {
+      let vm = this;
       this.axios
         .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
           params: {
@@ -217,17 +218,18 @@ export default {
         .then((response) => {
           this.highlightVideo = response.data[0];
           if (this.isFailed || this.highlightVideo.status === "FINISHED") {
-            console.log("stop fetch");
             clearInterval(this.fetchContent);
           }
-          if (this.highlightVideo == "" || this.highlightVideo == null)
+          if (this.highlightVideo == "" || this.highlightVideo == null) {
             this.highlightPage = "Error";
-          else {
+            clearInterval(this.fetchContent);
+          } else {
             this.highlightPage = "Find";
           }
         })
-        .catch(function (error) {
-          console.log(error.response);
+        .catch(() => {
+          vm.highlightPage = "Error";
+          clearInterval(this.fetchContent);
         });
     },
     mouseOverRrating: function (val) {
@@ -344,7 +346,7 @@ export default {
           text = "YT上傳失敗";
           break;
         default:
-          text = "Empty";
+          text = "";
       }
       return text;
     },
