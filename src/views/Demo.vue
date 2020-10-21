@@ -133,7 +133,13 @@
             id="videoShow"
             class="embed-responsive embed-responsive-16by9 my-2"
           >
-            <div ref="twitchVideo"></div>
+            <iframe
+              id="videoAnalysis"
+              class="embed-responsive-item"
+              :src="vidAnalysis"
+              scrolling="no"
+              allowfullscreen="true"
+            ></iframe>
           </div>
         </div>
       </div>
@@ -201,26 +207,15 @@
           <div class="row">
             <div class="col-12 col-lg-8">
               <div class="embed-responsive embed-responsive-16by9 my-1">
-                <div ref="twitchVideoManualEdit"></div>
+                <iframe
+                  class="embed-responsive-item"
+                  :src="vidAnalysis"
+                  scrolling="yes"
+                  allowfullscreen="true"
+                ></iframe>
               </div>
               <div class="justify-content-center">
                 <div class="form-row">
-                  <div class="col-6">
-                    <b-button
-                      variant="outline-primary"
-                      @click="setClipTime('start')"
-                      ><i class="fas fa-file-import mr-2"></i>
-                      片段開始時間</b-button
-                    >
-                  </div>
-                  <div class="col-6">
-                    <b-button
-                      variant="outline-primary"
-                      @click="setClipTime('end')"
-                      ><i class="fas fa-file-import mr-2"></i>
-                      片段結束時間</b-button
-                    >
-                  </div>
                   <div class="col-12 col-md-6">
                     <label for="startTime">開始時間：</label>
                     <div class="form-row">
@@ -514,8 +509,6 @@
   </div>
 </template>
 
-<!-- Load the Twitch embed script -->
-<script src= "https://player.twitch.tv/js/embed/v1.js"></script>
 <script>
 import HighlightList from "@/components/HighlightList.vue";
 
@@ -532,21 +525,13 @@ export default {
       vidId: "",
       videoSearchType: "搜尋項目",
 
+      vidAnalysis: "",
       vidSearch: "",
       vidSearchShow: "",
 
       starRating: 0,
       temp_starRating: 0,
       isRating: false,
-      //Twitch
-      twitchOptions: {
-        width: 1280,
-        height: 720,
-        video: "",
-        parent: ["clipfetcher.com", "127.0.0.1"],
-        autoplay: false,
-      },
-      twitchPlayer: null,
       //顯示控制
       vodShow: false,
       vodAnalysisBtnShow: false,
@@ -627,16 +612,16 @@ export default {
         })
         .get("videos/" + vid)
         .then(() => {
-          this.twitchOptions.video = vid;
-          this.twitchPlayer = new Twitch.Player(
-            this.$refs.twitchVideo,
-            this.twitchOptions
-          );
-          this.vod_id = vid;
-          this.vodValid = true;
-          this.vodLoadBtn = "reload";
-          this.vodShow = true;
-          this.vodAnalysisBtnShow = true;
+          vm.vidAnalysis =
+            "https://player.twitch.tv/?video=v" +
+            vid +
+            "&autoplay=false&parent=" +
+            window.location.hostname;
+          vm.vod_id = vid;
+          vm.vodValid = true;
+          vm.vodLoadBtn = "reload";
+          vm.vodShow = true;
+          vm.vodAnalysisBtnShow = true;
         })
         .catch(function (error) {
           console.log(error);
@@ -750,11 +735,6 @@ export default {
         window.alert("尚未登入 此功能僅供會員使用!");
       }
       if (isValid) {
-        this.twitchOptions.video = this.vod_id;
-        this.twitchPlayer = new Twitch.Player(
-          this.$refs.twitchVideoManualEdit,
-          this.twitchOptions
-        );
         this.vodShow = false;
         this.vodAnalysisBtnShow = false;
         this.manualEditorShow = true;
@@ -775,11 +755,6 @@ export default {
       if (parseInt(time) < 10) time = "0" + time;
     },
     cancelManualEditor: function () {
-      this.twitchOptions.video = this.vod_id;
-      this.twitchPlayer = new Twitch.Player(
-        this.$refs.twitchVideo,
-        this.twitchOptions
-      );
       this.manualEditorShow = false;
       this.vodAnalysisBtnShow = true;
       this.vodShow = true;
@@ -848,11 +823,11 @@ export default {
           .get("videos/" + vod_id)
           .then(() => {
             this.inputBar = true;
-            this.twitchOptions.video = vod_id;
-            this.twitchPlayer = new Twitch.Player(
-              this.$refs.twitchVideoManualEdit,
-              this.twitchOptions
-            );
+            this.vidAnalysis =
+              "https://player.twitch.tv/?video=v" +
+              vod_id +
+              "&autoplay=false&parent=" +
+              window.location.hostname;
             this.inputBarText = vod_id;
             this.vod_id = vod_id;
             this.vodValid = true;
@@ -954,29 +929,6 @@ export default {
         this.clip_time.push(time);
       } else {
         window.alert("片段時間輸入不正確!");
-      }
-    },
-    setClipTime(point) {
-      let time = this.twitchPlayer.getCurrentTime();
-      time = time.toFixed();
-      let hour = Math.floor(time / 60 / 60);
-      hour = hour >= 10 ? hour : "0" + hour;
-      let minute = Math.floor(time / 60) % 60;
-      minute = minute >= 10 ? minute : "0" + minute;
-      let second = time % 60;
-      second = second >= 10 ? second : "0" + second;
-      if (point === "start") {
-        this.startTime = {
-          hour: hour,
-          minute: minute,
-          second: second,
-        };
-      } else if (point === "end") {
-        this.endTime = {
-          hour: hour,
-          minute: minute,
-          second: second,
-        };
       }
     },
     removeClipTime: function (time) {
