@@ -180,9 +180,9 @@
                 ></b-form-input>
               </b-form-group>
 
-              <b-form-group v-if="analysis != null" label="analysis">
+              <b-form-group v-if="analyzeType != null" label="analyzeType">
                 <b-form-input
-                  v-model="formHighlightEdit.analysis"
+                  v-model="formHighlightEdit.analyzeType"
                   type="text"
                 ></b-form-input>
               </b-form-group>
@@ -251,7 +251,7 @@ export default {
     "memo",
     "author",
     "status",
-    "analysis",
+    "analyzeType",
   ],
   data() {
     return {
@@ -275,7 +275,7 @@ export default {
         memo: this.memo,
         author: this.author,
         status: this.status,
-        analysis: this.analysis,
+        analyzeType: this.analyzeType,
       },
 
       editting: false,
@@ -341,7 +341,7 @@ export default {
           memo: this.formHighlightEdit.memo,
           author: this.formHighlightEdit.author,
           status: this.formHighlightEdit.status,
-          analysis: this.formHighlightEdit.analysis,
+          analyzeType: this.formHighlightEdit.analyzeType,
         })
         .then(() => {
           this.editting = false;
@@ -434,6 +434,20 @@ export default {
           break;
         default:
           text = "Empty";
+      }
+      return text;
+    },
+    analysis() {
+      let text;
+      switch (this.analyzeType) {
+        case "freq":
+          text = "自動頻率分析";
+          break;
+        case "manual":
+          text = "手動剪輯";
+          break;
+        default:
+          text = "";
       }
       return text;
     },

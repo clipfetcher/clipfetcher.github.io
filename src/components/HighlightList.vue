@@ -194,7 +194,7 @@ export default {
     "memo",
     "author",
     "status",
-    "analysis",
+    "analyzeType",
   ],
   data() {
     return {
@@ -396,6 +396,20 @@ export default {
           bool = false;
       }
       return bool;
+    },
+    analysis() {
+      let text;
+      switch (this.analyzeType) {
+        case "freq":
+          text = "自動頻率分析";
+          break;
+        case "manual":
+          text = "手動剪輯";
+          break;
+        default:
+          text = "";
+      }
+      return text;
     },
     showManualEdit() {
       if (this.$router.currentRoute.name === "Demo") {

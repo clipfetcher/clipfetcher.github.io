@@ -446,7 +446,7 @@
             :memo="searchVideo.memo"
             :author="searchVideo.author"
             :status="searchVideo.status"
-            :analysis="searchVideo.analyzeType"
+            :analyzeType="searchVideo.analyzeType"
             v-on:manual="setManualEditor"
           ></HighlightList>
         </div>
@@ -487,7 +487,7 @@
           :memo="highlight.memo"
           :author="highlight.author"
           :status="highlight.status"
-          :analysis="highlight.analyzeType"
+          :analyzeType="highlight.analyzeType"
           v-on:manual="setManualEditor"
         ></HighlightList>
       </div>

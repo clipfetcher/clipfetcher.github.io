@@ -23,7 +23,7 @@
         :memo="highlight.memo"
         :author="highlight.author"
         :status="highlight.status"
-        :analysis="highlight.analyzeType"
+        :analyzeType="highlight.analyzeType"
       ></AdminHighlightList>
     </div>
     <div

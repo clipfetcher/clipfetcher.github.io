@@ -76,6 +76,7 @@
                 >{{ highlightVideo.author }}</b-link
               >
             </p>
+            <p class="text-left m-0">分析方式：{{ analysis }}</p>
             <b-button
               @click="appraiseModalShow = !appraiseModalShow"
               variant="outline-info"
@@ -393,6 +394,20 @@ export default {
           bool = false;
       }
       return bool;
+    },
+    analysis() {
+      let text;
+      switch (this.highlightVideo.analyzeType) {
+        case "freq":
+          text = "自動頻率分析";
+          break;
+        case "manual":
+          text = "手動剪輯";
+          break;
+        default:
+          text = "";
+      }
+      return text;
     },
   },
 };
