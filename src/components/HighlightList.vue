@@ -94,6 +94,7 @@
           class="float-right m-1"
           >我要評價</b-button
         >
+        <p class="text-left m-0">分析方式：{{ analysis }}</p>
 
         <b-modal v-model="appraiseModalShow" title="精華評價" hide-footer>
           <form @submit.prevent="appraise">

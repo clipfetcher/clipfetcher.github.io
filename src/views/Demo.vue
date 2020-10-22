@@ -357,7 +357,7 @@
                 </div>
                 <div class="card-footer">
                   <span
-                    :class="[clip_totalTime <= 20 ? '' : 'text-danger']"
+                    :class="[clip_totalTime <= 30 ? '' : 'text-danger']"
                     style="float: right"
                     >累積時間 {{ clip_totalTime }} 分鐘</span
                   >
@@ -446,7 +446,7 @@
             :memo="searchVideo.memo"
             :author="searchVideo.author"
             :status="searchVideo.status"
-            :analysis="searchVideo.analysis"
+            :analysis="searchVideo.analyzeType"
             v-on:manual="setManualEditor"
           ></HighlightList>
         </div>
@@ -487,7 +487,7 @@
           :memo="highlight.memo"
           :author="highlight.author"
           :status="highlight.status"
-          :analysis="highlight.analysis"
+          :analysis="highlight.analyzeType"
           v-on:manual="setManualEditor"
         ></HighlightList>
       </div>
@@ -767,9 +767,9 @@ export default {
       let vm = this;
       this.checkHighlightTitle();
       let isValid = this.titleValid;
-      if (this.clip_totalTime > 20) {
+      if (this.clip_totalTime > 30) {
         isValid = false;
-        window.alert("剪輯片段時間總和超過20分鐘 請減少片段！");
+        window.alert("剪輯片段時間總和超過30分鐘 請減少片段！");
       }
       if (this.$store.state.auth.isLogin == false) {
         isValid = false;

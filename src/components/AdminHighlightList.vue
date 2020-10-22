@@ -65,6 +65,7 @@
         </p>
         <p class="text-left m-0">目前分數：{{ avg_score }}</p>
         <p class="text-left m-0">建立者：{{ author }}</p>
+        <p class="text-left m-0">分析方式：{{ analysis }}</p>
         <div class="float-right mt-2 mb-0">
           <b-list-group horizontal>
             <b-list-group-item variant="info">
@@ -183,7 +184,6 @@
                 <b-form-input
                   v-model="formHighlightEdit.analysis"
                   type="text"
-                  disabled
                 ></b-form-input>
               </b-form-group>
 

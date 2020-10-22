@@ -1,7 +1,10 @@
 <template>
   <div>
     <br />
-    <div v-if="videoList === 'Loading'" class="d-flex justify-content-center my-5">
+    <div
+      v-if="videoList === 'Loading'"
+      class="d-flex justify-content-center my-5"
+    >
       <div class="spinner-grow text-secondary" role="status">
         <span class="sr-only">Loading...</span>
       </div>
@@ -20,10 +23,14 @@
         :memo="highlight.memo"
         :author="highlight.author"
         :status="highlight.status"
-        :analysis="highlight.analysis"
+        :analysis="highlight.analyzeType"
       ></AdminHighlightList>
     </div>
-    <div v-else-if="videoList === 'Empty'" class="alert alert-info" role="alert">
+    <div
+      v-else-if="videoList === 'Empty'"
+      class="alert alert-info"
+      role="alert"
+    >
       <p class="text-center my-2 py-2">
         <span>目前還沒有精華影片！！</span>
       </p>
