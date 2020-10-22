@@ -35,10 +35,11 @@ router.beforeEach((to, from, next) => {
             path: '/',
           })
         });
+    } else {
+      next({
+        path: '/',
+      })
     }
-    next({
-      path: '/',
-    })
   } else {
     if (store.state.auth.isLogin) {
       const api2 = `${process.env.VUE_APP_ROOT_API}/api/user`;
