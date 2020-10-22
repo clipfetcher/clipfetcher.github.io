@@ -130,6 +130,16 @@ const routes = [
     component: () => import('../views/HighlightSearch.vue')
   },
   {
+    path: '/clip',
+    name: 'Quick30',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import('../views/Quick30ClipGenerater.vue'),
+    // 判斷是否為管理員
+    meta: { requiresAuth: true },
+  },
+  {
     path: '/verify/:verify_token',
     name: 'AccountVerify',
     // route level code-splitting
