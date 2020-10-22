@@ -109,49 +109,49 @@
         <b-tab title="精華編輯" active>
           <b-card>
             <b-form @submit.prevent="highlightEdit">
-              <b-form-group v-if="vod_id != null" label="vod_id">
+              <b-form-group label="vod_id">
                 <b-form-input
                   v-model="formHighlightEdit.vod_id"
                   type="text"
                 ></b-form-input>
               </b-form-group>
 
-              <b-form-group v-if="highlight_id != null" label="highlight_id">
+              <b-form-group label="highlight_id">
                 <b-form-input
                   v-model="formHighlightEdit.highlight_id"
                   type="text"
                 ></b-form-input>
               </b-form-group>
 
-              <b-form-group v-if="channel_id != null" label="channel_id">
+              <b-form-group label="channel_id">
                 <b-form-input
                   v-model="formHighlightEdit.channel_id"
                   type="text"
                 ></b-form-input>
               </b-form-group>
 
-              <b-form-group v-if="streamerName != null" label="streamerName">
+              <b-form-group label="streamerName">
                 <b-form-input
                   v-model="formHighlightEdit.streamerName"
                   type="text"
                 ></b-form-input>
               </b-form-group>
 
-              <b-form-group v-if="game != null" label="game">
+              <b-form-group label="game">
                 <b-form-input
                   v-model="formHighlightEdit.game"
                   type="text"
                 ></b-form-input>
               </b-form-group>
 
-              <b-form-group v-if="youtube_url != null" label="youtube_url">
+              <b-form-group label="youtube_url">
                 <b-form-input
                   v-model="formHighlightEdit.youtube_url"
                   type="text"
                 ></b-form-input>
               </b-form-group>
 
-              <b-form-group v-if="avg_score != null" label="avg_score">
+              <b-form-group label="avg_score">
                 <b-form-input
                   v-model="formHighlightEdit.avg_score"
                   type="text"
@@ -159,28 +159,28 @@
                 ></b-form-input>
               </b-form-group>
 
-              <b-form-group v-if="memo != null" label="memo">
+              <b-form-group label="memo">
                 <b-form-input
                   v-model="formHighlightEdit.memo"
                   type="text"
                 ></b-form-input>
               </b-form-group>
 
-              <b-form-group v-if="author != null" label="author">
+              <b-form-group label="author">
                 <b-form-input
                   v-model="formHighlightEdit.author"
                   type="text"
                 ></b-form-input>
               </b-form-group>
 
-              <b-form-group v-if="status != null" label="status">
+              <b-form-group label="status">
                 <b-form-input
                   v-model="formHighlightEdit.status"
                   type="text"
                 ></b-form-input>
               </b-form-group>
 
-              <b-form-group v-if="analyzeType != null" label="analyzeType">
+              <b-form-group label="analyzeType">
                 <b-form-input
                   v-model="formHighlightEdit.analyzeType"
                   type="text"
