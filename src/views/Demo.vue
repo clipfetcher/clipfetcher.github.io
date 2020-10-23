@@ -744,7 +744,9 @@ export default {
       let isValid = this.titleValid;
       if (this.$store.state.auth.isLogin == false) {
         isValid = false;
-        window.alert("尚未登入 此功能僅供會員使用!");
+        window.alert(
+          "尚未登入 此功能僅供會員使用! 如您已是會員 請先登入後使用!"
+        );
       }
       if (isValid) {
         this.vodShow = false;
@@ -781,7 +783,9 @@ export default {
       }
       if (this.$store.state.auth.isLogin == false) {
         isValid = false;
-        window.alert("尚未登入 此功能僅供會員使用!");
+        window.alert(
+          "尚未登入 此功能僅供會員使用! 如您已是會員 請先登入後使用!"
+        );
       }
       if (isValid) {
         this.vodAnalysisBtnShow = false;
@@ -809,7 +813,9 @@ export default {
             vm.vodAnalysisSendStatus = "Error";
             if (error.response) {
               if (error.response.status === 400) {
-                window.alert("尚未登入 此功能僅供會員使用!");
+                window.alert(
+                  "尚未登入 此功能僅供會員使用! 如您已是會員 請先登入後使用!"
+                );
               } else {
                 window.alert("送出失敗!");
               }
@@ -822,7 +828,9 @@ export default {
     setManualEditor(vod_id, start_at, duration) {
       let vm = this;
       if (this.$store.state.auth.isLogin == false) {
-        window.alert("尚未登入 此功能僅供會員使用!");
+        window.alert(
+          "尚未登入 此功能僅供會員使用! 如您已是會員 請先登入後使用!"
+        );
       } else {
         this.axios
           .create({
