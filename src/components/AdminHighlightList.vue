@@ -10,9 +10,14 @@
             allowfullscreen
           ></iframe>
         </div>
-        <div v-else class="alert alert-info" role="alert">
+        <div
+          v-else
+          class="alert alert-info"
+          :class="[isFailed ? 'alert-danger' : 'alert-info']"
+          role="alert"
+        >
           <p class="text-center my-4 py-4">
-            <span>{{ status }}</span>
+            <span>{{ highlightStatus }}</span>
           </p>
         </div>
       </div>
@@ -437,6 +442,50 @@ export default {
       }
       return text;
     },
+    isFailed() {
+      let bool = false;
+      switch (this.status) {
+        case "GETINFO":
+          bool = false;
+          break;
+        case "RUNALGO":
+          bool = false;
+          break;
+        case "FMVODDL":
+          bool = false;
+          break;
+        case "FMVODCB":
+          bool = false;
+          break;
+        case "YTVODUL":
+          bool = false;
+          break;
+        case "FINISHED":
+          bool = false;
+          break;
+        case "NEWANALF":
+          bool = true;
+          break;
+        case "GETINFOF":
+          bool = true;
+          break;
+        case "RUNALGOF":
+          bool = true;
+          break;
+        case "FMVODDLF":
+          bool = true;
+          break;
+        case "FMVODCBF":
+          bool = true;
+          break;
+        case "YTVODULF":
+          bool = true;
+          break;
+        default:
+          bool = false;
+      }
+      return bool;
+    },
     analysis() {
       let text;
       switch (this.analyzeType) {
@@ -445,6 +494,9 @@ export default {
           break;
         case "manual":
           text = "手動剪輯";
+          break;
+        case "machine":
+          text = "機器學習";
           break;
         default:
           text = "";

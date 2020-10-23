@@ -404,6 +404,9 @@ export default {
         case "manual":
           text = "手動剪輯";
           break;
+        case "machine":
+          text = "機器學習";
+          break;
         default:
           text = "";
       }
