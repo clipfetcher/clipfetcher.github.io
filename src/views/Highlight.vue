@@ -13,10 +13,7 @@
         <div class="row">
           <div class="col-12">
             <div
-              v-if="
-                highlightVideo.status === 'FINISHED' ||
-                highlightStatusText === ''
-              "
+              v-if="highlightVideo.status === 'FINISHED'"
               class="embed-responsive embed-responsive-16by9 mb-4"
             >
               <iframe
@@ -347,7 +344,7 @@ export default {
           text = "YT上傳失敗";
           break;
         default:
-          text = "";
+          text = "獲取資訊中";
       }
       return text;
     },

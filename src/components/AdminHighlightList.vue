@@ -3,7 +3,10 @@
   <div class="m-4" v-show="!isDelete">
     <div class="row">
       <div class="col-12 col-md-4 my-2">
-        <div v-if="youtube_url" class="embed-responsive embed-responsive-16by9">
+        <div
+          v-if="status === 'FINISHED'"
+          class="embed-responsive embed-responsive-16by9"
+        >
           <iframe
             class="embed-responsive-item"
             :src="youtube_embed"
@@ -438,7 +441,7 @@ export default {
           text = "YT上傳失敗";
           break;
         default:
-          text = "Empty";
+          text = "獲取資訊中";
       }
       return text;
     },

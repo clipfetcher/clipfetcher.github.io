@@ -4,7 +4,7 @@
     <div class="row">
       <div class="col-12 col-md-4 my-2">
         <div
-          v-if="status === 'FINISHED' || highlightStatusText === 'Empty'"
+          v-if="status === 'FINISHED'"
           class="embed-responsive embed-responsive-16by9"
         >
           <iframe
@@ -349,7 +349,7 @@ export default {
           text = "YT上傳失敗";
           break;
         default:
-          text = "Empty";
+          text = "獲取資訊中";
       }
       return text;
     },
