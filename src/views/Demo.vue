@@ -121,6 +121,14 @@
                   <b-card-text>分析完成後即可觀看您的精華影片</b-card-text>
                 </b-card>
               </b-card-group>
+              <b-card-text class="text-center mt-2">
+                使用本系統功能即代表您已閱讀並了解
+                <b-link to="/terms-of-service" target="_blank">
+                  服務條款 </b-link
+                >及<b-link to="/privacy-notice" target="_blank">
+                  隱私權聲明
+                </b-link>
+              </b-card-text>
             </b-card-body>
           </b-collapse>
         </b-card>
