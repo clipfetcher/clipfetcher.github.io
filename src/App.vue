@@ -16,7 +16,7 @@
 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="ml-auto">
-          <!-- <b-nav-item-dropdown class="mx-1" right>
+          <b-nav-item-dropdown v-if="isAdmin" class="mx-1" right>
             <template v-slot:button-content>
               <em>其他頁面</em>
             </template>
@@ -25,7 +25,7 @@
             <b-dropdown-item to="/test">TestComponent</b-dropdown-item>
             <b-dropdown-item to="/admin">Admin</b-dropdown-item>
             <b-dropdown-item to="/user">User</b-dropdown-item>
-          </b-nav-item-dropdown>-->
+          </b-nav-item-dropdown>
 
           <b-nav-form v-if="!isLogin">
             <b-button @click="modalLogin()" variant="info">
@@ -489,6 +489,7 @@ export default {
         checkNewPasswordErrorText: "",
       },
 
+      isAdmin: false,
       response: null,
       modalResponse: null,
     };
@@ -627,6 +628,10 @@ export default {
             this.loginPassword = "";
 
             let token = response.data.token;
+            console.log(JSON.parse(atob(token.split(".")[1])).role);
+            if (JSON.parse(atob(token.split(".")[1])).role === "admin") {
+              this.isAdmin = true;
+            }
             this.$store.dispatch("auth/setAuth", {
               token: token,
               isLogin: true,
@@ -660,6 +665,7 @@ export default {
       }
     },
     logout() {
+      this.isAdmin = false;
       this.$store.dispatch("auth/setAuth", {
         token: "",
         isLogin: false,
