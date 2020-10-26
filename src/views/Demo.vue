@@ -333,12 +333,12 @@
                 >
                   <table class="table table-borderless">
                     <tbody>
-                      <tr
-                        v-for="time in clip_timeSort"
-                        :key="time.index"
-                        @click="editClipTime(time)"
-                      >
-                        <td class="px-0 align-middle text-center" colspan="4">
+                      <tr v-for="time in clip_timeSort" :key="time.index">
+                        <td
+                          class="px-0 align-middle text-center"
+                          colspan="4"
+                          @click="editClipTime(time)"
+                        >
                           {{ time.start }} ~ {{ time.end }}
                         </td>
                         <td>
@@ -401,7 +401,7 @@
         </div>
         <div
           v-else-if="vodAnalysisSendStatus === 'Success'"
-          class="alert alert-info"
+          class="alert alert-info my-2 py-4"
           role="alert"
         >
           <p class="text-center my-2 py-2">
