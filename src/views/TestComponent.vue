@@ -13,7 +13,13 @@
         memo="highlight.memo"
       ></HighlightList>
     </div>
-    <button @click="getTime">Time</button>
+    <input type="text" class="form-control" v-model="video" />
+    <button class="btn btn-primary m-1" @click="getTime">Time</button>
+    <button class="btn btn-primary m-1" @click="createTwitchPlayer">New</button>
+    <button class="btn btn-primary m-1" @click="setTwitchPlayer">Set</button>
+    <button class="btn btn-primary m-1" @click="removeTwitchPlayer">
+      Remove
+    </button>
     <p>{{ time }}</p>
     <div class="embed-responsive embed-responsive-16by9 my-1">
       <div ref="twitchVideo"></div>
@@ -42,10 +48,11 @@ export default {
       },
       player: null,
       time: "",
+      video: "",
     };
   },
   mounted() {
-    this.player = new Twitch.Player(this.$refs.twitchVideo, this.options);
+    this.createTwitchPlayer();
   },
   methods: {
     getTime() {
@@ -58,6 +65,20 @@ export default {
       let second = diff % 60;
       second = second >= 10 ? second : "0" + second;
       this.time = hour + ":" + minute + ":" + second;
+    },
+    createTwitchPlayer() {
+      if (this.player != null) this.player.destroy();
+      this.player = new Twitch.Player(this.$refs.twitchVideo, this.options);
+    },
+    setTwitchPlayer() {
+      if (this.video != "") {
+        if (this.player != null) this.player.destroy();
+        this.options.video = this.video;
+        this.player = new Twitch.Player(this.$refs.twitchVideo, this.options);
+      }
+    },
+    removeTwitchPlayer() {
+      this.player.destroy();
     },
   },
   components: { HighlightList },
