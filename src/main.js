@@ -60,10 +60,6 @@ router.beforeEach((to, from, next) => {
 })
 
 new Vue({
-  created() {
-    const html = document.documentElement // returns the html tag
-    html.setAttribute('lang', 'zh-Hant')
-  },
   router,
   store,
   render: h => h(App)
