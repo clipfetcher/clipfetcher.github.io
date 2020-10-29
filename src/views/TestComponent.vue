@@ -13,16 +13,10 @@
         memo="highlight.memo"
       ></HighlightList>
     </div>
-    <input type="text" class="form-control" v-model="video" />
-    <button class="btn btn-primary m-1" @click="getTime">Time</button>
-    <button class="btn btn-primary m-1" @click="createTwitchPlayer">New</button>
-    <button class="btn btn-primary m-1" @click="setTwitchPlayer">Set</button>
-    <button class="btn btn-primary m-1" @click="removeTwitchPlayer">
-      Remove
-    </button>
-    <p>{{ time }}</p>
+    <input type="text" class="form-control" v-model="vod_id" />
+    <p>Time:{{ time }}</p>
     <div class="embed-responsive embed-responsive-16by9 my-1">
-      <div ref="twitchVideo"></div>
+      <twitch-embeded :vod_id="vod_id" v-on:getTime="getTime"></twitch-embeded>
     </div>
     <br />
   </div>
@@ -33,54 +27,22 @@
 
 <script>
 import HighlightList from "@/components/HighlightList.vue";
+import TwitchEmbeded from "@/components/TwitchEmbeded.vue";
 
 export default {
   name: "test",
   data() {
     return {
-      options: {
-        width: 1260,
-        height: 720,
-        video: "767275669",
-        parent: ["clipfetcher.com", "127.0.0.1"],
-        autoplay: false,
-        allowfullscreen: true,
-      },
-      player: null,
+      vod_id: "767275669",
       time: "",
-      video: "",
     };
   },
-  mounted() {
-    this.createTwitchPlayer();
-  },
+  mounted() {},
   methods: {
-    getTime() {
-      let diff = this.player.getCurrentTime();
-      diff = diff.toFixed();
-      let hour = Math.floor(diff / 60 / 60);
-      hour = hour >= 10 ? hour : "0" + hour;
-      let minute = Math.floor(diff / 60) % 60;
-      minute = minute >= 10 ? minute : "0" + minute;
-      let second = diff % 60;
-      second = second >= 10 ? second : "0" + second;
-      this.time = hour + ":" + minute + ":" + second;
-    },
-    createTwitchPlayer() {
-      if (this.player != null) this.player.destroy();
-      this.player = new Twitch.Player(this.$refs.twitchVideo, this.options);
-    },
-    setTwitchPlayer() {
-      if (this.video != "") {
-        if (this.player != null) this.player.destroy();
-        this.options.video = this.video;
-        this.player = new Twitch.Player(this.$refs.twitchVideo, this.options);
-      }
-    },
-    removeTwitchPlayer() {
-      this.player.destroy();
+    getTime(value) {
+      this.time = value;
     },
   },
-  components: { HighlightList },
+  components: { HighlightList, TwitchEmbeded },
 };
 </script>
