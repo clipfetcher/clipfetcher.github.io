@@ -15,8 +15,17 @@
     </div>
     <input type="text" class="form-control" v-model="vod_id" />
     <p>Time:{{ time }}</p>
-    <div class="embed-responsive embed-responsive-16by9 my-1">
-      <twitch-embeded :vod_id="vod_id" v-on:getTime="getTime"></twitch-embeded>
+    <button class="btn btn-primary" @click="showEmbeded = !showEmbeded">
+      {{ showEmbeded ? "關閉" : "開啟" }}
+    </button>
+    <div
+      class="embed-responsive embed-responsive-16by9 my-1"
+      v-if="showEmbeded"
+    >
+      <twitch-embeded
+        :vod_id="vod_id"
+        v-on:getVODTime="getVODTime"
+      ></twitch-embeded>
     </div>
     <br />
   </div>
@@ -35,11 +44,12 @@ export default {
     return {
       vod_id: "767275669",
       time: "",
+      showEmbeded: true,
     };
   },
   mounted() {},
   methods: {
-    getTime(value) {
+    getVODTime(value) {
       this.time = value;
     },
   },

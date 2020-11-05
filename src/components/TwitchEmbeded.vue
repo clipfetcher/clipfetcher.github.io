@@ -46,7 +46,7 @@ export default {
       this.setTwitchPlayer();
     },
     time() {
-      this.$emit("getTime", this.time);
+      this.$emit("getVODTime", this.time);
     },
   },
   computed: {
