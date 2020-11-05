@@ -141,13 +141,11 @@
             id="videoShow"
             class="embed-responsive embed-responsive-16by9 my-2"
           >
-            <iframe
-              id="videoAnalysis"
-              class="embed-responsive-item"
-              :src="vidAnalysis"
-              scrolling="no"
-              allowfullscreen="true"
-            ></iframe>
+            <twitch-embeded
+              v-if="vodShow"
+              :vod_id="vod_id"
+              v-on:getVODTime="getVODTime"
+            ></twitch-embeded>
           </div>
         </div>
       </div>
@@ -215,12 +213,34 @@
           <div class="row">
             <div class="col-12 col-lg-8">
               <div class="embed-responsive embed-responsive-16by9 my-1">
-                <iframe
-                  class="embed-responsive-item"
-                  :src="vidAnalysis"
-                  scrolling="yes"
-                  allowfullscreen="true"
-                ></iframe>
+                <twitch-embeded
+                  v-if="manualEditorShow"
+                  :vod_id="vod_id"
+                  v-on:getVODTime="getVODTime"
+                ></twitch-embeded>
+              </div>
+              <div class="row">
+                <div class="col-12 col-md-6 my-2">
+                  <span>目前影片時間：{{ vod_time }}</span>
+                </div>
+                <div class="col-12 col-md-6">
+                  <div class="d-flex justify-content-center my-2">
+                    <button
+                      type="button"
+                      class="btn btn-primary mx-2"
+                      @click="setClipTime('start')"
+                    >
+                      設定為開始時間
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-primary mx-2"
+                      @click="setClipTime('end')"
+                    >
+                      設定為結束時間
+                    </button>
+                  </div>
+                </div>
               </div>
               <div class="justify-content-center">
                 <div class="form-row">
@@ -519,6 +539,7 @@
 
 <script>
 import HighlightList from "@/components/HighlightList.vue";
+import TwitchEmbeded from "@/components/TwitchEmbeded.vue";
 
 export default {
   name: "demo",
@@ -533,7 +554,6 @@ export default {
       vidId: "",
       videoSearchType: "搜尋項目",
 
-      vidAnalysis: "",
       vidSearch: "",
       vidSearchShow: "",
 
@@ -557,6 +577,7 @@ export default {
       vodValid: true,
       vodErrorData: "",
       vod_id: "",
+      vod_time: "",
       analyseVideos: null,
 
       //HighlightList
@@ -583,7 +604,7 @@ export default {
       api: null,
     };
   },
-  components: { HighlightList },
+  components: { HighlightList, TwitchEmbeded },
   mounted() {
     let vm = this;
     this.axios
@@ -620,11 +641,6 @@ export default {
         })
         .get("videos/" + vid)
         .then(() => {
-          vm.vidAnalysis =
-            "https://player.twitch.tv/?video=v" +
-            vid +
-            "&autoplay=false&parent=" +
-            window.location.hostname;
           vm.vod_id = vid;
           vm.vodValid = true;
           vm.vodLoadBtn = "reload";
@@ -653,7 +669,7 @@ export default {
         this.axios
           .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight", {
             params: {
-              vod_id: vm.vod_id,
+              vod_id: this.vod_id,
             },
           })
           .then((response) => {
@@ -843,11 +859,6 @@ export default {
           .get("videos/" + vod_id)
           .then(() => {
             this.inputBar = true;
-            this.vidAnalysis =
-              "https://player.twitch.tv/?video=v" +
-              vod_id +
-              "&autoplay=false&parent=" +
-              window.location.hostname;
             this.inputBarText = vod_id;
             this.vod_id = vod_id;
             this.vodValid = true;
@@ -964,6 +975,21 @@ export default {
       this.endTime.minute = end[1];
       this.endTime.second = end[2];
       // this.removeClipTime(time);
+    },
+    setClipTime(pos) {
+      let time = this.vod_time.split(":");
+      if (pos === "start") {
+        this.startTime.hour = time[0];
+        this.startTime.minute = time[1];
+        this.startTime.second = time[2];
+      } else {
+        this.endTime.hour = time[0];
+        this.endTime.minute = time[1];
+        this.endTime.second = time[2];
+      }
+    },
+    getVODTime(value) {
+      this.vod_time = value;
     },
   },
   computed: {
