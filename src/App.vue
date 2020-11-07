@@ -1,6 +1,12 @@
 <template>
   <div id="app">
-    <b-navbar class="py-1" toggleable="lg" type="dark" variant="dark">
+    <b-navbar
+      class="py-1"
+      toggleable="lg"
+      type="dark"
+      variant="dark"
+      sticky="true"
+    >
       <b-navbar-brand to="/">
         <img
           src="./assets/ClipFetcher.png"
@@ -40,105 +46,245 @@
               <i class="fas fa-sign-out-alt mr-2"></i>登出
             </b-button>
           </b-nav-form>
+          <b-nav-item-dropdown class="mx-1" right>
+            <template v-slot:button-content>
+              <em><i class="fas fa-info-circle fa-lg ml-2"></i></em>
+            </template>
+            <b-dropdown-item to="/terms-of-service" target="_blank"
+              >服務條款</b-dropdown-item
+            >
+            <b-dropdown-item to="/privacy-notice" target="_blank"
+              >隱私權聲明</b-dropdown-item
+            >
+            <b-dropdown-item @click="opinionModalShow = !opinionModalShow"
+              >意見回饋</b-dropdown-item
+            >
+          </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
     <br />
     <router-view />
 
-    <footer class="mt-3">
-      <div class="fixed-bottom">
-        <div class="float-right">
-          <b-button
-            @click="opinionModalShow = !opinionModalShow"
-            pill
-            variant="info"
-            v-b-tooltip.hover
-            title="意見回饋"
-            class="m-4"
-          >
-            <i class="fas fa-info-circle fa-lg"></i>
-          </b-button>
-        </div>
-      </div>
+    <div class="container">
+      <b-modal v-model="opinionModalShow" title="意見回饋" hide-footer>
+        <form @submit.prevent="opinion">
+          <div class="form-group">
+            <label for="mail">電子信箱：</label>
+            <input
+              type="text"
+              class="form-control"
+              :class="emailError ? 'is-invalid' : ''"
+              id="mail"
+              v-model="mail"
+              aria-describedby="emailHelp"
+            />
+            <div class="invalid-feedback">{{ emailErrorText }}</div>
+            <small id="emailHelp" class="form-text text-muted"
+              >我們將會使用這個信箱作為聯絡您的方式</small
+            >
+          </div>
+          <div class="form-group">
+            <label for="content">建議內容：</label>
+            <input
+              type="text"
+              class="form-control"
+              :class="contentError ? 'is-invalid' : ''"
+              placeholder="想要給本系統改善的建議"
+              id="content"
+              v-model="content"
+              maxlength="50"
+            />
+            <div class="invalid-feedback">建議內容不得為空</div>
+          </div>
+          <button type="submit" class="btn btn-primary float-right">
+            送出
+          </button>
+        </form>
+      </b-modal>
 
-      <div class="container">
-        <b-modal v-model="opinionModalShow" title="意見回饋" hide-footer>
-          <form @submit.prevent="opinion">
+      <b-modal
+        v-model="accountModalShow"
+        :title="accountModalTitle"
+        hide-footer
+      >
+        <!--登入-->
+        <div v-if="accountModalTitle === '登入'">
+          <form @submit.prevent="login">
             <div class="form-group">
-              <label for="mail">電子信箱：</label>
+              <label for="loginAccount">帳號：</label>
               <input
                 type="text"
                 class="form-control"
-                :class="emailError ? 'is-invalid' : ''"
-                id="mail"
-                v-model="mail"
-                aria-describedby="emailHelp"
+                :class="loginAccountError ? 'is-invalid' : ''"
+                id="loginAccount"
+                v-model="loginAccount"
               />
-              <div class="invalid-feedback">{{ emailErrorText }}</div>
-              <small id="emailHelp" class="form-text text-muted"
-                >我們將會使用這個信箱作為聯絡您的方式</small
-              >
+              <div class="invalid-feedback">{{ loginAccountErrorText }}</div>
             </div>
             <div class="form-group">
-              <label for="content">建議內容：</label>
+              <label for="loginPassword">密碼：</label>
               <input
-                type="text"
+                type="password"
                 class="form-control"
-                :class="contentError ? 'is-invalid' : ''"
-                placeholder="想要給本系統改善的建議"
-                id="content"
-                v-model="content"
-                maxlength="50"
+                :class="loginPasswordError ? 'is-invalid' : ''"
+                id="loginPassword"
+                v-model="loginPassword"
+                aria-describedby="loginPasswordHelp"
               />
-              <div class="invalid-feedback">建議內容不得為空</div>
+              <div class="invalid-feedback">{{ loginPasswordErrorText }}</div>
+              <small id="loginPasswordHelp" class="form-text">
+                <b-link @click="modalForgotPassword">忘記密碼</b-link>
+              </small>
             </div>
-            <button type="submit" class="btn btn-primary float-right">
-              送出
-            </button>
+            <div class="form-group">
+              <span>
+                還沒有帳號嗎？
+                <b-link @click="modalSignup">註冊帳號</b-link>
+              </span>
+              <div v-if="logging">
+                <div
+                  class="spinner-border text-secondary float-right"
+                  role="status"
+                >
+                  <span class="sr-only">Loading...</span>
+                </div>
+              </div>
+              <div v-else>
+                <button type="submit" class="btn btn-primary float-right">
+                  登入
+                </button>
+              </div>
+            </div>
           </form>
-        </b-modal>
+        </div>
 
-        <b-modal
-          v-model="accountModalShow"
-          :title="accountModalTitle"
-          hide-footer
-        >
-          <!--登入-->
-          <div v-if="accountModalTitle === '登入'">
-            <form @submit.prevent="login">
+        <!--註冊-->
+        <div v-else-if="accountModalTitle === '註冊'">
+          <div v-if="signupSuccess" class="alert alert-success" role="alert">
+            <p class="text-center my-2 py-2">
+              <span>驗證信已寄出 請至註冊時填寫的信箱查看!</span>
+            </p>
+          </div>
+          <div v-else>
+            <form @submit.prevent="signup">
               <div class="form-group">
-                <label for="loginAccount">帳號：</label>
+                <span>
+                  已經有帳號了嗎？
+                  <b-link @click="accountModalTitle = '登入'">登入帳號</b-link>
+                </span>
+              </div>
+              <div v-if="signupFail" class="alert alert-danger" role="alert">
+                <p class="text-center m-0">
+                  <span>{{ signupFailText }}</span>
+                </p>
+              </div>
+              <div class="form-group">
+                <label for="signupAccount">帳號：</label>
                 <input
                   type="text"
                   class="form-control"
-                  :class="loginAccountError ? 'is-invalid' : ''"
-                  id="loginAccount"
-                  v-model="loginAccount"
+                  :class="signupAccountError ? 'is-invalid' : ''"
+                  id="signupAccount"
+                  v-model="signupAccount"
+                  @keyup="signupAccountLengthCheck"
                 />
-                <div class="invalid-feedback">{{ loginAccountErrorText }}</div>
+                <div class="invalid-feedback">
+                  {{ signupAccountErrorText }}
+                </div>
               </div>
               <div class="form-group">
-                <label for="loginPassword">密碼：</label>
+                <label for="signupMail">電子信箱：</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  :class="signupMailError ? 'is-invalid' : ''"
+                  id="signupMail"
+                  v-model="signupMail"
+                />
+                <div class="invalid-feedback">{{ signupMailErrorText }}</div>
+              </div>
+              <div class="form-group">
+                <label for="signupPassword">設定密碼</label>
                 <input
                   type="password"
                   class="form-control"
-                  :class="loginPasswordError ? 'is-invalid' : ''"
-                  id="loginPassword"
-                  v-model="loginPassword"
-                  aria-describedby="loginPasswordHelp"
+                  :class="signupPasswordError ? 'is-invalid' : ''"
+                  id="signupPassword"
+                  v-model="signupPassword"
+                  @keyup="signupPasswordLengthCheck"
                 />
-                <div class="invalid-feedback">{{ loginPasswordErrorText }}</div>
-                <small id="loginPasswordHelp" class="form-text">
-                  <b-link @click="modalForgotPassword">忘記密碼</b-link>
-                </small>
+                <div class="invalid-feedback">
+                  {{ signupPasswordErrorText }}
+                </div>
               </div>
               <div class="form-group">
-                <span>
-                  還沒有帳號嗎？
-                  <b-link @click="modalSignup">註冊帳號</b-link>
-                </span>
-                <div v-if="logging">
+                <label for="signupCheckPassword">確認密碼</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  :class="signupCheckPasswordError ? 'is-invalid' : ''"
+                  id="signupCheckPassword"
+                  v-model="signupCheckPassword"
+                  @keyup="signupCheckPasswordSameCheck"
+                />
+                <div class="invalid-feedback">
+                  {{ signupCheckPasswordErrorText }}
+                </div>
+              </div>
+              <div class="form-group">
+                <p class="text-center">
+                  點擊註冊及代表您已閱讀並了解
+                  <b-link to="/terms-of-service" target="_blank"
+                    >服務條款</b-link
+                  >及
+                  <b-link to="/privacy-notice" target="_blank"
+                    >隱私權聲明</b-link
+                  >
+                </p>
+                <div class="text-center">
+                  <div v-if="signupping">
+                    <div class="spinner-border text-secondary" role="status">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                  </div>
+                  <div v-else>
+                    <button type="submit" class="btn btn-primary">註冊</button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!--忘記密碼-->
+        <div v-else-if="accountModalTitle === '忘記密碼'">
+          <div
+            v-if="forgotPasswordSuccess"
+            class="alert alert-success"
+            role="alert"
+          >
+            <p class="text-center my-2 py-2">
+              <span>驗證信已寄出 請至註冊時填寫的信箱查看!</span>
+            </p>
+          </div>
+          <div v-else>
+            <form @submit.prevent="forgotPassword">
+              <div class="form-group">
+                <label for="forgotPasswordId">請輸入帳號或電子信箱：</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  :class="forgotPasswordIdError ? 'is-invalid' : ''"
+                  id="forgotPasswordId"
+                  v-model="forgotPasswordId"
+                />
+                <div class="invalid-feedback">
+                  {{ forgotPasswordIdErrorText }}
+                </div>
+              </div>
+              <div class="form-group">
+                <div v-if="forgotPasswordLoading">
                   <div
                     class="spinner-border text-secondary float-right"
                     role="status"
@@ -148,163 +294,107 @@
                 </div>
                 <div v-else>
                   <button type="submit" class="btn btn-primary float-right">
-                    登入
+                    傳送驗證信件
                   </button>
                 </div>
               </div>
             </form>
           </div>
+        </div>
 
-          <!--註冊-->
-          <div v-else-if="accountModalTitle === '註冊'">
-            <div v-if="signupSuccess" class="alert alert-success" role="alert">
-              <p class="text-center my-2 py-2">
-                <span>驗證信已寄出 請至註冊時填寫的信箱查看!</span>
-              </p>
-            </div>
-            <div v-else>
-              <form @submit.prevent="signup">
-                <div class="form-group">
-                  <span>
-                    已經有帳號了嗎？
-                    <b-link @click="accountModalTitle = '登入'"
-                      >登入帳號</b-link
-                    >
-                  </span>
-                </div>
-                <div v-if="signupFail" class="alert alert-danger" role="alert">
-                  <p class="text-center m-0">
-                    <span>{{ signupFailText }}</span>
-                  </p>
-                </div>
-                <div class="form-group">
-                  <label for="signupAccount">帳號：</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    :class="signupAccountError ? 'is-invalid' : ''"
-                    id="signupAccount"
-                    v-model="signupAccount"
-                    @keyup="signupAccountLengthCheck"
-                  />
-                  <div class="invalid-feedback">
-                    {{ signupAccountErrorText }}
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="signupMail">電子信箱：</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    :class="signupMailError ? 'is-invalid' : ''"
-                    id="signupMail"
-                    v-model="signupMail"
-                  />
-                  <div class="invalid-feedback">{{ signupMailErrorText }}</div>
-                </div>
-                <div class="form-group">
-                  <label for="signupPassword">設定密碼</label>
-                  <input
-                    type="password"
-                    class="form-control"
-                    :class="signupPasswordError ? 'is-invalid' : ''"
-                    id="signupPassword"
-                    v-model="signupPassword"
-                    @keyup="signupPasswordLengthCheck"
-                  />
-                  <div class="invalid-feedback">
-                    {{ signupPasswordErrorText }}
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="signupCheckPassword">確認密碼</label>
-                  <input
-                    type="password"
-                    class="form-control"
-                    :class="signupCheckPasswordError ? 'is-invalid' : ''"
-                    id="signupCheckPassword"
-                    v-model="signupCheckPassword"
-                    @keyup="signupCheckPasswordSameCheck"
-                  />
-                  <div class="invalid-feedback">
-                    {{ signupCheckPasswordErrorText }}
-                  </div>
-                </div>
-                <div class="form-group">
-                  <p class="text-center">
-                    點擊註冊及代表您已閱讀並了解
-                    <b-link to="/terms-of-service" target="_blank"
-                      >服務條款</b-link
-                    >及
-                    <b-link to="/privacy-notice" target="_blank"
-                      >隱私權聲明</b-link
-                    >
-                  </p>
-                  <div class="text-center">
-                    <div v-if="signupping">
-                      <div class="spinner-border text-secondary" role="status">
-                        <span class="sr-only">Loading...</span>
-                      </div>
-                    </div>
-                    <div v-else>
-                      <button type="submit" class="btn btn-primary">
-                        註冊
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-
-          <!--忘記密碼-->
-          <div v-else-if="accountModalTitle === '忘記密碼'">
+        <!--設定-->
+        <div v-else-if="accountModalTitle === '設定'">
+          <div v-if="accountSettingLoading">
             <div
-              v-if="forgotPasswordSuccess"
-              class="alert alert-success"
-              role="alert"
+              class="spinner-border text-secondary float-right"
+              role="status"
             >
-              <p class="text-center my-2 py-2">
-                <span>驗證信已寄出 請至註冊時填寫的信箱查看!</span>
-              </p>
-            </div>
-            <div v-else>
-              <form @submit.prevent="forgotPassword">
-                <div class="form-group">
-                  <label for="forgotPasswordId">請輸入帳號或電子信箱：</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    :class="forgotPasswordIdError ? 'is-invalid' : ''"
-                    id="forgotPasswordId"
-                    v-model="forgotPasswordId"
-                  />
-                  <div class="invalid-feedback">
-                    {{ forgotPasswordIdErrorText }}
-                  </div>
-                </div>
-                <div class="form-group">
-                  <div v-if="forgotPasswordLoading">
-                    <div
-                      class="spinner-border text-secondary float-right"
-                      role="status"
-                    >
-                      <span class="sr-only">Loading...</span>
-                    </div>
-                  </div>
-                  <div v-else>
-                    <button type="submit" class="btn btn-primary float-right">
-                      傳送驗證信件
-                    </button>
-                  </div>
-                </div>
-              </form>
+              <span class="sr-only">Loading...</span>
             </div>
           </div>
+          <div v-else>
+            <b-form>
+              <b-form-group label="帳號">
+                <b-form-input
+                  v-model="accountSettingForm.account"
+                  type="text"
+                  disabled
+                ></b-form-input>
+              </b-form-group>
 
-          <!--設定-->
-          <div v-else-if="accountModalTitle === '設定'">
-            <div v-if="accountSettingLoading">
+              <b-form-group label="電子信箱">
+                <b-form-input
+                  v-model="accountSettingForm.email"
+                  type="text"
+                  disabled
+                ></b-form-input>
+              </b-form-group>
+
+              <b-button variant="primary" @click="modalUpdatePassword()"
+                >修改密碼</b-button
+              >
+            </b-form>
+          </div>
+        </div>
+
+        <!--修改密碼-->
+        <div v-else-if="accountModalTitle === '修改密碼'">
+          <form @submit.prevent="updatePassword()">
+            <div class="form-group">
+              <span>
+                <b-link @click="accountModalTitle = '設定'">
+                  <i class="fas fa-chevron-left mr-2"></i>返回
+                </b-link>
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label for="updatePasswordFormOldPassword">舊密碼</label>
+              <input
+                v-model="updatePasswordForm.oldPassword"
+                type="password"
+                id="updatePasswordFormOldPassword"
+                class="form-control"
+                :class="updatePasswordForm.oldPasswordError ? 'is-invalid' : ''"
+              />
+              <div class="invalid-feedback">
+                {{ updatePasswordForm.oldPasswordErrorText }}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="updatePasswordFormNewPassword">設定新密碼</label>
+              <input
+                v-model="updatePasswordForm.newPassword"
+                type="password"
+                id="updatePasswordFormNewPassword"
+                class="form-control"
+                :class="updatePasswordForm.newPasswordError ? 'is-invalid' : ''"
+                @keyup="updatePasswordNewPasswordLengthCheck()"
+              />
+              <div class="invalid-feedback">
+                {{ updatePasswordForm.newPasswordErrorText }}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="updatePasswordFormCheckNewPassword">確認新密碼</label>
+              <input
+                v-model="updatePasswordForm.checkNewPassword"
+                type="password"
+                id="updatePasswordFormCheckNewPassword"
+                class="form-control"
+                :class="
+                  updatePasswordForm.checkNewPasswordError ? 'is-invalid' : ''
+                "
+                @keyup="updatePasswordCheckNewPasswordSameCheck()"
+              />
+              <div class="invalid-feedback">
+                {{ updatePasswordForm.checkNewPasswordErrorText }}
+              </div>
+            </div>
+
+            <div v-if="updatePasswordLoading">
               <div
                 class="spinner-border text-secondary float-right"
                 role="status"
@@ -313,111 +403,14 @@
               </div>
             </div>
             <div v-else>
-              <b-form>
-                <b-form-group label="帳號">
-                  <b-form-input
-                    v-model="accountSettingForm.account"
-                    type="text"
-                    disabled
-                  ></b-form-input>
-                </b-form-group>
-
-                <b-form-group label="電子信箱">
-                  <b-form-input
-                    v-model="accountSettingForm.email"
-                    type="text"
-                    disabled
-                  ></b-form-input>
-                </b-form-group>
-
-                <b-button variant="primary" @click="modalUpdatePassword()"
-                  >修改密碼</b-button
-                >
-              </b-form>
+              <b-button type="submit" variant="primary" class="float-right"
+                >修改密碼</b-button
+              >
             </div>
-          </div>
-
-          <!--修改密碼-->
-          <div v-else-if="accountModalTitle === '修改密碼'">
-            <form @submit.prevent="updatePassword()">
-              <div class="form-group">
-                <span>
-                  <b-link @click="accountModalTitle = '設定'">
-                    <i class="fas fa-chevron-left mr-2"></i>返回
-                  </b-link>
-                </span>
-              </div>
-
-              <div class="form-group">
-                <label for="updatePasswordFormOldPassword">舊密碼</label>
-                <input
-                  v-model="updatePasswordForm.oldPassword"
-                  type="password"
-                  id="updatePasswordFormOldPassword"
-                  class="form-control"
-                  :class="
-                    updatePasswordForm.oldPasswordError ? 'is-invalid' : ''
-                  "
-                />
-                <div class="invalid-feedback">
-                  {{ updatePasswordForm.oldPasswordErrorText }}
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="updatePasswordFormNewPassword">設定新密碼</label>
-                <input
-                  v-model="updatePasswordForm.newPassword"
-                  type="password"
-                  id="updatePasswordFormNewPassword"
-                  class="form-control"
-                  :class="
-                    updatePasswordForm.newPasswordError ? 'is-invalid' : ''
-                  "
-                  @keyup="updatePasswordNewPasswordLengthCheck()"
-                />
-                <div class="invalid-feedback">
-                  {{ updatePasswordForm.newPasswordErrorText }}
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="updatePasswordFormCheckNewPassword"
-                  >確認新密碼</label
-                >
-                <input
-                  v-model="updatePasswordForm.checkNewPassword"
-                  type="password"
-                  id="updatePasswordFormCheckNewPassword"
-                  class="form-control"
-                  :class="
-                    updatePasswordForm.checkNewPasswordError ? 'is-invalid' : ''
-                  "
-                  @keyup="updatePasswordCheckNewPasswordSameCheck()"
-                />
-                <div class="invalid-feedback">
-                  {{ updatePasswordForm.checkNewPasswordErrorText }}
-                </div>
-              </div>
-
-              <div v-if="updatePasswordLoading">
-                <div
-                  class="spinner-border text-secondary float-right"
-                  role="status"
-                >
-                  <span class="sr-only">Loading...</span>
-                </div>
-              </div>
-              <div v-else>
-                <b-button type="submit" variant="primary" class="float-right"
-                  >修改密碼</b-button
-                >
-              </div>
-            </form>
-          </div>
-        </b-modal>
-      </div>
-    </footer>
+          </form>
+        </div>
+      </b-modal>
+    </div>
   </div>
 </template>
 
