@@ -28,6 +28,16 @@
         v-on:getVODTime="getVODTime"
       ></twitch-embeded>
     </div>
+    <div class="embed-responsive embed-responsive-16by9 my-1">
+      <iframe
+        src="https://iframe.videodelivery.net/1bba34ebe4a188bb51fd1ac2535f2807"
+        style="border: none"
+        height="720"
+        width="1280"
+        allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+        allowfullscreen="true"
+      ></iframe>
+    </div>
     <br />
   </div>
 </template>

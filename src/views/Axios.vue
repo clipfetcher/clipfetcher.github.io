@@ -7,9 +7,13 @@
       <input type="text" name="vod" v-model="vod" />
     </div>
     <p>{{ vod }}</p>
-    <button class="btn btn-primary m-1" @click="tryApi_twitch()">Test_Twitch_api</button>
+    <button class="btn btn-primary m-1" @click="tryApi_twitch()">
+      Test_Twitch_api
+    </button>
     <p>{{ api_test_twitch }}</p>
-    <button class="btn btn-primary m-1" @click="tryApi_user()">Test_User</button>
+    <button class="btn btn-primary m-1" @click="tryApi_user()">
+      Test_User
+    </button>
     <p>{{ api_test_user }}</p>
     <h2 class="text-success">vod_post</h2>
     <button class="btn btn-primary m-1" @click="tryApi_1()">Test</button>
@@ -18,7 +22,9 @@
     <button class="btn btn-primary m-1" @click="tryApi_2()">Test</button>
     <p>{{ api_test_2 }}</p>
     <h2 class="text-success text-muted">vod/check_post</h2>
-    <button class="btn btn-primary m-1 disabled" @click="tryApi_3()">Test</button>
+    <button class="btn btn-primary m-1 disabled" @click="tryApi_3()">
+      Test
+    </button>
     <p>{{ api_test_3 }}</p>
     <h2 class="text-warning">vod/status_post</h2>
     <button class="btn btn-primary m-1" @click="tryApi_4()">Test</button>
@@ -26,6 +32,14 @@
     <h2 class="text-success">vod/highlight_get</h2>
     <button class="btn btn-primary m-1" @click="tryApi_5()">Test</button>
     <p>{{ api_test_5 }}</p>
+    <h2 class="text-success">vod/highlightList_get</h2>
+    <button class="btn btn-primary m-1" @click="tryApi_highlightList()">
+      Test
+    </button>
+    <button class="btn btn-primary m-1" @click="tryApi_highlightList_first()">
+      Test All
+    </button>
+    <p>{{ api_test_highlightList }}</p>
     <h2 class="text-success">vod/appraise_post</h2>
     <form action="javascript:void(0)" @submit="tryApi_6()">
       <div class="form-group">
@@ -79,6 +93,7 @@ export default {
       api_test_7: null,
       api_test_twitch: null,
       api_test_user: null,
+      api_test_highlightList: null,
     };
   },
   methods: {
@@ -168,6 +183,27 @@ export default {
         .then((response) => (this.api_test_user = response))
         .catch(function (error) {
           vm.api_test_user = error.response.data;
+          console.log(error);
+        });
+    },
+    tryApi_highlightList() {
+      this.axios
+        .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight_playlist", {
+          params: {
+            limit: 2,
+            _next: this.vod,
+          },
+        })
+        .then((response) => (this.api_test_highlightList = response.data))
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    tryApi_highlightList_first() {
+      this.axios
+        .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight_playlist")
+        .then((response) => (this.api_test_highlightList = response.data))
+        .catch(function (error) {
           console.log(error);
         });
     },

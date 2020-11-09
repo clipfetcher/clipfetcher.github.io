@@ -519,6 +519,26 @@
           :analyzeType="highlight.analyzeType"
           v-on:manual="setManualEditor"
         ></HighlightList>
+        <div
+          v-if="nextHighlightVideoOID != ''"
+          class="d-flex justify-content-center my-5"
+        >
+          <!-- <button
+            v-if="fetchVideoList === 'Finish'"
+            type="button"
+            class="btn btn-outline-primary mx-2"
+            @click="fetchHighlightVideos"
+          >
+            檢視更多精華影片
+          </button> -->
+          <div
+            v-if="fetchVideoList === 'Loading'"
+            class="spinner-grow text-secondary"
+            role="status"
+          >
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
       </div>
       <div
         v-else-if="videoList === 'Empty'"
@@ -584,6 +604,8 @@ export default {
 
       //HighlightList
       highlightVideos: null,
+      nextHighlightVideoOID: "",
+      fetchVideoList: "",
 
       //search
       searchVideos: null,
@@ -603,6 +625,7 @@ export default {
         second: "00",
       },
 
+      scrolledToBottom: false,
       api: null,
     };
   },
@@ -610,17 +633,74 @@ export default {
   mounted() {
     let vm = this;
     this.axios
-      .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight")
+      .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight_playlist", {
+        params: {
+          limit: 8,
+        },
+      })
       .then((response) => {
-        this.highlightVideos = response.data.reverse();
+        this.highlightVideos = response.data.highlight;
+        this.nextHighlightVideoOID = response.data._next
+          ? response.data._next
+          : "";
         if (this.highlightVideos.length == 0) this.videoList = "Empty";
-        else this.videoList = "Finish";
+        else {
+          this.videoList = "Finish";
+          this.fetchVideoList = "Finish";
+        }
+        this.scroll();
       })
       .catch(() => {
         vm.videoList = "Error";
       });
   },
   methods: {
+    fetchHighlightVideos() {
+      let vm = this;
+      this.fetchVideoList = "Loading";
+      this.axios
+        .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight_playlist", {
+          params: {
+            limit: 8,
+            _next: this.nextHighlightVideoOID,
+          },
+        })
+        .then((response) => {
+          this.highlightVideos = this.highlightVideos.concat(
+            response.data.highlight
+          );
+          this.nextHighlightVideoOID = response.data._next
+            ? response.data._next
+            : "";
+          this.fetchVideoList = "Finish";
+        })
+        .catch(function (error) {
+          console.log(error);
+          vm.videoList = "Error";
+        });
+    },
+    scroll() {
+      window.onscroll = () => {
+        let bottomOfWindow =
+          Math.max(
+            window.pageYOffset,
+            document.documentElement.scrollTop,
+            document.body.scrollTop
+          ) +
+            window.innerHeight ===
+          document.documentElement.offsetHeight;
+
+        if (bottomOfWindow) {
+          this.scrolledToBottom = true;
+          if (
+            this.nextHighlightVideoOID != "" &&
+            this.videoList == "Finish" &&
+            this.fetchVideoList == "Finish"
+          )
+            this.fetchHighlightVideos();
+        }
+      };
+    },
     loadVideo: function () {
       this.vodShow = false;
       this.vodAnalysisBtnShow = false;
@@ -978,9 +1058,9 @@ export default {
       this.endTime.second = end[2];
       // SET VOD TIME
       this.vod_seek_time =
-          parseInt(start[0] * 60 * 60) +
-          parseInt(start[1] * 60) +
-          parseInt(start[2]);
+        parseInt(start[0] * 60 * 60) +
+        parseInt(start[1] * 60) +
+        parseInt(start[2]);
     },
     setClipTime(pos) {
       let time = this.vod_time.split(":");
