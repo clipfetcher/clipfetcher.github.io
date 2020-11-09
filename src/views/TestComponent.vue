@@ -24,6 +24,7 @@
     >
       <twitch-embeded
         :vod_id="vod_id"
+        :seek_time="seek_time"
         v-on:getVODTime="getVODTime"
       ></twitch-embeded>
     </div>
@@ -45,6 +46,7 @@ export default {
       vod_id: "767275669",
       time: "",
       showEmbeded: true,
+      seek_time: 0.0,
     };
   },
   mounted() {},

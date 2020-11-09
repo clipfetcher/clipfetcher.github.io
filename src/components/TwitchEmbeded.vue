@@ -8,7 +8,7 @@
 <script>
 export default {
   name: "twitch-embeded",
-  props: ["vod_id"],
+  props: ["vod_id", "seek_time"],
   data() {
     return {
       options: {
@@ -44,6 +44,11 @@ export default {
   watch: {
     vod_id() {
       this.setTwitchPlayer();
+    },
+    seek_time(){
+      if (this.player != null){
+        this.player.seek(this.seek_time);
+      }
     },
     time() {
       this.$emit("getVODTime", this.time);

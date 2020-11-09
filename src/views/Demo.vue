@@ -216,6 +216,7 @@
                 <twitch-embeded
                   v-if="manualEditorShow"
                   :vod_id="vod_id"
+                  :seek_time="vod_seek_time"
                   v-on:getVODTime="getVODTime"
                 ></twitch-embeded>
               </div>
@@ -578,6 +579,7 @@ export default {
       vodErrorData: "",
       vod_id: "",
       vod_time: "",
+      vod_seek_time: 0.0,
       analyseVideos: null,
 
       //HighlightList
@@ -974,7 +976,11 @@ export default {
       this.endTime.hour = end[0];
       this.endTime.minute = end[1];
       this.endTime.second = end[2];
-      // this.removeClipTime(time);
+      // SET VOD TIME
+      this.vod_seek_time =
+          parseInt(start[0] * 60 * 60) +
+          parseInt(start[1] * 60) +
+          parseInt(start[2]);
     },
     setClipTime(pos) {
       let time = this.vod_time.split(":");
