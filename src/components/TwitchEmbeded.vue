@@ -45,8 +45,8 @@ export default {
     vod_id() {
       this.setTwitchPlayer();
     },
-    seek_time(){
-      if (this.player != null){
+    seek_time() {
+      if (this.player != null) {
         this.player.seek(this.seek_time);
       }
     },
