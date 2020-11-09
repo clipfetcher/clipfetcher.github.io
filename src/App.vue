@@ -1,12 +1,6 @@
 <template>
   <div id="app">
-    <b-navbar
-      class="py-1"
-      toggleable="lg"
-      type="dark"
-      variant="dark"
-      sticky="true"
-    >
+    <b-navbar class="py-1" toggleable="lg" type="dark" variant="dark" sticky>
       <b-navbar-brand to="/">
         <img
           src="./assets/ClipFetcher.png"
