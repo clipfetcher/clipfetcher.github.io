@@ -8,9 +8,10 @@ install: npm install
 script: npm run build
 
 deploy:
+  commit_message: Deploy From Travis-CI
   target_branch: master
   provider: pages
-  skip_cleanup: true
+  cleanup: true
   github_token: $GITHUB_TOKEN
   local_dir: dist
   on:
