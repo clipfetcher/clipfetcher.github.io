@@ -6,11 +6,26 @@ cache: npm
 
 install: npm install
 
-deploy:
-provider: pages
-skip_cleanup: true
-github_token: $GITHUB_TOKEN
-local_dir: dist
-script: bash deploy.sh
+script:
+  # abort on errors
+  set -e
+
+  # build
+  npm run build
+
+  # navigate into the build output directory
+  cd dist
+
+  # if you are deploying to a custom domain
+  # echo 'www.example.com' > CNAME
+  echo 'clipfetcher.com' > CNAME
+  git init
+  git add -A
+  git commit -m 'deploy'
+
+  # if you are deploying to https://<USERNAME>.github.io/<REPO>
+  git push -f https://github.com/clipfetcher/ClipFetcher_Frontend.git master:master
+
+  cd -
 on:
   branch: dev
