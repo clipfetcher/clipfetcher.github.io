@@ -8,7 +8,7 @@ install: npm install
 
 deploy:
 skip_cleanup: true
-github_token: ${GITHUB_TOKEN}
+github_token: 6bc900f6b6146a3dda8c81a16b46cf09acd581
 local_dir: dist
 script: bash deploy.sh
 on:
