@@ -300,12 +300,16 @@ export default {
   computed: {
     embed_linked: function () {
       let vodData = this.highlightVideo.youtube_url;
+      let link = this.highlightVideo.youtube_url;
       vodData = vodData.split("=");
       let url = vodData[1];
-      console.log(url);
+      if (!url) {
+        link = link.split("/");
+        console.log(link);
+      }
       return url
         ? "https://www.youtube.com/embed/" + url + "?rel=0"
-        : this.highlightVideo.youtube_url;
+        : "https://iframe.videodelivery.net/" + link[3];
     },
     highlightStatusText() {
       let text;
