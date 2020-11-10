@@ -4,13 +4,13 @@ node_js:
 
 cache: npm
 
-script: npm run build
+install: npm install
 
 deploy:
 provider: pages
 skip_cleanup: true
 github_token: $GITHUB_TOKEN
 local_dir: dist
-script: bash ./deploy.sh
+script: bash deploy.sh
 on:
   branch: dev
