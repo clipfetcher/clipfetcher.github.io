@@ -5,11 +5,11 @@ node_js:
 cache: npm
 
 install: npm install
-script: npm run build
+# script: npm run build
 
 deploy:
-  provider: master
-  skip_cleanup: true
+  provider: page
+  cleanup: true
   github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
   local_dir: dist
   on:
