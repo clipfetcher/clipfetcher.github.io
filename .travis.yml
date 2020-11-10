@@ -10,6 +10,5 @@ deploy:
 skip_cleanup: true
 github_token: echo $GITHUB_TOKEN
 local_dir: dist
-script: bash deploy.sh
 on:
   branch: dev
