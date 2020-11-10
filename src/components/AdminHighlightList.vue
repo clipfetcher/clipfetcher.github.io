@@ -9,7 +9,7 @@
         >
           <iframe
             class="embed-responsive-item"
-            :src="youtube_embed"
+            :src="embed_linked"
             allowfullscreen
           ></iframe>
         </div>
@@ -395,11 +395,13 @@ export default {
     },
   },
   computed: {
-    youtube_embed: function () {
+    embed_linked: function () {
       let vodData = this.youtube_url;
       vodData = vodData.split("=");
       let url = vodData[1];
-      return "https://www.youtube.com/embed/" + url + "?rel=0";
+      return url
+        ? "https://www.youtube.com/embed/" + url + "?rel=0"
+        : this.youtube_url;
     },
     highlightStatus() {
       let text;

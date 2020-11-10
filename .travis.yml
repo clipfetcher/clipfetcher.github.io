@@ -5,10 +5,11 @@ node_js:
 cache: npm
 
 install: npm install
-script: npm run build
+script: 
+  - npm run build
+  - echo 'clipfetcher.com' > CNAME
 
 deploy:
-  commit_message: Deploy From Travis-CI
   target_branch: master
   provider: pages
   cleanup: true

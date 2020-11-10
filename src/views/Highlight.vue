@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="my-2">
+    <div class="my-1">
       <div
         v-if="highlightPage === 'Loading'"
         class="d-flex justify-content-center my-4"
@@ -14,12 +14,12 @@
           <div class="col-12">
             <div
               v-if="highlightVideo.status === 'FINISHED'"
-              class="embed-responsive embed-responsive-16by9 mb-4"
+              class="embed-responsive embed-responsive-16by9"
             >
               <iframe
                 class="embed-responsive-item"
-                :src="youtube_embed"
-                allowfullscreen
+                :src="embed_linked"
+                allowfullscreen="true"
               ></iframe>
             </div>
             <div
@@ -33,7 +33,7 @@
               </p>
             </div>
           </div>
-          <div class="col-12">
+          <div class="col-12 mt-4">
             <h4>
               {{ highlightVideo.memo }}
             </h4>
@@ -298,97 +298,104 @@ export default {
     },
   },
   computed: {
-    youtube_embed: function () {
+    embed_linked: function () {
       let vodData = this.highlightVideo.youtube_url;
       vodData = vodData.split("=");
       let url = vodData[1];
-      return "https://www.youtube.com/embed/" + url + "?rel=0";
+      console.log(url);
+      return url
+        ? "https://www.youtube.com/embed/" + url + "?rel=0"
+        : this.highlightVideo.youtube_url;
     },
     highlightStatusText() {
       let text;
-      switch (this.highlightVideo.status) {
-        case "GETINFO":
-          text = "獲取資訊中";
-          break;
-        case "RUNALGO":
-          text = "影片分析中";
-          break;
-        case "FMVODDL":
-          text = "影片下載中";
-          break;
-        case "FMVODCB":
-          text = "影片合併中";
-          break;
-        case "YTVODUL":
-          text = "YT上傳中";
-          break;
-        case "FINISHED":
-          text = "已完成";
-          break;
-        case "NEWANALF":
-          text = "建立分析失敗";
-          break;
-        case "GETINFOF":
-          text = "獲取資訊失敗";
-          break;
-        case "RUNALGOF":
-          text = "影片分析失敗";
-          break;
-        case "FMVODDLF":
-          text = "影片下載失敗";
-          break;
-        case "FMVODCBF":
-          text = "影片合併失敗";
-          break;
-        case "YTVODULF":
-          text = "YT上傳失敗";
-          break;
-        default:
-          text = "獲取資訊中";
+      if (this.highlightVideo.status) {
+        switch (this.highlightVideo.status) {
+          case "GETINFO":
+            text = "獲取資訊中";
+            break;
+          case "RUNALGO":
+            text = "影片分析中";
+            break;
+          case "FMVODDL":
+            text = "影片下載中";
+            break;
+          case "FMVODCB":
+            text = "影片合併中";
+            break;
+          case "YTVODUL":
+            text = "YT上傳中";
+            break;
+          case "FINISHED":
+            text = "已完成";
+            break;
+          case "NEWANALF":
+            text = "建立分析失敗";
+            break;
+          case "GETINFOF":
+            text = "獲取資訊失敗";
+            break;
+          case "RUNALGOF":
+            text = "影片分析失敗";
+            break;
+          case "FMVODDLF":
+            text = "影片下載失敗";
+            break;
+          case "FMVODCBF":
+            text = "影片合併失敗";
+            break;
+          case "YTVODULF":
+            text = "YT上傳失敗";
+            break;
+          default:
+            text = "獲取資訊中";
+        }
       }
       return text;
     },
     isFailed() {
       let bool = false;
-      switch (this.highlightVideo.status) {
-        case "GETINFO":
-          bool = false;
-          break;
-        case "RUNALGO":
-          bool = false;
-          break;
-        case "FMVODDL":
-          bool = false;
-          break;
-        case "FMVODCB":
-          bool = false;
-          break;
-        case "YTVODUL":
-          bool = false;
-          break;
-        case "FINISHED":
-          bool = false;
-          break;
-        case "NEWANALF":
-          bool = true;
-          break;
-        case "GETINFOF":
-          bool = true;
-          break;
-        case "RUNALGOF":
-          bool = true;
-          break;
-        case "FMVODDLF":
-          bool = true;
-          break;
-        case "FMVODCBF":
-          bool = true;
-          break;
-        case "YTVODULF":
-          bool = true;
-          break;
-        default:
-          bool = false;
+      if (this.highlightVideo.status) {
+        switch (this.highlightVideo.status) {
+          case "GETINFO":
+            bool = false;
+            break;
+          case "RUNALGO":
+            bool = false;
+            break;
+          case "FMVODDL":
+            bool = false;
+            break;
+          case "FMVODCB":
+            bool = false;
+            break;
+          case "YTVODUL":
+            bool = false;
+            break;
+          case "FINISHED":
+            bool = false;
+            break;
+          case "NEWANALF":
+            bool = true;
+            break;
+          case "GETINFOF":
+            bool = true;
+            break;
+          case "RUNALGOF":
+            bool = true;
+            break;
+          case "FMVODDLF":
+            bool = true;
+            break;
+          case "FMVODCBF":
+            bool = true;
+            break;
+          case "YTVODULF":
+            bool = true;
+            break;
+          default:
+            bool = false;
+        }
       }
       return bool;
     },
