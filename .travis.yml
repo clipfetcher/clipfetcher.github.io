@@ -5,13 +5,13 @@ node_js:
 cache: npm
 
 install: npm install
-# script: npm run build
+script: npm run build
 
 deploy:
   target_branch: master
   provider: pages
-  cleanup: true
-  github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
   local_dir: dist
   on:
     branch: dev
