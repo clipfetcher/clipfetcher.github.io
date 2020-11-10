@@ -18,7 +18,7 @@
             >
               <iframe
                 class="embed-responsive-item"
-                :src="embed_linked"
+                :src="embed_link"
                 allowfullscreen="true"
               ></iframe>
             </div>
@@ -298,18 +298,23 @@ export default {
     },
   },
   computed: {
-    embed_linked: function () {
-      let vodData = this.highlightVideo.youtube_url;
-      let link = this.highlightVideo.youtube_url;
-      vodData = vodData.split("=");
-      let url = vodData[1];
-      if (!url) {
-        link = link.split("/");
-        console.log(link);
+    embed_link: function () {
+      let video_url = this.highlightVideo.youtube_url;
+      let video_hostname = new URL(video_url).hostname;
+      let video_id = "";
+      // if youtube link
+      if (video_hostname === "www.youtube.com") {
+        video_url = video_url.split("=");
+        video_id = video_url[1];
+        return "https://www.youtube.com/embed/" + video_id + "?rel=0";
+      } else {
+        // other video link
+        video_url = video_url.split("=");
+        video_url = video_url[0];
+        video_url = video_url.split("/");
+        video_id = video_url[video_url.length - 1];
+        return "https://iframe.videodelivery.net/" + video_id;
       }
-      return url
-        ? "https://www.youtube.com/embed/" + url + "?rel=0"
-        : "https://iframe.videodelivery.net/" + link[3];
     },
     highlightStatusText() {
       let text;
