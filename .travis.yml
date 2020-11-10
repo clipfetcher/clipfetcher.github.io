@@ -7,7 +7,7 @@ cache: npm
 install: npm install
 script: 
   - npm run build
-  - echo 'clipfetcher.com' > CNAME
+  - echo 'clipfetcher.com' > dist/CNAME
 
 deploy:
   target_branch: master
