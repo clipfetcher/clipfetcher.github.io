@@ -1,4 +1,4 @@
-# hello-world
+# Clip Fetcher https://travis-ci.org/clipfetcher/clipfetcher.github.io.svg?branch=dev
 
 ## Project setup
 ```
