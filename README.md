@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/clipfetcher/clipfetcher.github.io.svg?branch=master)](https://travis-ci.com/clipfetcher/clipfetcher.github.io)
 # hello-world
 
 ## Project setup
