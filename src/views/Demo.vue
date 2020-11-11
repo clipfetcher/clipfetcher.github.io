@@ -635,7 +635,7 @@ export default {
     this.axios
       .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight_playlist", {
         params: {
-          limit: 8,
+          limit: 12,
         },
       })
       .then((response) => {
@@ -661,7 +661,7 @@ export default {
       this.axios
         .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight_playlist", {
           params: {
-            limit: 8,
+            limit: 12,
             _next: this.nextHighlightVideoOID,
           },
         })
@@ -875,9 +875,9 @@ export default {
       let vm = this;
       this.checkHighlightTitle();
       let isValid = this.titleValid;
-      if (this.clip_totalTime > 30) {
+      if (this.clip_totalTime > 10) {
         isValid = false;
-        window.alert("剪輯片段時間總和超過30分鐘 請減少片段！");
+        window.alert("剪輯片段時間總和超過10分鐘 請減少片段！");
       }
       if (this.$store.state.auth.isLogin == false) {
         isValid = false;
