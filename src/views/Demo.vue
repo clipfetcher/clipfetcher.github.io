@@ -386,7 +386,7 @@
                 </div>
                 <div class="card-footer">
                   <span
-                    :class="[clip_totalTime <= 30 ? '' : 'text-danger']"
+                    :class="[clip_totalTime <= 10 ? '' : 'text-danger']"
                     style="float: right"
                     >累積時間 {{ clip_totalTime }} 分鐘</span
                   >
