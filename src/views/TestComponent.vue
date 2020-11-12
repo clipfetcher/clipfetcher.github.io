@@ -13,6 +13,20 @@
         memo="highlight.memo"
       ></HighlightList>
     </div>
+    <div class="row">
+      <div class="col-4">
+        <highlight-grid></highlight-grid>
+      </div>
+      <div class="col-4">
+        <highlight-grid></highlight-grid>
+      </div>
+      <div class="col-4">
+        <highlight-grid></highlight-grid>
+      </div>
+      <div class="col-4">
+        <highlight-grid></highlight-grid>
+      </div>
+    </div>
     <input type="text" class="form-control" v-model="vod_id" />
     <p>Time:{{ time }}</p>
     <button class="btn btn-primary" @click="showEmbeded = !showEmbeded">
@@ -28,16 +42,6 @@
         v-on:getVODTime="getVODTime"
       ></twitch-embeded>
     </div>
-    <div class="embed-responsive embed-responsive-16by9 my-1">
-      <iframe
-        src="https://iframe.videodelivery.net/b23a8e2d0026413f80294c6d4fa3ff29"
-        style="border: none"
-        height="720"
-        width="1280"
-        allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
-        allowfullscreen="true"
-      ></iframe>
-    </div>
     <br />
   </div>
 </template>
@@ -48,6 +52,7 @@
 <script>
 import HighlightList from "@/components/HighlightList.vue";
 import TwitchEmbeded from "@/components/TwitchEmbeded.vue";
+import HighlightGrid from "@/components/HighlightGrid.vue";
 
 export default {
   name: "test",
@@ -65,6 +70,6 @@ export default {
       this.time = value;
     },
   },
-  components: { HighlightList, TwitchEmbeded },
+  components: { HighlightList, TwitchEmbeded, HighlightGrid },
 };
 </script>
