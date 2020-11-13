@@ -1,7 +1,7 @@
 <template>
   <div class="card my-2">
     <img
-      src="https://videodelivery.net/1a682d14d284e6d8941c29d23e836004/thumbnails/thumbnail.jpg"
+      src="https://videodelivery.net/1a682d14d284e6d8941c29d23e836004/thumbnails/thumbnail.gif?time=10s&fps=3&duration=2s"
       class="card-img-top"
       alt="..."
     />
