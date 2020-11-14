@@ -458,9 +458,9 @@
             <span class="sr-only">Loading...</span>
           </div>
         </div>
-        <div v-else-if="highlightSearch === 'Find'" class="card my-2">
-          <h5 class="card-header">精華搜尋結果</h5>
-          <HighlightList
+        <div v-else-if="highlightSearch === 'Find'" class="my-2">
+          <h2>精華搜尋結果</h2>
+          <highlight-shelf
             v-for="searchVideo in searchVideos"
             :key="searchVideo.index"
             :vod_id="searchVideo.vod_id"
@@ -468,7 +468,7 @@
             :channel_id="searchVideo.channel_id"
             :streamerName="searchVideo.streamerName"
             :game="searchVideo.game"
-            :youtube_url="searchVideo.youtube_url"
+            :video_link="searchVideo.youtube_url"
             :start_at="searchVideo.start_at"
             :duration="searchVideo.duration"
             :avg_score="searchVideo.avg_score"
@@ -477,7 +477,7 @@
             :status="searchVideo.status"
             :analyzeType="searchVideo.analyzeType"
             v-on:manual="setManualEditor"
-          ></HighlightList>
+          ></highlight-shelf>
         </div>
         <div v-else class="alert alert-danger" role="alert">
           <p class="text-center my-2 py-2">
@@ -501,24 +501,6 @@
         </div>
       </div>
       <div v-else-if="videoList === 'Finish'">
-        <!-- <HighlightList
-          v-for="highlight in highlightVideos"
-          :key="highlight.index"
-          :vod_id="highlight.vod_id"
-          :highlight_id="highlight.highlight_id"
-          :channel_id="highlight.channel_id"
-          :streamerName="highlight.streamerName"
-          :game="highlight.game"
-          :youtube_url="highlight.youtube_url"
-          :start_at="highlight.start_at"
-          :duration="highlight.duration"
-          :avg_score="highlight.avg_score"
-          :memo="highlight.memo"
-          :author="highlight.author"
-          :status="highlight.status"
-          :analyzeType="highlight.analyzeType"
-          v-on:manual="setManualEditor"
-        ></HighlightList> -->
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3">
           <highlight-grid
             v-for="highlight in highlightVideos"
@@ -571,9 +553,9 @@
 </template>
 
 <script>
-import HighlightList from "@/components/HighlightList.vue";
 import TwitchEmbeded from "@/components/TwitchEmbeded.vue";
 import HighlightGrid from "@/components/HighlightGrid.vue";
+import HighlightShelf from "@/components/HighlightShelf.vue";
 
 export default {
   name: "demo",
@@ -642,7 +624,7 @@ export default {
       api: null,
     };
   },
-  components: { HighlightList, TwitchEmbeded, HighlightGrid },
+  components: { TwitchEmbeded, HighlightGrid, HighlightShelf },
   mounted() {
     let vm = this;
     this.axios
@@ -833,7 +815,7 @@ export default {
           },
         })
         .then((response) => {
-          this.searchVideos = response.data;
+          this.searchVideos = response.data.reverse();
           if (this.searchVideos == "") this.highlightSearch = "Error";
           else this.highlightSearch = "Find";
           this.videoSearchType = "搜尋項目";
