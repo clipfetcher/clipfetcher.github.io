@@ -5,10 +5,10 @@
         v-if="status === 'FINISHED'"
         :src="embed_thumbnail"
         @click="highlightPage"
-        class="card-img-top img-fluid"
+        class="card-img-top"
         alt="video_thumbnail"
       />
-      <div v-else class="card-img-top" style="height: auto">
+      <div v-else class="card-img-top">
         <div
           class="alert alert-info"
           :class="[isFailed ? 'alert-danger' : 'alert-info']"
@@ -75,13 +75,12 @@
 export default {
   name: "highlight-grid",
   props: [
-    "video_link",
     "vod_id",
     "highlight_id",
     "channel_id",
     "streamerName",
     "game",
-    "youtube_url",
+    "video_link",
     "start_at",
     "duration",
     "avg_score",
@@ -201,38 +200,18 @@ export default {
       let bool = false;
       switch (this.status) {
         case "GETINFO":
-          bool = false;
-          break;
         case "RUNALGO":
-          bool = false;
-          break;
         case "FMVODDL":
-          bool = false;
-          break;
         case "FMVODCB":
-          bool = false;
-          break;
         case "YTVODUL":
-          bool = false;
-          break;
         case "FINISHED":
           bool = false;
           break;
         case "NEWANALF":
-          bool = true;
-          break;
         case "GETINFOF":
-          bool = true;
-          break;
         case "RUNALGOF":
-          bool = true;
-          break;
         case "FMVODDLF":
-          bool = true;
-          break;
         case "FMVODCBF":
-          bool = true;
-          break;
         case "YTVODULF":
           bool = true;
           break;
