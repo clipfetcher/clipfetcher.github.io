@@ -61,7 +61,6 @@
 <script src= "https://player.twitch.tv/js/embed/v1.js"></script>
 
 <script>
-import HighlightList from "@/components/HighlightList.vue";
 import TwitchEmbeded from "@/components/TwitchEmbeded.vue";
 import HighlightGrid from "@/components/HighlightGrid.vue";
 import HighlightShelf from "@/components/HighlightShelf.vue";

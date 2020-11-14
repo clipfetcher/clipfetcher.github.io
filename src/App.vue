@@ -20,11 +20,9 @@
             <template v-slot:button-content>
               <em>其他頁面</em>
             </template>
-            <b-dropdown-item to="/home">Vue Home</b-dropdown-item>
             <b-dropdown-item to="/axios">Axios</b-dropdown-item>
             <b-dropdown-item to="/test">TestComponent</b-dropdown-item>
             <b-dropdown-item to="/admin">Admin</b-dropdown-item>
-            <b-dropdown-item to="/user">User</b-dropdown-item>
           </b-nav-item-dropdown>
 
           <b-nav-form v-if="!isLogin">
