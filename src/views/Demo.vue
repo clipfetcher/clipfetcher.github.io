@@ -501,7 +501,7 @@
         </div>
       </div>
       <div v-else-if="videoList === 'Finish'">
-        <HighlightList
+        <!-- <HighlightList
           v-for="highlight in highlightVideos"
           :key="highlight.index"
           :vod_id="highlight.vod_id"
@@ -518,19 +518,31 @@
           :status="highlight.status"
           :analyzeType="highlight.analyzeType"
           v-on:manual="setManualEditor"
-        ></HighlightList>
+        ></HighlightList> -->
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3">
+          <highlight-grid
+            v-for="highlight in highlightVideos"
+            :key="highlight.index"
+            :vod_id="highlight.vod_id"
+            :highlight_id="highlight.highlight_id"
+            :channel_id="highlight.channel_id"
+            :streamerName="highlight.streamerName"
+            :game="highlight.game"
+            :video_link="highlight.youtube_url"
+            :start_at="highlight.start_at"
+            :duration="highlight.duration"
+            :avg_score="highlight.avg_score"
+            :memo="highlight.memo"
+            :author="highlight.author"
+            :status="highlight.status"
+            :analyzeType="highlight.analyzeType"
+            v-on:manual="setManualEditor"
+          ></highlight-grid>
+        </div>
         <div
           v-if="nextHighlightVideoOID != ''"
           class="d-flex justify-content-center my-5"
         >
-          <!-- <button
-            v-if="fetchVideoList === 'Finish'"
-            type="button"
-            class="btn btn-outline-primary mx-2"
-            @click="fetchHighlightVideos"
-          >
-            檢視更多精華影片
-          </button> -->
           <div
             v-if="fetchVideoList === 'Loading'"
             class="spinner-grow text-secondary"
@@ -561,6 +573,7 @@
 <script>
 import HighlightList from "@/components/HighlightList.vue";
 import TwitchEmbeded from "@/components/TwitchEmbeded.vue";
+import HighlightGrid from "@/components/HighlightGrid.vue";
 
 export default {
   name: "demo",
@@ -629,7 +642,7 @@ export default {
       api: null,
     };
   },
-  components: { HighlightList, TwitchEmbeded },
+  components: { HighlightList, TwitchEmbeded, HighlightGrid },
   mounted() {
     let vm = this;
     this.axios
@@ -682,13 +695,13 @@ export default {
     scroll() {
       window.onscroll = () => {
         let bottomOfWindow =
-          Math.max(
-            window.pageYOffset,
-            document.documentElement.scrollTop,
-            document.body.scrollTop
-          ) +
-            window.innerHeight ===
-          document.documentElement.offsetHeight;
+          Math.ceil(
+            Math.max(
+              window.pageYOffset,
+              document.documentElement.scrollTop,
+              document.body.scrollTop
+            ) + window.innerHeight
+          ) >= document.documentElement.offsetHeight;
 
         if (bottomOfWindow) {
           this.scrolledToBottom = true;

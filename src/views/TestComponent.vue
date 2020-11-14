@@ -13,19 +13,45 @@
         memo="highlight.memo"
       ></HighlightList>
     </div>
-    <div class="row">
-      <div class="col-4">
-        <highlight-grid></highlight-grid>
-      </div>
-      <div class="col-4">
-        <highlight-grid></highlight-grid>
-      </div>
-      <div class="col-4">
-        <highlight-grid></highlight-grid>
-      </div>
-      <div class="col-4">
-        <highlight-grid></highlight-grid>
-      </div>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3">
+      <highlight-grid
+        vod_id="searchVideo.vod_id"
+        highlight_id="searchVideo.highlight_id"
+        channel_id="searchVideo.channel_id"
+        streamerName="searchVideo.streamerName"
+        game="searchVideo.game"
+        youtube_url="searchVideo.youtube_url"
+        start_at="searchVideo.start_at"
+        duration="searchVideo.duration"
+        avg_score="searchVideo.avg_score"
+        memo="searchVideo.memo"
+        author="searchVideo.author"
+        status="searchVideo.status"
+        analyzeType="searchVideo.analyzeType"
+        video_link="https://iframe.videodelivery.net/1a682d14d284e6d8941c29d23e836004"
+      ></highlight-grid>
+      <highlight-grid
+        vod_id="searchVideo.vod_id"
+        highlight_id="searchVideo.highlight_id"
+        channel_id="searchVideo.channel_id"
+        streamerName="searchVideo.streamerName"
+        game="searchVideo.game"
+        youtube_url="searchVideo.youtube_url"
+        start_at="searchVideo.start_at"
+        duration="searchVideo.duration"
+        avg_score="searchVideo.avg_score"
+        memo="searchVideo.memo"
+        author="searchVideo.author"
+        status="FINISHED"
+        analyzeType="searchVideo.analyzeType"
+        video_link="https://iframe.videodelivery.net/1a682d14d284e6d8941c29d23e836004"
+      ></highlight-grid>
+      <highlight-grid
+        video_link="https://www.youtube.com/watch?v=IqkQcQxWcAA"
+      ></highlight-grid>
+      <highlight-grid
+        video_link="https://www.youtube.com/watch?v=IqkQcQxWcAA"
+      ></highlight-grid>
     </div>
     <input type="text" class="form-control" v-model="vod_id" />
     <p>Time:{{ time }}</p>
