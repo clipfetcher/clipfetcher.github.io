@@ -1,13 +1,17 @@
 <template>
   <div class="col">
     <div class="card my-2">
-      <img
-        v-if="status === 'FINISHED'"
-        :src="embed_thumbnail"
-        @click="highlightPage"
-        class="card-img-top"
-        alt="video_thumbnail"
-      />
+      <div v-if="status === 'FINISHED'">
+        <img
+          @click="highlightPage"
+          :src="embed_thumbnail"
+          class="card-img-top"
+          alt="video_thumbnail"
+        />
+        <p class="m-0 text-center text-secondary">
+          <small>點擊上方圖片以檢視完整影片</small>
+        </p>
+      </div>
       <div v-else class="card-img-top">
         <div
           class="alert alert-info"
@@ -21,51 +25,48 @@
       </div>
 
       <div class="card-body py-1">
-        <h5 class="card-title mb-1">{{ memo }}</h5>
-        <b-button
-          v-if="showManualEdit"
-          @click="manualEditor"
-          variant="link"
-          class="float-right p-0"
-          ><i
-            class="fas fa-user-edit m-1"
-            v-b-tooltip.hover
-            title="手動剪輯"
-          ></i>
-        </b-button>
+        <h5 class="card-title mb-1">
+          {{ memo }}
+        </h5>
         <div class="card-text py-0">
-          <p class="m-0">
-            <small
-              >實況主：
-              <b-link
-                :to="'/results?channel_id=' + channel_id"
-                @click.prevent="channelSearch"
-                >{{ streamerName }}</b-link
-              ></small
-            >
-          </p>
-          <p class="m-0">
-            <small
-              >遊戲分類：
-              <b-link :to="'/results?game=' + game" @click.prevent="gameSearch">
-                {{ game }}
-              </b-link></small
-            >
-          </p>
-          <p class="m-0">
-            <small
-              >建立者：
-              <b-link
-                :to="'/results?author=' + author"
-                @click.prevent="authorSearch"
-                >{{ author }}</b-link
-              ></small
-            >
+          <p class="mx-0 my-2">
+            <b-button
+              v-if="showManualEdit"
+              @click="manualEditor"
+              variant="outline-info"
+              v-b-tooltip.hover
+              title="建立自己專屬的手動剪輯"
+              class="float-right"
+              ><i class="fas fa-user-edit m-1"></i>片段編輯
+            </b-button>
           </p>
         </div>
       </div>
       <div class="card-footer py-1">
-        <small class="text-muted">{{ analysis }}</small>
+        <p class="m-0">
+          <small class="text-muted"
+            ><b-link
+              :to="'/results?channel_id=' + channel_id"
+              @click.prevent="channelSearch"
+              >{{ streamerName }}</b-link
+            >・<b-link
+              :to="'/results?game=' + game"
+              @click.prevent="gameSearch"
+            >
+              {{ game }}
+            </b-link></small
+          >
+        </p>
+        <p class="m-0">
+          <small class="text-muted"
+            >建立者：<b-link
+              :to="'/results?author=' + author"
+              @click.prevent="authorSearch"
+              >{{ author }}</b-link
+            >
+            使用{{ analysis }}</small
+          >
+        </p>
       </div>
     </div>
   </div>

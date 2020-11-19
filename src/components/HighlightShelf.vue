@@ -4,8 +4,8 @@
       <div class="col-md-4">
         <img
           v-if="status === 'FINISHED'"
-          :src="embed_thumbnail"
           @click="highlightPage"
+          :src="embed_thumbnail"
           class="card-img"
           alt="video_thumbnail"
         />
@@ -23,30 +23,23 @@
       </div>
       <div class="col-md-8">
         <div class="card-body">
+          <p
+            v-if="status === 'FINISHED'"
+            class="m-0 text-center text-secondary"
+          >
+            <small>點擊圖片以檢視完整影片</small>
+          </p>
           <h5 class="card-title mb-1">{{ memo }}</h5>
-          <b-button
-            v-if="showManualEdit"
-            @click="manualEditor"
-            variant="link"
-            class="float-right p-0"
-            ><i
-              class="fas fa-user-edit m-1"
-              v-b-tooltip.hover
-              title="手動剪輯"
-            ></i>
-          </b-button>
           <div class="card-text py-0">
             <p class="m-0">
-              實況主：
               <b-link
                 :to="'/results?channel_id=' + channel_id"
                 @click.prevent="channelSearch"
                 >{{ streamerName }}</b-link
+              >・<b-link
+                :to="'/results?game=' + game"
+                @click.prevent="gameSearch"
               >
-            </p>
-            <p class="m-0">
-              遊戲分類：
-              <b-link :to="'/results?game=' + game" @click.prevent="gameSearch">
                 {{ game }}
               </b-link>
             </p>
@@ -57,11 +50,20 @@
                 @click.prevent="authorSearch"
                 >{{ author }}</b-link
               >
+              使用{{ analysis }}
+            </p>
+            <p class="mx-0 my-2">
+              <b-button
+                v-if="showManualEdit"
+                @click="manualEditor"
+                variant="outline-info"
+                v-b-tooltip.hover
+                title="建立自己專屬的手動剪輯"
+                class="float-right"
+                ><i class="fas fa-user-edit m-1"></i>片段編輯
+              </b-button>
             </p>
           </div>
-          <p class="card-text">
-            <small class="text-muted">{{ analysis }}</small>
-          </p>
         </div>
       </div>
     </div>
