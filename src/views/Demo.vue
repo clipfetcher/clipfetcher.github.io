@@ -556,6 +556,7 @@
 import TwitchEmbeded from "@/components/TwitchEmbeded.vue";
 import HighlightGrid from "@/components/HighlightGrid.vue";
 import HighlightShelf from "@/components/HighlightShelf.vue";
+import { apiGetHighlightPlayList } from "@/api/vod.js";
 
 export default {
   name: "demo",
@@ -627,12 +628,10 @@ export default {
   components: { TwitchEmbeded, HighlightGrid, HighlightShelf },
   mounted() {
     let vm = this;
-    this.axios
-      .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight_playlist", {
-        params: {
-          limit: 12,
-        },
-      })
+
+    apiGetHighlightPlayList({
+      limit: 12,
+    })
       .then((response) => {
         this.highlightVideos = response.data.highlight;
         this.nextHighlightVideoOID = response.data._next
@@ -650,16 +649,13 @@ export default {
       });
   },
   methods: {
-    fetchHighlightVideos() {
+    async fetchHighlightVideos() {
       let vm = this;
       this.fetchVideoList = "Loading";
-      this.axios
-        .get(process.env.VUE_APP_ROOT_API + "/api/vod/highlight_playlist", {
-          params: {
-            limit: 12,
-            _next: this.nextHighlightVideoOID,
-          },
-        })
+      apiGetHighlightPlayList({
+        limit: 12,
+        _next: this.nextHighlightVideoOID,
+      })
         .then((response) => {
           this.highlightVideos = this.highlightVideos.concat(
             response.data.highlight
