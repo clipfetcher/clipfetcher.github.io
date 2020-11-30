@@ -25,43 +25,54 @@
       </div>
 
       <div class="card-body py-1">
-        <h5 class="card-title mb-1">
-          {{ memo }}
-        </h5>
-        <div class="card-text py-0">
-          <p class="mx-0 my-2">
-            <b-button
-              v-if="showManualEdit"
+        <div class="row">
+          <div class="col-10">
+            <h5 class="card-title mb-1 p-0 text-truncate">{{ memo }}</h5>
+            <p class="m-0">
+              <small class="text-muted"
+                ><b-link
+                  :to="'/results?channel_id=' + channel_id"
+                  @click.prevent="channelSearch"
+                  class="text-secondary"
+                  >{{ streamerName }}</b-link
+                >・<b-link
+                  :to="'/results?game=' + game"
+                  @click.prevent="gameSearch"
+                  class="text-secondary"
+                >
+                  {{ game }}
+                </b-link></small
+              >
+            </p>
+          </div>
+          <b-dropdown
+            v-if="showManualEdit"
+            variant="link"
+            class="col-2 p-0"
+            toggle-class="text-decoration-none"
+            right
+            no-caret
+          >
+            <template #button-content>
+              <i class="fas fa-ellipsis-h text-secondary"></i>
+            </template>
+            <b-dropdown-item
               @click="manualEditor"
-              variant="outline-info"
               v-b-tooltip.hover
-              title="建立自己專屬的手動剪輯"
-              class="float-right"
-              ><i class="fas fa-user-edit m-1"></i>片段編輯
-            </b-button>
-          </p>
+              title="建立自己專屬的手動編輯"
+              ><i class="fas fa-user-edit mr-2"></i>手動編輯</b-dropdown-item
+            >
+          </b-dropdown>
         </div>
+        <div class="card-text py-0"></div>
       </div>
       <div class="card-footer py-1">
-        <p class="m-0">
-          <small class="text-muted"
-            ><b-link
-              :to="'/results?channel_id=' + channel_id"
-              @click.prevent="channelSearch"
-              >{{ streamerName }}</b-link
-            >・<b-link
-              :to="'/results?game=' + game"
-              @click.prevent="gameSearch"
-            >
-              {{ game }}
-            </b-link></small
-          >
-        </p>
         <p class="m-0">
           <small class="text-muted"
             >建立者：<b-link
               :to="'/results?author=' + author"
               @click.prevent="authorSearch"
+              class="text-info"
               >{{ author }}</b-link
             >
             使用{{ analysis }}</small
