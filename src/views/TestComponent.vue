@@ -82,7 +82,6 @@ export default {
     },
   },
   components: {
-    HighlightList,
     TwitchEmbeded,
     HighlightGrid,
     HighlightShelf,
