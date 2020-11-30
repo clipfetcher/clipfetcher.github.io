@@ -29,7 +29,7 @@
           >
             <small>點擊圖片以檢視完整影片</small>
           </p>
-          <h5 class="card-title mb-1">{{ memo }}</h5>
+          <h5 class="card-title mb-1 text-truncate">{{ memo }}</h5>
           <div class="card-text py-0">
             <p class="m-0">
               <b-link
