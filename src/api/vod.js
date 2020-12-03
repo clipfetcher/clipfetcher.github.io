@@ -4,4 +4,4 @@ export const apiGetHighlightPlayList = params => req("get", "/vod/highlight_play
 export const apiManualEditor = params => req("post", "/vod/manualEditor", params);
 export const apiHighlightCreate = params => req("post", "/vod", params);
 export const apiHighlightSearch = params => req("get", "/vod/highlight", params);
-export const apiHighlightAppraise = params => req("get", "/vod/appraise", params);
+export const apiHighlightAppraise = params => req("post", "/vod/appraise", params);
