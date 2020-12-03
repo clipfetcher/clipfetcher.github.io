@@ -46,7 +46,6 @@
             </p>
           </div>
           <b-dropdown
-            v-if="showManualEdit"
             variant="link"
             class="col-2 p-0"
             toggle-class="text-decoration-none"
@@ -57,10 +56,15 @@
               <i class="fas fa-ellipsis-h text-secondary"></i>
             </template>
             <b-dropdown-item
+              v-if="showManualEdit"
               @click="manualEditor"
-              v-b-tooltip.hover
-              title="建立自己專屬的手動編輯"
+              v-b-tooltip.hover.bottomleft="'建立自己專屬的手動編輯'"
               ><i class="fas fa-user-edit mr-2"></i>手動編輯</b-dropdown-item
+            >
+            <b-dropdown-item
+              @click="appraiseModalShow = !appraiseModalShow"
+              v-b-tooltip.hover.bottomleft="'對此影片做出評價'"
+              ><i class="fas fa-user-check mr-2"></i>精華評價</b-dropdown-item
             >
           </b-dropdown>
         </div>
@@ -80,10 +84,85 @@
         </p>
       </div>
     </div>
+
+    <b-modal v-model="appraiseModalShow" title="精華評價" hide-footer>
+      <form @submit.prevent="appraise">
+        <div class="form-group">
+          <label for="validationText">評論：</label>
+          <br />
+          <button
+            type="button"
+            class="btn m-1"
+            :class="notAccurate ? 'btn-secondary' : 'btn-outline-secondary'"
+            @click="textButton('notAccurate')"
+          >
+            影片不精準
+          </button>
+          <button
+            type="button"
+            class="btn m-1"
+            :class="videoLong ? 'btn-secondary' : 'btn-outline-secondary'"
+            @click="textButton('videoLong')"
+          >
+            影片長度過長
+          </button>
+          <button
+            type="button"
+            class="btn m-1"
+            :class="analysisLong ? 'btn-secondary' : 'btn-outline-secondary'"
+            @click="textButton('analysisLong')"
+          >
+            影片分析太久
+          </button>
+          <br />
+          <input
+            type="text"
+            class="form-control"
+            :class="validationText ? 'is-invalid' : ''"
+            id="validationText"
+            @change="checkText"
+            @keyup="checkText"
+            maxlength="50"
+            v-model="text"
+          />
+          <div class="invalid-feedback">評論不得為空</div>
+        </div>
+        <div class="form-group">
+          <label for="starRating">分數：</label>
+          <br />
+          <template v-for="index in 5">
+            <i
+              v-if="index <= starRating"
+              :key="index.id"
+              class="text-warning fas fa-star"
+              @click="clickRating(index)"
+              @mouseover="mouseOverRrating(index)"
+              @touchstart="mouseOverRrating(index)"
+              @mouseout="mouseOutRrating"
+              @touchend="mouseOutRrating"
+            ></i>
+            <i
+              v-else
+              :key="index.id"
+              class="text-warning far fa-star"
+              @click="clickRating(index)"
+              @mouseover="mouseOverRrating(index)"
+              @touchstart="mouseOverRrating(index)"
+              @mouseout="mouseOutRrating"
+              @touchend="mouseOutRrating"
+            ></i>
+          </template>
+          {{ starRating }}
+        </div>
+        <button type="submit" class="btn btn-primary float-right">送出</button>
+      </form>
+    </b-modal>
   </div>
 </template>
 
 <script>
+import { apiHighlightAppraise } from "@/api/vod.js";
+
 export default {
   name: "highlight-grid",
   props: [
@@ -101,6 +180,18 @@ export default {
     "status",
     "analyzeType",
   ],
+  data() {
+    return {
+      appraiseModalShow: false,
+      temp_starRating: 4,
+      starRating: 4,
+      text: "",
+      notAccurate: false,
+      videoLong: false,
+      analysisLong: false,
+      validationText: false,
+    };
+  },
   //https://videodelivery.net/{id}/thumbnails/thumbnail.jpg
   //https://videodelivery.net/{id}}/thumbnails/thumbnail.gif?time=10s&fps=3&duration=2s
   //https://img.youtube.com/vi/{id}/hqdefault.jpg
@@ -141,6 +232,66 @@ export default {
     },
     manualEditor() {
       this.$emit("manual", this.vod_id, this.start_at, this.duration);
+    },
+    mouseOverRrating: function (val) {
+      this.temp_starRating = this.starRating;
+      this.starRating = val;
+    },
+    mouseOutRrating: function () {
+      if (!this.isRating) this.starRating = 4;
+      else this.starRating = this.temp_starRating;
+      this.temp_starRating = 0;
+    },
+    clickRating: function (val) {
+      this.starRating = this.temp_starRating = val;
+      this.isRating = true;
+    },
+    textButton: function (button) {
+      let output = "";
+      if (button == "notAccurate") {
+        this.notAccurate = !this.notAccurate;
+      } else if (button == "videoLong") {
+        this.videoLong = !this.videoLong;
+      } else if (button == "analysisLong") {
+        this.analysisLong = !this.analysisLong;
+      }
+      if (this.notAccurate) {
+        output += " 影片不精準 ";
+      }
+      if (this.videoLong) {
+        output += " 影片長度過長 ";
+      }
+      if (this.analysisLong) {
+        output += " 影片分析太久 ";
+      }
+      this.text = output;
+    },
+    checkText: function () {
+      if (this.text == "" || this.text == null) {
+        this.validationText = true;
+      } else {
+        this.validationText = false;
+      }
+    },
+    appraise: function () {
+      let vm = this;
+      if (this.text == "" || this.text == null) {
+        this.validationText = true;
+      } else {
+        this.validationText = false;
+        apiHighlightAppraise({
+          highlight_id: this.highlight_id,
+          text: this.text,
+          score: this.starRating,
+        })
+          .then((response) => {
+            vm.response = response;
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+        this.appraiseModalShow = !this.appraiseModalShow;
+      }
     },
   },
   computed: {
