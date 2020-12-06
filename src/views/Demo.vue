@@ -386,7 +386,9 @@
                 </div>
                 <div class="card-footer">
                   <span
-                    :class="[clip_totalTime <= 10 ? '' : 'text-danger']"
+                    :class="[
+                      clip_totalTime <= clip_timeLimit ? '' : 'text-danger',
+                    ]"
                     style="float: right"
                     >累積時間 {{ clip_totalTime }} 分鐘</span
                   >
@@ -621,6 +623,7 @@ export default {
         second: "00",
       },
 
+      clip_timeLimit: 30,
       scrolledToBottom: false,
       api: null,
     };
@@ -866,9 +869,11 @@ export default {
       let vm = this;
       this.checkHighlightTitle();
       let isValid = this.titleValid;
-      if (this.clip_totalTime > 10) {
+      if (this.clip_totalTime > this.clip_timeLimit) {
         isValid = false;
-        window.alert("剪輯片段時間總和超過10分鐘 請減少片段！");
+        window.alert(
+          "剪輯片段時間總和超過" + this.clip_timeLimit + "分鐘 請減少片段！"
+        );
       }
       if (this.$store.state.auth.isLogin == false) {
         isValid = false;
