@@ -297,6 +297,7 @@ export default {
   computed: {
     embed_thumbnail: function () {
       let video_url = this.video_link;
+      console.log(video_url);
       let video_hostname = new URL(video_url).hostname;
       let video_id = "";
       // if youtube link
@@ -306,7 +307,7 @@ export default {
         return "https://i.ytimg.com/vi/" + video_id + "/maxresdefault.jpg";
       } else {
         // other video link
-        video_url = video_url.split("=");
+        video_url = video_url.split("?");
         video_url = video_url[0];
         video_url = video_url.split("/");
         video_id = video_url[video_url.length - 1];

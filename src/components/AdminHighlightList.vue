@@ -10,7 +10,7 @@
           <iframe
             class="embed-responsive-item"
             :src="embed_link"
-            allowfullscreen
+            allowfullscreen="true"
           ></iframe>
         </div>
         <div
@@ -406,7 +406,7 @@ export default {
         return "https://www.youtube.com/embed/" + video_id + "?rel=0";
       } else {
         // other video link
-        video_url = video_url.split("=");
+        video_url = video_url.split("?");
         video_url = video_url[0];
         video_url = video_url.split("/");
         video_id = video_url[video_url.length - 1];
