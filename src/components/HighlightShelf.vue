@@ -2,14 +2,15 @@
   <div class="card mb-3 px-1 py-2">
     <div class="row no-gutters">
       <div class="col-md-4">
-        <img
-          v-if="status === 'FINISHED'"
-          @click="highlightPage"
-          :src="embed_thumbnail"
-          class="card-img"
-          style="height: 13em"
-          alt="video_thumbnail"
-        />
+        <div v-if="status === 'FINISHED'" style="width: 100%; height: 12em">
+          <img
+            @click="highlightPage"
+            :src="embed_thumbnail"
+            class="card-img"
+            style="width: 100%; height: 100%; object-fit: cover"
+            alt="video_thumbnail"
+          />
+        </div>
         <div v-else class="card-img">
           <div
             class="alert alert-info p-4"

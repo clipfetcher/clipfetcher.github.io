@@ -2,13 +2,15 @@
   <div class="col">
     <div class="card my-2">
       <div v-if="status === 'FINISHED'">
-        <img
-          @click="highlightPage"
-          :src="embed_thumbnail"
-          class="card-img-top"
-          style="height: 13em"
-          alt="video_thumbnail"
-        />
+        <div style="width: 100%; height: 12em">
+          <img
+            @click="highlightPage"
+            :src="embed_thumbnail"
+            class="card-img-top"
+            style="width: 100%; height: 100%; object-fit: cover"
+            alt="video_thumbnail"
+          />
+        </div>
         <p class="m-0 text-center text-secondary">
           <small>點擊上方圖片以檢視完整影片</small>
         </p>
