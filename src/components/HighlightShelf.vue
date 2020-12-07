@@ -7,6 +7,7 @@
           @click="highlightPage"
           :src="embed_thumbnail"
           class="card-img"
+          style="height: 13em"
           alt="video_thumbnail"
         />
         <div v-else class="card-img">
@@ -139,7 +140,7 @@ export default {
       if (video_hostname === "www.youtube.com") {
         video_url = video_url.split("=");
         video_id = video_url[1];
-        return "https://i.ytimg.com/vi/" + video_id + "/maxresdefault.jpg";
+        return "https://i.ytimg.com/vi/" + video_id + "/sddefault.jpg";
       } else {
         // other video link
         video_url = video_url.split("?");
