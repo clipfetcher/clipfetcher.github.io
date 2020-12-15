@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import { apiUserVerify } from "@/api/user.js";
 export default {
   name: "AccountVerify",
   props: ["verify_token"],
@@ -41,10 +42,7 @@ export default {
   methods: {
     verify() {
       let vm = this;
-      this.axios
-        .get(
-          process.env.VUE_APP_ROOT_API + "/api/user/verify/" + this.verify_token
-        )
+      apiUserVerify(this.verify_token)
         .then(() => {
           this.verifyState = "success";
           setTimeout(() => {

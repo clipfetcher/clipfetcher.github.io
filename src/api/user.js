@@ -6,4 +6,4 @@ export const apiUserVerify = token => req("post", "/user/verify/" + token);
 export const apiUserLogout = params => req("post", "/user/logout", params);
 export const apiUserForgetPassword = params => req("post", "/user/forgetPassword", params);
 export const apiUserUpdatePassword = params => req("post", "/user/updatePassword", params);
-export const apiUserUpdatePassword = params => req("post", "/user", params);
+export const apiUserInfo = params => req("post", "/user", params);
