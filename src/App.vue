@@ -70,6 +70,8 @@
               id="mail"
               v-model="mail"
               aria-describedby="emailHelp"
+              autocomplete="email"
+              required
             />
             <div class="invalid-feedback">{{ emailErrorText }}</div>
             <small id="emailHelp" class="form-text text-muted"
@@ -118,8 +120,15 @@
             </div>
             <div class="form-group">
               <label for="loginPassword">密碼：</label>
+              <b-link
+                class="float-right"
+                @click="loginShowPassword = !loginShowPassword"
+                ><small>{{
+                  loginShowPassword ? "隱藏密碼" : "顯示密碼"
+                }}</small></b-link
+              >
               <input
-                type="password"
+                :type="loginShowPassword ? 'text' : 'password'"
                 class="form-control"
                 :class="loginPasswordError ? 'is-invalid' : ''"
                 id="loginPassword"
@@ -205,8 +214,15 @@
               </div>
               <div class="form-group">
                 <label for="signupPassword">設定密碼</label>
+                <b-link
+                  class="float-right"
+                  @click="signupShowPassword = !signupShowPassword"
+                  ><small>{{
+                    signupShowPassword ? "隱藏密碼" : "顯示密碼"
+                  }}</small></b-link
+                >
                 <input
-                  type="password"
+                  :type="signupShowPassword ? 'text' : 'password'"
                   class="form-control"
                   :class="signupPasswordError ? 'is-invalid' : ''"
                   id="signupPassword"
@@ -222,7 +238,7 @@
               <div class="form-group">
                 <label for="signupCheckPassword">確認密碼</label>
                 <input
-                  type="password"
+                  :type="signupShowPassword ? 'text' : 'password'"
                   class="form-control"
                   :class="signupCheckPasswordError ? 'is-invalid' : ''"
                   id="signupCheckPassword"
@@ -447,6 +463,7 @@ export default {
       loginPasswordErrorText: "",
       loginPasswordError: false,
       logging: false,
+      loginShowPassword: false,
       //account-signup
       signupAccount: "",
       signupMail: "",
@@ -464,6 +481,7 @@ export default {
       signupFail: false,
       signupFailText: "",
       signupping: false,
+      signupShowPassword: false,
       //account-forgotPassword
       forgotPasswordId: "",
       forgotPasswordIdErrorText: "",
