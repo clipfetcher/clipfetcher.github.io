@@ -111,6 +111,8 @@
                 :class="loginAccountError ? 'is-invalid' : ''"
                 id="loginAccount"
                 v-model="loginAccount"
+                autocomplete="username"
+                required
               />
               <div class="invalid-feedback">{{ loginAccountErrorText }}</div>
             </div>
@@ -123,6 +125,8 @@
                 id="loginPassword"
                 v-model="loginPassword"
                 aria-describedby="loginPasswordHelp"
+                autocomplete="password"
+                required
               />
               <div class="invalid-feedback">{{ loginPasswordErrorText }}</div>
               <small id="loginPasswordHelp" class="form-text">
@@ -180,6 +184,7 @@
                   id="signupAccount"
                   v-model="signupAccount"
                   @keyup="signupAccountLengthCheck"
+                  required
                 />
                 <div class="invalid-feedback">
                   {{ signupAccountErrorText }}
@@ -193,6 +198,8 @@
                   :class="signupMailError ? 'is-invalid' : ''"
                   id="signupMail"
                   v-model="signupMail"
+                  autocomplete="email"
+                  required
                 />
                 <div class="invalid-feedback">{{ signupMailErrorText }}</div>
               </div>
@@ -205,6 +212,8 @@
                   id="signupPassword"
                   v-model="signupPassword"
                   @keyup="signupPasswordLengthCheck"
+                  autocomplete="new-password"
+                  required
                 />
                 <div class="invalid-feedback">
                   {{ signupPasswordErrorText }}
@@ -219,6 +228,8 @@
                   id="signupCheckPassword"
                   v-model="signupCheckPassword"
                   @keyup="signupCheckPasswordSameCheck"
+                  autocomplete="new-password"
+                  required
                 />
                 <div class="invalid-feedback">
                   {{ signupCheckPasswordErrorText }}
@@ -348,6 +359,7 @@
                 id="updatePasswordFormOldPassword"
                 class="form-control"
                 :class="updatePasswordForm.oldPasswordError ? 'is-invalid' : ''"
+                required
               />
               <div class="invalid-feedback">
                 {{ updatePasswordForm.oldPasswordErrorText }}
@@ -363,6 +375,8 @@
                 class="form-control"
                 :class="updatePasswordForm.newPasswordError ? 'is-invalid' : ''"
                 @keyup="updatePasswordNewPasswordLengthCheck()"
+                autocomplete="new-password"
+                required
               />
               <div class="invalid-feedback">
                 {{ updatePasswordForm.newPasswordErrorText }}
@@ -380,6 +394,8 @@
                   updatePasswordForm.checkNewPasswordError ? 'is-invalid' : ''
                 "
                 @keyup="updatePasswordCheckNewPasswordSameCheck()"
+                autocomplete="new-password"
+                required
               />
               <div class="invalid-feedback">
                 {{ updatePasswordForm.checkNewPasswordErrorText }}
