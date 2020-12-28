@@ -300,7 +300,6 @@ export default {
   computed: {
     embed_thumbnail: function () {
       let video_url = this.video_link;
-      console.log(video_url);
       let video_hostname = new URL(video_url).hostname;
       let video_id = "";
       // if youtube link
