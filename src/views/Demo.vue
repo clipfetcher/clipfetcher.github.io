@@ -766,13 +766,13 @@ export default {
                   memo: vm.highlightTitle,
                 })
                 .then((response) => {
-                  vm.vodAnalysisSendStatus = "Success";
-                  vm.highlightTitle = "";
                   vm.videoHighlightId = response.data.highlight_id;
+                  vm.highlightTitle = "";
+                  vm.vodAnalysisSendStatus = "Success";
                 })
                 .catch(() => {
-                  vm.vodAnalysisSendStatus = "Error";
                   vm.vodAnalysisBtnShow = true;
+                  vm.vodAnalysisSendStatus = "Error";
                 });
             }
           })
