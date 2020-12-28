@@ -767,12 +767,12 @@ export default {
                 })
                 .then((response) => {
                   vm.videoHighlightId = response.data.highlight_id;
-                  vm.highlightTitle = "";
                   vm.vodAnalysisSendStatus = "Success";
+                  vm.highlightTitle = "";
                 })
                 .catch(() => {
-                  vm.vodAnalysisBtnShow = true;
                   vm.vodAnalysisSendStatus = "Error";
+                  vm.vodAnalysisBtnShow = true;
                 });
             }
           })
