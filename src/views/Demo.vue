@@ -945,6 +945,8 @@ export default {
             this.titleValid = true;
             this.highlightTitle = "";
             this.titleErrorFeedback = "";
+            this.vodAnalysisSendStatusShow = false;
+            this.vodAnalysisSendStatus = "Loading";
 
             this.clip_time = [];
 
