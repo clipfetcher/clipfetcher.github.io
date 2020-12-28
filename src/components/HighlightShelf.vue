@@ -62,7 +62,7 @@
                 v-b-tooltip.hover
                 title="建立自己專屬的手動剪輯"
                 class="float-right"
-                ><i class="fas fa-user-edit m-1"></i>片段編輯
+                ><i class="fas fa-user-edit mr-2"></i>手動編輯
               </b-button>
             </p>
           </div>
