@@ -770,10 +770,9 @@ export default {
                   vm.highlightTitle = "";
                   vm.videoHighlightId = response.data.highlight_id;
                 })
-                .catch(function (error) {
-                  console.log(error);
-                  vm.vodAnalysisBtnShow = true;
+                .catch(() => {
                   vm.vodAnalysisSendStatus = "Error";
+                  vm.vodAnalysisBtnShow = true;
                 });
             }
           })
