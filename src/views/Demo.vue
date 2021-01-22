@@ -878,7 +878,7 @@ export default {
       }
       if (this.clip_totalTime === 0) {
         isValid = false;
-        window.alert("剪輯片段時間總和為0分鐘 請新增片段！");
+        window.alert("剪輯片段時間總和為0分鐘 請增加精華片段！");
       }
       if (this.$store.state.auth.isLogin == false) {
         isValid = false;
