@@ -876,7 +876,7 @@ export default {
           "剪輯片段時間總和超過" + this.clip_timeLimit + "分鐘 請減少片段！"
         );
       }
-      if (this.clip_totalTime === 0) {
+      if (this.clip_totalTime == 0) {
         isValid = false;
         window.alert("剪輯片段時間總和為0分鐘 請增加精華片段！");
       }
