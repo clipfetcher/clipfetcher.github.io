@@ -387,7 +387,9 @@
                 <div class="card-footer">
                   <span
                     :class="[
-                      clip_totalTime <= clip_timeLimit ? '' : 'text-danger',
+                      clip_totalTime <= clip_timeLimit && clip_totalTime > 0
+                        ? ''
+                        : 'text-danger',
                     ]"
                     style="float: right"
                     >累積時間 {{ clip_totalTime }} 分鐘</span
@@ -873,6 +875,10 @@ export default {
         window.alert(
           "剪輯片段時間總和超過" + this.clip_timeLimit + "分鐘 請減少片段！"
         );
+      }
+      if (this.clip_totalTime === 0) {
+        isValid = false;
+        window.alert("剪輯片段時間總和為0分鐘 請新增片段！");
       }
       if (this.$store.state.auth.isLogin == false) {
         isValid = false;
