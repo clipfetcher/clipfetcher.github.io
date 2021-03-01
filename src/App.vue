@@ -42,15 +42,12 @@
             <template v-slot:button-content>
               <em><i class="fas fa-info-circle fa-lg ml-2"></i></em>
             </template>
-            <b-dropdown-item to="/terms-of-service" target="_blank"
-              >服務條款</b-dropdown-item
-            >
-            <b-dropdown-item to="/privacy-notice" target="_blank"
-              >隱私權聲明</b-dropdown-item
-            >
+            <b-dropdown-item to="/terms-of-service">服務條款</b-dropdown-item>
+            <b-dropdown-item to="/privacy-notice">隱私權聲明</b-dropdown-item>
             <b-dropdown-item @click="opinionModalShow = !opinionModalShow"
               >意見回饋</b-dropdown-item
             >
+            <b-dropdown-item to="/update-log">更新紀錄</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-collapse>
