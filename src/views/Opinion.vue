@@ -34,6 +34,7 @@
         />
         <div class="invalid-feedback">建議內容不得為空</div>
       </div>
+      <br />
       <button
         type="submit"
         class="btn btn-primary float-right"
