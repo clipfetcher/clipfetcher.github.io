@@ -44,9 +44,7 @@
             </template>
             <b-dropdown-item to="/terms-of-service">服務條款</b-dropdown-item>
             <b-dropdown-item to="/privacy-notice">隱私權聲明</b-dropdown-item>
-            <b-dropdown-item @click="opinionModalShow = !opinionModalShow"
-              >意見回饋</b-dropdown-item
-            >
+            <b-dropdown-item to="/opinion">意見回饋</b-dropdown-item>
             <b-dropdown-item to="/update-log">更新紀錄</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
@@ -56,44 +54,6 @@
     <router-view />
 
     <div class="container">
-      <b-modal v-model="opinionModalShow" title="意見回饋" hide-footer>
-        <form @submit.prevent="opinion">
-          <div class="form-group">
-            <label for="mail">電子信箱：</label>
-            <input
-              type="text"
-              class="form-control"
-              :class="emailError ? 'is-invalid' : ''"
-              id="mail"
-              v-model="mail"
-              aria-describedby="emailHelp"
-              autocomplete="email"
-              required
-            />
-            <div class="invalid-feedback">{{ emailErrorText }}</div>
-            <small id="emailHelp" class="form-text text-muted"
-              >我們將會使用這個信箱作為聯絡您的方式</small
-            >
-          </div>
-          <div class="form-group">
-            <label for="content">建議內容：</label>
-            <input
-              type="text"
-              class="form-control"
-              :class="contentError ? 'is-invalid' : ''"
-              placeholder="想要給本系統改善的建議"
-              id="content"
-              v-model="content"
-              maxlength="50"
-            />
-            <div class="invalid-feedback">建議內容不得為空</div>
-          </div>
-          <button type="submit" class="btn btn-primary float-right">
-            送出
-          </button>
-        </form>
-      </b-modal>
-
       <b-modal
         v-model="accountModalShow"
         :title="accountModalTitle"
@@ -441,13 +401,6 @@ export default {
   data() {
     return {
       title: "Highlight Clip Fetcher",
-      //opinion
-      opinionModalShow: false,
-      mail: "",
-      content: "",
-      emailErrorText: "",
-      emailError: false,
-      contentError: false,
 
       //account
       accountModalShow: false,
@@ -578,44 +531,6 @@ export default {
         checkNewPasswordError: false,
         checkNewPasswordErrorText: "",
       };
-    },
-    opinion: function () {
-      let vm = this;
-      let reg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      this.emailError = false;
-      this.contentError = false;
-      this.emailErrorText = "";
-
-      if (this.mail == "" || this.mail == null) {
-        this.emailError = true;
-        this.emailErrorText = "信箱未填寫";
-        if (this.content == "" || this.content == null) {
-          this.contentError = true;
-        }
-      } else if (reg.test(this.mail) == false) {
-        this.emailError = true;
-        this.emailErrorText = "信箱格式不正確";
-        if (this.content == "" || this.content == null) {
-          this.contentError = true;
-        }
-      } else if (this.content == "" || this.content == null) {
-        this.contentError = true;
-      } else {
-        this.axios
-          .post(process.env.VUE_APP_ROOT_API + "/api/opinion", {
-            mail: this.mail,
-            content: this.content,
-          })
-          .then((response) => {
-            vm.response = response.status;
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-        this.opinionModalShow = !this.opinionModalShow;
-        this.mail = "";
-        this.content = "";
-      }
     },
     login: function () {
       let isValid = true;

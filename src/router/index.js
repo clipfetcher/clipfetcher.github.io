@@ -35,6 +35,11 @@ const routes = [
     component: () => import('../views/UpdateLog.vue')
   },
   {
+    path: '/opinion',
+    name: 'Opinion',
+    component: () => import('../views/Opinion.vue')
+  },
+  {
     path: '/highlight/:highlight_id',
     name: 'Highlight',
     component: () => import('../views/Highlight.vue'),
