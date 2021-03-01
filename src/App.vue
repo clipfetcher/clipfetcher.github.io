@@ -247,6 +247,13 @@
           <div v-else>
             <form @submit.prevent="forgotPassword">
               <div class="form-group">
+                <span>
+                  <b-link @click="accountModalTitle = '登入'"
+                    ><i class="fas fa-chevron-left"></i> 登入帳號</b-link
+                  >
+                </span>
+              </div>
+              <div class="form-group">
                 <label for="forgotPasswordId">請輸入帳號或電子信箱：</label>
                 <input
                   type="text"
