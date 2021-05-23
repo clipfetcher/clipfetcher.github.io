@@ -706,9 +706,9 @@ export default {
       this.highlightTitle = "";
       let vm = this;
       let vodData = this.inputBarText;
-      vodData = vodData.split("?");
-      let vid = vodData[0];
-      vid = vid.substring(vid.length - 9);
+      vodData = vodData.split("videos/");
+      let vid = vodData[1];
+      //vid = vid.substring(vid.length - 9);
       this.axios
         .create({
           baseURL: "https://api.twitch.tv/kraken/",
@@ -790,9 +790,10 @@ export default {
         this.videoSearchType == "搜尋項目" ||
         this.videoSearchType == "vod_id"
       ) {
-        let video = this.inputBarText.split("?");
-        vid = video[0];
-        vid = vid.substring(vid.length - 9);
+        let vodData = this.inputBarText;
+        vodData = vodData.split("videos/");
+        vid = vodData[1];
+        //vid = vid.substring(vid.length - 9);
       } else vid = this.inputBarText;
 
       this.highlightSearch = "Loading";
