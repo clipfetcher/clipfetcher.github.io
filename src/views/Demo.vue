@@ -751,7 +751,8 @@ export default {
             },
           })
           .then((response) => {
-            if (response.data != "") {
+            if (response.data != "" && response.data[0].analyzeType == "freq") {
+              console.log(response.data[0]);
               vm.vodAnalysisBtnShow = true;
               vm.vodAnalysisSendStatusShow = false;
               vm.titleValid = false;
